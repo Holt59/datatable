@@ -33,7 +33,13 @@
 			this.data = this.options.data ;
 		}
 		else if (jQuery.isPlainObject(this.options.data)) {
-			var size = parseInt(this.table.data('size'), 10) ;	
+			var size ; 
+			if (this.table.data('size')) {
+				size = parseInt(this.table.data('size'), 10) ;	
+			}
+			else {
+				size = this.options.data.size ;
+			}
 			this.data = [] ;
 			$(this.options.loadingDivSelector).html('<div class="progress progress-striped active datatable-load-bar"><div class="bar" style="width: 0%;"></div></div>') ;
 			for (var i=0 ; i < size; i += this.options.pageSize * this.options.pagingNumberOfPages ) {
@@ -118,7 +124,7 @@
 					if (this.options.filters[field] === true) {
 						var input = $('<input type="text" class="search-field" data-filter="' + field + '" />') ;
 						dataTable.filterVals[field] = input.val() ;
-						input.keyup(function () {
+						input.keydown(function () {
 								var val = $(this).val().toUpperCase() ;
 								var field = $(this).data('filter') ;
 								typewatch (function () {
