@@ -7,11 +7,20 @@
     <meta name="description" content="Datatable : jQuery plugin for data tables" />
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-	<link rel="stylesheet" type="text/css" media="screen" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/prettify.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="https://raw.github.com/silviomoreto/bootstrap-select/master/bootstrap-select.min.css">
-	<link rel="stylesheet" type="text/css" media="screen" href="https://raw.github.com/Holt59/datatable/master/css/datatable-bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" media="screen" href="https://raw.github.com/Holt59/datatable/master/css/datatable-bootstrap.min.css">
 
     <title>Datatable</title>
+    
+    <style>
+    /* Prettify */
+    li.L0, li.L1, li.L2, li.L3,
+    li.L5, li.L6, li.L7, li.L8 { 
+        list-style-type: decimal !important ;
+    }
+    </style>
   </head>
 
   <body>
@@ -47,122 +56,514 @@
 <h2>
 <a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h2>
 
-<table>
-<thead><tr>
-<th>Firstname</th>
-<th>Lastname</th>
-</tr></thead>
-<tbody>
-<tr>
-<td>Linus</td>
-<td>Torvalds</td>
-</tr>
-<tr>
-<td>Brian</td>
-<td>Kernighan</td>
-</tr>
-<tr>
-<td>Blaise</td>
-<td>Pascal</td>
-</tr>
-<tr>
-<td>Lary</td>
-<td>Page</td>
-</tr>
-<tr>
-<td>Richard</td>
-<td>Hamming</td>
-</tr>
-<tr>
-<td>Grace</td>
-<td>Hopper</td>
-</tr>
-<tr>
-<td>Pierre</td>
-<td>Bezier</td>
-</tr>
-<tr>
-<td>Shigeru</td>
-<td>Miyamoto</td>
-</tr>
-<tr>
-<td>Leslie</td>
-<td>Lamport</td>
-</tr>
-<tr>
-<td>Rasmus</td>
-<td>Lerdorf</td>
-</tr>
-<tr>
-<td>Xavier</td>
-<td>Leroy</td>
-</tr>
-<tr>
-<td>Albert</td>
-<td>Einstein</td>
-</tr>
-<tr>
-<td>Bill</td>
-<td>Gates</td>
-</tr>
-<tr>
-<td>Leonard</td>
-<td>De Vinci</td>
-</tr>
-<tr>
-<td>Pierre</td>
-<td>De Fermat</td>
-</tr>
-<tr>
-<td>René</td>
-<td>Descartes</td>
-</tr>
-<tr>
-<td>Alan</td>
-<td>Turing</td>
-</tr>
-<tr>
-<td>Ada</td>
-<td>Lovelace</td>
-</tr>
-<tr>
-<td>Isaac</td>
-<td>Newton</td>
-</tr>
-<tr>
-<td>Carl Friedrich</td>
-<td>Gauss</td>
-</tr>
-<tr>
-<td>John</td>
-<td>Von Neumann</td>
-</tr>
-<tr>
-<td>Claude</td>
-<td>Shannon</td>
-</tr>
-<tr>
-<td>Tim</td>
-<td>Berners-Lee</td>
-</tr>
-<tr>
-<td>Richard</td>
-<td>Stallman</td>
-</tr>
-<tr>
-<td>Dennis</td>
-<td>Ritchie</td>
-</tr>
-<tr>
-<td>Bjarne</td>
-<td>Stroustrup</td>
-</tr>
-<tr>
-<td>Steve</td>
-<td>Jobs</td>
-</tr>
-</tbody>
+<p>Here is the initial HTML table: <button id="show-initial-table" class="btn btn-primary btn-small" >Show</button></p>
+
+<pre><code id="code-initial-table" class="prettyprint lang-html" style="display: none ;">&lt;div class="paging"&gt;&lt;/div&gt;
+&lt;table&gt;
+    &lt;thead&gt;
+        &lt;tr&gt;
+            &lt;th&gt;Firstname&lt;/th&gt;
+            &lt;th&gt;Lastname&lt;/th&gt;
+            &lt;th&gt;&lt;/th&gt;
+        &lt;/tr&gt;
+    &lt;/thead&gt;
+    &lt;tbody&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Linus&lt;/td&gt;
+            &lt;td&gt;Torvalds&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Brian&lt;/td&gt;
+            &lt;td&gt;Kernighan&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Blaise&lt;/td&gt;
+            &lt;td&gt;Pascal&lt;/td&gt;
+            &lt;td&gt;Mathematics&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Larry&lt;/td&gt;
+            &lt;td&gt;Page&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Richard&lt;/td&gt;
+            &lt;td&gt;Hamming&lt;/td&gt;
+            &lt;td&gt;Mathematics&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Grace&lt;/td&gt;
+            &lt;td&gt;Hopper&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Pierre&lt;/td&gt;
+            &lt;td&gt;Bezier&lt;/td&gt;
+            &lt;td&gt;Mathematics&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Shigeru&lt;/td&gt;
+            &lt;td&gt;Miyamoto&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Leslie&lt;/td&gt;
+            &lt;td&gt;Lamport&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Rasmus&lt;/td&gt;
+            &lt;td&gt;Lerdorf&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Xavier&lt;/td&gt;
+            &lt;td&gt;Leroy&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Albert&lt;/td&gt;
+            &lt;td&gt;Einstein&lt;/td&gt;
+            &lt;td&gt;Physics&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Bill&lt;/td&gt;
+            &lt;td&gt;Gates&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Leonard&lt;/td&gt;
+            &lt;td&gt;De Vinci&lt;/td&gt;
+            &lt;td&gt;Mathematics&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Pierre&lt;/td&gt;
+            &lt;td&gt;De Fermat&lt;/td&gt;
+            &lt;td&gt;Mathematics&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;René&lt;/td&gt;
+            &lt;td&gt;Descartes&lt;/td&gt;
+            &lt;td&gt;Mathematics&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Alan&lt;/td&gt;
+            &lt;td&gt;Turing&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Ada&lt;/td&gt;
+            &lt;td&gt;Lovelace&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Isaac&lt;/td&gt;
+            &lt;td&gt;Newton&lt;/td&gt;
+            &lt;td&gt;Physics&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Carl Friedrich&lt;/td&gt;
+            &lt;td&gt;Gauss&lt;/td&gt;
+            &lt;td&gt;Mathematics&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;John&lt;/td&gt;
+            &lt;td&gt;Von Neumann&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Claude&lt;/td&gt;
+            &lt;td&gt;Shannon&lt;/td&gt;
+            &lt;td&gt;Mathematics&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Tim&lt;/td&gt;
+            &lt;td&gt;Berners-Lee&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Richard&lt;/td&gt;
+            &lt;td&gt;Stallman&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Dennis&lt;/td&gt;
+            &lt;td&gt;Ritchie&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Bjarne&lt;/td&gt;
+            &lt;td&gt;Stroustrup&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+        &lt;tr&gt;
+            &lt;td&gt;Steve&lt;/td&gt;
+            &lt;td&gt;Jobs&lt;/td&gt;
+            &lt;td&gt;Computer Science&lt;/td&gt;
+		&lt;/tr&gt;
+    &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;div class="paging"&gt;&lt;/div&gt;</code>
+</pre>
+
+<p>And here is what it becomes after calling datatable: </p>
+
+<div class="paging"></div>
+<table id="example-table">
+    <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>Linus</td>
+            <td>Torvalds</td>
+            <td>Computer Science</td>
+        </tr>
+        <tr>
+            <td>Brian</td>
+            <td>Kernighan</td>
+            <td>Computer Science</td>
+        </tr>
+        <tr>
+            <td>Blaise</td>
+            <td>Pascal</td>
+            <td>Mathematics</td>
+        </tr>
+        <tr>
+            <td>Larry</td>
+            <td>Page</td>
+            <td>Computer Science</td>
+        </tr>
+        <tr>
+            <td>Richard</td>
+            <td>Hamming</td>
+            <td>Mathematics</td>
+        </tr>
+        <tr>
+            <td>Grace</td>
+            <td>Hopper</td>
+            <td>Computer Science</td>
+        </tr>
+        <tr>
+            <td>Pierre</td>
+            <td>Bezier</td>
+            <td>Mathematics</td>
+        </tr>
+        <tr>
+            <td>Shigeru</td>
+            <td>Miyamoto</td>
+            <td>Computer Science</td>
+        </tr>
+        <tr>
+            <td>Leslie</td>
+            <td>Lamport</td>
+            <td>Computer Science</td>
+        </tr>
+        <tr>
+            <td>Rasmus</td>
+            <td>Lerdorf</td>
+            <td>Computer Science</td>
+        </tr>
+        <tr>
+            <td>Xavier</td>
+            <td>Leroy</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Albert</td>
+            <td>Einstein</td>
+            <td>Physics</td>
+		</tr>
+        <tr>
+            <td>Bill</td>
+            <td>Gates</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Leonard</td>
+            <td>De Vinci</td>
+            <td>Mathematics</td>
+		</tr>
+        <tr>
+            <td>Pierre</td>
+            <td>De Fermat</td>
+            <td>Mathematics</td>
+		</tr>
+        <tr>
+            <td>René</td>
+            <td>Descartes</td>
+            <td>Mathematics</td>
+		</tr>
+        <tr>
+            <td>Alan</td>
+            <td>Turing</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Ada</td>
+            <td>Lovelace</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Isaac</td>
+            <td>Newton</td>
+            <td>Physics</td>
+		</tr>
+        <tr>
+            <td>Carl Friedrich</td>
+            <td>Gauss</td>
+            <td>Mathematics</td>
+		</tr>
+        <tr>
+            <td>John</td>
+            <td>Von Neumann</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Claude</td>
+            <td>Shannon</td>
+            <td>Mathematics</td>
+		</tr>
+        <tr>
+            <td>Tim</td>
+            <td>Berners-Lee</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Richard</td>
+            <td>Stallman</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Dennis</td>
+            <td>Ritchie</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Bjarne</td>
+            <td>Stroustrup</td>
+            <td>Computer Science</td>
+		</tr>
+        <tr>
+            <td>Steve</td>
+            <td>Jobs</td>
+            <td>Computer Science</td>
+		</tr>
+    </tbody>
 </table>
+<div class="paging"></div>
+<p>Here is the code used to transform the table: </p>
+<pre><code class="prettyprint lang-javascript linenums">$('#example-table').datatable({
+    pageSize: 5,
+    sort: [true, true, false],
+    filters: [true, false, 'select']
+}) ;</code></pre>
+
+<h2>
+<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Available options</h2>
+<p>The current available options that can be passed to datatable are shown in the following table:</p>
+<table>
+    <thead>
+        <tr>
+            <th>Option</th>
+            <th>Default value</th>
+            <th>Explanation</th>
+            <th>Data Attribute</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>data</td>
+            <td colspan="3">See the data part below for more information.</td>
+        </tr>
+        <tr>
+            <td>pagingDivSelector</td>
+            <td><code>'.paging'</code></td>
+            <td>The jQuery selector for paging divs.</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>counterDivSelector</td>
+            <td><code>'.loading'</code></td>
+            <td>The jQuery selector for counter divs.</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>counterText</td>
+            <td colspan="3">See below.</td>
+        </tr>
+        <tr>
+            <td>loadingDivSelector</td>
+            <td><code>'.loading'</code></td>
+            <td>The jQuery selector for the ajax loading div.</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>sort</td>
+            <td><code>false</code></td>
+            <td>See the sort part below for more information.</td>
+            <td><code>data-sort</code></td>
+        </tr>
+        <tr>
+            <td>sortKey</td>
+            <td><code>undefined</code></td>
+            <td>The default sort key (if sort enable).</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>sortDir</td>
+            <td><code>'asc'</code></td>
+            <td>The default sort direction (<code>'asc'</code> or <code>'desc'</code>).</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>nbColumns</td>
+            <td><code>-1</code></td>
+            <td>The number of columns. If not specified will be find according to the number of
+            &lt;th&gt; tags in the head of the table.</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>pageSize</td>
+            <td><code>20</code></td>
+            <td>The number of elements that will be shown on each page.</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>pagingNumberOfPages</td>
+            <td><code>9</code></td>
+            <td>The number of pages that will be shown on the pagination list.</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>filters</td>
+            <td colspan="3">See the filter part below for more information.</td>
+        </tr>
+        <tr>
+            <td>beforeRefresh</td>
+            <td><code>function () {}</code></td>
+            <td>A callback call before each refresh.</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>afterRefresh</td>
+            <td><code>function () {}</code></td>
+            <td>A callback call after each refresh.</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td>lineFormat</td>
+            <td colspan="3">See below.</td>
+        </tr>
+    </tbody>
+</table>   
+
+<h3>data</h3>
+<p>If you don't specify the data option, the plugin will load the data from the current HTML table,
+considering each row as an element (See the example above).</p>
+<p>If you specify a javascript array (of array or of element), it will be used as the data:</p>
+<pre><code class="prettyprint lang-javascript">$('#MyTable').datatable({
+    data: [
+       ['Albert', 'Einstein', 'Computer Science'],
+       ['Isaac', 'Newton', 'Physics']
+    ]
+}) ;</code></pre>
+<pre><code class="prettyprint lang-javascript">$('#MyTable').datatable({
+    data: [
+       {firstname: 'Albert', lastname: 'Einstein', field: 'Computer Science'},
+       {firstname: 'Isaac', lastname: 'Newton', field: 'Physics'}
+    ]
+}) ;</code></pre>
+<p>Depending on the type of element (array or object), you have to be carefull when you use the filter and the sort
+option which use the key.</p>
+<h3>Ajax data</h3>
+<p>If you don't want to put the data on the HTML page (because of the amount of data, for example), you can specify
+a ajax URL that will be used by the plugin to load asynchronously the data.</p>
+<p>To do that, you first have to create a web service that will take 2 arguments (get or post, see below), which
+are:</p>
+<ul>
+<li>offset: The first line to retrieve</li>
+<li>limit: The number of lines to retrieve</lI>
+</ul>
+<p>The service should return a json array containing the data.</p>
+<p>For example, if the plugin send a request with offset=10 & limit=2 to your server, it should return something like that:</p>
+<pre><code class="prettyprint lang-javascript">[{firstname: 'Albert', lastname: 'Einstein', field: 'Computer Science'}, {firstname: 'Isaac', lastname: 'Newton', field: 'Physics'}]</code></pre>
+<p>To use the service, you have to pass specific data option to the plugin:</p>
+<pre><code class="prettyprint lang-javascript">$('#MyTable').datatable({
+    data: {
+        url: "http://my-web-site/datas/get", // The service URL
+        type: "post", // The type of request (post or get)
+        size: 157 // The total amount of data, this parameter can be given as a data-size attribute on the table
+    }
+}) ;</code></pre>
+
+<h3>counterText</h3>
+<p>You can customize the counter text, see the default function below for example:</p>
+<pre><code class="prettyprint lang-javascript linenums">function (currentPage, totalPage, firstRow, lastRow, totalRow) {
+    return 'Page ' + currentPage + ' on ' + totalPage + '. '
+        + Starting at ' + firstRow + ', ending at ' 
+        + lastRow + ' over ' + totalRow + ' entries.' ;
+}</code></pre>
+
+<h3>sort</h3>
+<p>The plugin allow you to sort data in different way, specifying which column can be sort, or which key to use.</p>
+<p><strong>Sorting data using specific function</strong></p>
+<p>If you specify a function as the sorting option, it will be used to sort data, but you won't be able
+to change the sorting direction (asc or desc). The function should take 2 arguments and return -1, 0, or 1 if the first
+argument is resp. lower, equal or greater than the second.</p>
+<p><strong>Specifying which column can be sort</strong></p>
+<p>You have 3 ways to specify the columns, depending on the sort option:</p>
+<ul>
+    <li><code>false</code> - No sortable columns</li>
+    <li><code>true</code> - The sortable columns will be find according to <code>data-sort</code> attribute of &lt;th&gt; tags.</li>
+    <li><code>'*'</code> - All the column will be sortable.</li>
+    <li><code>[true, false, true]</code> - Column at index i will be sortable if <code>true</code> (see the example above).</li>
+</ul>
+<p>You can specify a default sort by specifying <code>sortKey</code> and <code>sortDir</code> options.</p>
+
+<h3>filters</h3>
+<p>You can add filters on some columns if you want. The filter are text input or select (multiple or not).</p>
+<p>To add filters, you should specify the filters option which is an array. Each element of the array correspond to a
+column can take different values:</p>
+<ul>
+    <li><code>false</code> - No filter for the specified column.</li>
+    <li><code>true</code> - Text input filter (see &laquo;Firstname&raquo; column on the example above).</li>
+    <li><code>'select'</code> - Select input: The options are find according to the current data set. This value should never be used with ajax loading.</li>
+    <li><code>{0: "Option 0", 1: "Option 1"}</code> - Select input with specified options.</li>
+</ul>
+<p>In the select form, the comparison is done according to option value, not option text.</p>
+<p>Another form exist to create select filter, which is specified as a plain javascript object: </p>
+<pre><code class="prettyprint lang-javascript">{
+    /* The list of options. */
+    values: {0: "Option 0", 1: "Option 1"}, 
+    /* The select option(s), can be either a value or an array (for multiple select). If not specified, no value
+    will be selected (for simple select), or all the values (for multiple select). */
+    default: 0,
+    /* Specify if an empty entrie should be added. Default value is true. When no option is selected,
+    all the row are visible for this filter. This parameter as no effect on multiple select. */
+    empty: true,
+    /* True for multiple select, false for simple. Default value is false. */
+    multiple: false
+}</code></pre>
+<p><em>The test between the 2 previous form is done according to 'values' key. If you have an option that use 'values' as
+a key, you have to use the last form.</em></p>
+
+<h3>lineFormat</h3>
+<p>You can customize the way line are displayed, the function should return a jQuery line (see default function below for example):</p>
+<pre><code class="prettyprint lang-javascript linenums">function (id, data) { 
+    var res = $('<tr></tr>') ;
+    for (var key in data) { 
+        res.append('<td>' + data[key] + '</td>') ; 
+    }
+    return res ;
+}</code></pre>
+        
       </section>
     </div>
 
@@ -173,19 +574,39 @@
         <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
       </footer>
     </div>
-	
+    
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script type="text/javascript" src="javascripts/prettify/prettify.js"></script>
     <script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="https://raw.github.com/silviomoreto/bootstrap-select/master/bootstrap-select.min.js"></script>
-	<script type="text/javascript" src="https://raw.github.com/Holt59/datatable/master/js/datatable.min.js"></script>
+    <script type="text/javascript" src="https://raw.github.com/silviomoreto/bootstrap-select/master/bootstrap-select.min.js"></script>
+    <script type="text/javascript" src="../datatable/js/datatable.js"></script>
 
     <script type="text/javascript">
-	
-		function test () {
-			console.log('test') ;
-		}
-	
-	</script>
+    
+        $('#example-table').datatable({
+            pageSize: 5,
+            sort: [true, true, false],
+            filters: [true, false, 'select']
+        }) ;
+    
+		$('#show-initial-table').click(function () {
+            if ($('#code-initial-table').is(':visible')) {
+                $('#code-initial-table').hide('slow') ;
+                $(this).removeClass('btn-inverse')
+                    .addClass('btn-primary')
+                    .html('Show') ;
+            }
+            else {
+                $('#code-initial-table').show('slow') ;
+                $(this).removeClass('btn-primary')
+                    .addClass('btn-inverse')
+                    .html('Hide') ;
+            }
+        }) ;
+        
+        prettyPrint() ;
+    
+    </script>
 
   </body>
 </html>
