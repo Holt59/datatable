@@ -189,6 +189,8 @@
 	
 	DataTable.prototype = {
 	
+		constructor: DataTable,
+	
 		updateLoadingDivs: function () {
 			if (this.data.length === size) {
 				$(this.options.loadingDivSelector).remove() ;
