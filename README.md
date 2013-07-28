@@ -1,7 +1,7 @@
 Datatable v0.1 - Alpha
 =========
 
-Datatable is a jQuery / bootstrap plugin for dynamic datatables with pagination, filtering and ajax loading.
+Datatable is a jQuery plugin for dynamic datatables with pagination, filtering and ajax loading.
 
 How to use?
 ===========
@@ -16,6 +16,19 @@ And run:
 If you use bootstrap CSS, you can use datatable-boostrap.css instead of datatable.css (which is just the datatable-bootstrap.css with some additional style).
 
 For more information, checkout http://mikael-capelle.fr/articles/view/datatable-a-jquery-plugin-for-dynamics-table or http://holt59.github.io/datatable
+
+How to modify CSS?
+==================
+
+The datatable plugin come with small CSS files, one for non-bootstrap theme and others for bootstrap theme. These CSS files does not modify tables skin, they just:
+1. Add background-img to sorting header
+2. Add margin to ajax load bar
+3. Create skin for pagination div (non-boostrap only)
+4. Create skin for ajax loading bar (non-boostrap only)
+
+Bootstrap CSS files use bootstrap pagination div and loading bar.
+
+If you want to add a theme, do not hesitate to push it on github! If you need more information on how to customize table CSS, do not hesitate to contact me.
 
 Copyright and license
 =====================
