@@ -70,7 +70,7 @@
 					$(this).data('sort', countTH) ;
 				}
 				else if (jQuery.isArray(dataTable.options.sort) && dataTable.options.sort[countTH]) {
-					$(this).data('sort', dataTable.options.sort[countTH]) ;
+					$(this).data('sort', countTH) ;
 				}
 				
 				if ($(this).data('sort') !== undefined) {
