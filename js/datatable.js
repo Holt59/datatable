@@ -1,6 +1,6 @@
 var DataTable = function (table, opts) {
 
-  "use strict" ;
+	"use strict" ;
 
 	this.options = opts ;
 	this.table = table ;
@@ -34,6 +34,36 @@ var DataTable = function (table, opts) {
 		var size = parseInt(this.table.data('size'), 10) ;	
 		this.data = [] ;
 		$(this.options.loadingDivSelector).html('<div class="progress progress-striped active" style="width: 100%; margin: 8px 0 ; "><div class="bar" style="width: 0%;"></div></div>') ;
+		this.updateLoadingDivs = function () {
+			if (this.data.length === size) {
+				$(this.options.loadingDivSelector).remove() ;
+			}
+			else {
+				$(this.options.loadingDivSelector).find('div.progress .bar').css('width', parseInt(100 * this.data.length / size, 10) + '%') ;
+			}
+		} ;
+		this.getAjaxData = function (start) {
+			$.ajax({
+				url: this.options.data.url,
+				type: this.options.data.type,
+				data: {
+					offset: start,
+					limit: this.options.pageSize * this.options.pagingNumberOfPages 
+				},
+				ajaxI: start,
+				ajaxThis: this,
+				success: function (data, text, jqxhr) {
+					this.ajaxThis.data = this.ajaxThis.data.concat($.parseJSON(data)) ;
+					this.ajaxThis.sort() ;
+					this.ajaxThis.filter () ;
+					this.ajaxThis.updateLoadingDivs () ;
+				},
+				error: function (jqhxr, text, error) {
+					console.log('Load ' + this.ajaxI + ' failed: ' + text + ' (Trying again)') ;
+					this.ajaxThis.getAjaxData(this.ajaxI) ;
+				}
+			}) ;
+		} ;
 		for (var i=0 ; i < size; i += this.options.pageSize * this.options.pagingNumberOfPages ) {
 			this.getAjaxData (i) ;
 		}
@@ -47,216 +77,30 @@ var DataTable = function (table, opts) {
 		}) ;
 	}
 	
-	/* Add sorting class to all th and add callback. */
+	/* Some getters to help in the function below... */
 	
-	if (!jQuery.isFunction(this.options.sort)) {
+	this.getTable = function () {
+		return this.table ;
+	} ;
 	
-		var countTH = 0 ;
-		
-		this.table.find('thead th').each (function () {
-		
-			if ($(this).data('sort')) {
-				dataTable.options.sort = true ;
-			}
-			else if (dataTable.options.sort === '*') {
-				$(this).data('sort', countTH) ;
-			}
-			else if (jQuery.isArray(dataTable.options.sort) && dataTable.options.sort[countTH]) {
-				$(this).data('sort', dataTable.options.sort[countTH]) ;
-			}
-			
-			if ($(this).data('sort') !== undefined) {
-				$(this).addClass('sorting')
-					.css('cursor', 'pointer')
-					.css('background', 'url("' + dataTable.options.imgFolder + '/sort_both.png") no-repeat center right') ;
-			}
-			
-			countTH ++ ;
-		
-		}) ;
-		
-		this.table.find('thead th').click(function () {
-			if ($(this).data('sort') !== undefined) {
-				if ($(this).hasClass('sorting-asc')) {
-					dataTable.options.sortDir = 'desc' ;
-					$(this).removeClass('sorting-asc')
-						.addClass('sorting-desc')
-						.css('background-image', 'url("' + dataTable.options.imgFolder + '/sort_desc.png")') ;
-				}
-				else if ($(this).hasClass('sorting-desc')) {
-					dataTable.options.sortDir = 'asc' ;
-					$(this).removeClass('sorting-desc') 
-						.addClass('sorting-asc') 
-						.css('background-image', 'url("' + dataTable.options.imgFolder + '/sort_asc.png")') ;
-				}
-				else {
-					$(this).parent('tr').find('th')
-						.removeClass('sorting-desc')
-						.removeClass('sorting-asc')
-						.css('background-image', 'url("' + dataTable.options.imgFolder + '/sort_both.png")') ;
-					dataTable.options.sortDir = 'asc' ;
-					dataTable.options.sortKey = $(this).data('sort') ;
-					$(this).addClass('sorting-asc')
-						.css('background-image', 'url("' + dataTable.options.imgFolder + '/sort_asc.png")') ;
-				}
-				dataTable.sort () ;
-				dataTable.refresh () ;
-			}
-		}) ;
-	
-	}
-	
-	var typewatch = (function(){
-		var timer = 0;
-		return function(callback, ms){
-			clearTimeout (timer);
-			timer = setTimeout(callback, ms);
-		};
-	})();
-	
-	/* Add filter where it's needed. */
-	
-	if (this.options.filters) {
-		var tr = $('<tr></tr>').insertAfter(this.table.find('thead tr').last()) ;
-		for (var field in this.options.filters) {
-			if (this.options.filters[field]) {
-				var td = $('<td></td>') ;
-				if (this.options.filters[field] === true) {
-					var input = $('<input type="text" class="search-field" data-sort="' + field + '" />') ;
-					dataTable.filterVals[field] = input.val() ;
-					input.keyup(function (field) {
-						return function () {
-							var val = $(this).val().toUpperCase() ;
-							typewatch (function () {
-								// dataTable.options.filter = field ;
-								dataTable.filterVals[field] = val ;
-								dataTable.filter () ; 
-							}, 300) ;
-						} ;
-					} (field)) ;
-					td.append(input) ;
-					dataTable.addFilter(field, function (data, val) {
-						return data.toUpperCase().indexOf(val) !== -1;
-					}) ;
-				}
-				else {
-					var values = [], selected ;
-					if ('values' in this.options.filters[field]) {
-						values = this.options.filters[field]['values'] ;
-						selected = this.options.filters[field]['default'];
-					}
-					else {
-						values = this.options.filters[field] ;
-						selected = values ;
-					}
-					var select = $('<select multiple="multiple" class="selectpicker" data-sort="' + field + '"></select>') ;
-					for (var key in values) {
-						select.append('<option value="' + key + '" ' + (key in selected ? 'selected' : '') + '>' + values[key] + '</option>') ;
-					}
-					dataTable.filterVals[field] = select.val() ;
-					select.change (function (field) {
-						return function () {
-							var val = $(this).val() ;
-							// dataTable.options.filter = field ;
-							dataTable.filterVals[field] = val ;
-							dataTable.filter () ;
-						} ;
-					} (field)) ;
-					td.append(select) ;
-					dataTable.addFilter(field, function (data, val) {
-						if (!val) { return false ; }
-						return val.indexOf(data) !== -1 ;
-					}) ;
-				}
-				tr.append(td) ;
-			}
-			else {
-				tr.append('<td></td>') ;
-			}
-		}
-		if ($.isFunction($().selectpicker)) {
-			$('.selectpicker').selectpicker() ;
-		}
-	}
-	
-	/* If a sort key is specified, sort. */
-		
-	if (jQuery.isFunction(this.options.sort)) {
-		this.sort() ;
-	}
-	else if (this.options.sortKey !== undefined) {
-		var th = undefined ;
-		this.table.find('thead th').each(function () {
-			if ($(this).data('sort') == dataTable.options.sortKey) {
-				th = $(this) ;
-			}
-		}) ;
-		if (th !== undefined ) {
-			th.trigger('click') ;
-		}
-	}
-	
-	/* Then filter (and refresh) ! */
-	
-	this.filter () ;
-	
-} ;
-
-DataTable.prototype = {
-	
-	/** Method to upload the loading div, use with ajax. **/
-	updateLoadingDivs: function () {
-		if (this.data.length === size) {
-			$(this.options.loadingDivSelector).remove() ;
-		}
-		else {
-			$(this.options.loadingDivSelector).find('div.progress .bar').css('width', parseInt(100 * this.data.length / size, 10) + '%') ;
-		}
-	},
-	
-	/** Method use to retrieve data from a server, recursive on error. **/
-	getAjaxData: function (start) {
-		$.ajax({
-			url: this.options.data.url,
-			type: this.options.data.type,
-			data: {
-				offset: start,
-				limit: this.options.pageSize * this.options.pagingNumberOfPages 
-			},
-			ajaxI: start,
-			ajaxThis: this,
-			success: function (data, text, jqxhr) {
-				this.ajaxThis.data = this.ajaxThis.data.concat($.parseJSON(data)) ;
-				this.ajaxThis.sort() ;
-				this.ajaxThis.filter () ;
-				this.ajaxThis.updateLoadingDivs () ;
-			},
-			error: function (jqhxr, text, error) {
-				console.log('Load ' + this.ajaxI + ' failed: ' + text + ' (Trying again)') ;
-				this.ajaxThis.getAjaxData(this.ajaxI) ;
-			}
-		}) ;
-	},
-	
-	/** Getters for head / etc... **/
-	getHead: function () {
+	this.getHead = function () {
 		return this.table.find('thead').first() ;
-	},
+	} ;
 	
-	getBody: function () {
+	this.getBody = function () {
 		return this.table.find('tbody').first() ;
-	},
+	} ;
 	
-	getCounter: function () {
+	this.getCounter = function () {
 		return $(this.options.counterDivSelector) ;
-	},
+	} ;
 	
-	getPagingLists: function () {
+	this.getPagingLists = function () {
 		return $(this.options.pagingDivSelector).find('ul') ;
-	},
+	} ;
 	
 	/** Update the paging div. **/
-	updatePaging: function () {
+	this.updatePaging = function () {
 	
 		/* Be carefull if you change something here, all this part calculate the first and last page to display.
 		I choose to center the current page, it's more beautiful... */
@@ -327,19 +171,18 @@ DataTable.prototype = {
 			}
 		}) ;
 	
-	},
+	} ;
 	
-	/** Update the counter div. **/
-	updateCounter: function () {
+	this.updateCounter = function () {
 		var cp = this.filterIndex.length ? parseInt(this.currentStart / this.options.pageSize, 10) + 1 : 0 ;
 		var lp = parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
 		var first = this.filterIndex.length ? this.currentStart + 1 : 0 ;
 		var last = (this.currentStart + this.options.pageSize) > this.filterIndex.length ? this.filterIndex.length : this.currentStart + this.options.pageSize ;
 		this.getCounter().html(this.options.counterText(cp, lp, first, last, this.filterIndex.length)) ;
-	},
+	} ;
 	
 	/** Return a sort function according options.sortKey & options.sortDir **/
-	getSortFunction: function () {
+	this.getSortFunction = function () {
 		if (jQuery.isFunction(this.options.sort)) {
 			return this.options.sort ;
 		}
@@ -351,19 +194,19 @@ DataTable.prototype = {
 			if (vala < valb) { return asc ? -1 :  1 ; }
 			return 0 ;
 		} ;
-	},
+	} ;
 	
 	/** Return the length of data after filtering. **/
-	filter: function () {
+	this.filter = function () {
 		this.currentStart = 0 ;
 		this.filterIndex = []  ;
 		for (var i = 0 ; i < this.data.length ; i++) { 
 			if (this.checkFilter(this.data[i])) { this.filterIndex.push(i) ; }
 		}
 		this.refresh () ;
-	},
+	} ;
 	
-	checkFilter: function (data) {
+	this.checkFilter = function (data) {
 		var ok = true ;
 		for (var fk in this.filters) {
 			if (!this.filters[fk](data[fk], this.filterVals[fk])) {
@@ -372,31 +215,31 @@ DataTable.prototype = {
 			}
 		}
 		return ok ;
-	},
+	} ;
 	
-	addFilter: function (field, filter) {
+	this.addFilter = function (field, filter) {
 		this.filters[field] = filter ;
-	},
+	} ;
 	
 	/** Sort the data (WITHOUT REFRESHING). **/
-	sort: function () {
+	this.sort = function () {
 		if (!this.options.sort) {
 			return ;
 		}
 		this.data.sort(this.getSortFunction()) ;
-	},
+	} ;
 	
 	/** Add a 'row' (a data). **/
-	addRow: function (data) {
+	this.addRow = function (data) {
 		this.data.push(data) ; 
 		this.sort() ;
 		this.filter () ;
 		this.currentStart = parseInt(this.filterIndex.indexOf(this.data.indexOf(data)) / this.options.pageSize, 10) * this.options.pageSize ;
 		this.refresh () ;
-	},
+	} ;
 	
 	/** Remove a 'row'. */
-	deleteRow: function (rowId) {
+	this.deleteRow = function (rowId) {
 		var oldCurrentStart = this.currentStart ;
 		this.data.splice(rowId, 1) ;
 		this.filterIndex.splice(this.filterIndex.indexOf(rowId), 1) ;
@@ -409,23 +252,23 @@ DataTable.prototype = {
 			if (this.currentStart < 0) { this.currentStart = 0 ; }
 		}
 		this.refresh () ;
-	},
+	} ;
 	
 	/** Update a 'row' (data). **/
-	updateRow: function (rowId, data) {
+	this.updateRow = function (rowId, data) {
 		this.data.splice(rowId, 1);
 		this.addRow(data) ;
-	},
+	} ;
 	
 	/** Change the current page and refresh. **/
-	loadPage: function (page) {
+	this.loadPage = function (page) {
 		this.currentStart = (page - 1) * this.options.pageSize  ;
 		this.refresh () ;
-	},
+	} ;
 	
 	/** Refresh the page according to current page (DO NOT SORT).
 	This function call options.lineFormat. **/
-	refresh: function () {
+	this.refresh = function () {
 		this.options.beforeRefresh () ;
 		this.updatePaging () ;
 		this.updateCounter () ;
@@ -438,7 +281,149 @@ DataTable.prototype = {
 			this.getBody().append(this.options.lineFormat(this.filterIndex[this.currentStart+i], this.data[this.filterIndex[this.currentStart+i]])) ;
 		}
 		this.options.afterRefresh () ;
-	}	
+	} ;
+	
+	/* Add sorting class to all th and add callback. */
+	
+	if (!jQuery.isFunction(this.options.sort)) {
+	
+		var countTH = 0 ;
+		
+		this.getTable().find('thead th').each (function () {
+		
+			if ($(this).data('sort')) {
+				dataTable.options.sort = true ;
+			}
+			else if (dataTable.options.sort === '*') {
+				$(this).data('sort', countTH) ;
+			}
+			else if (jQuery.isArray(dataTable.options.sort) && dataTable.options.sort[countTH]) {
+				$(this).data('sort', dataTable.options.sort[countTH]) ;
+			}
+			
+			if ($(this).data('sort') !== undefined) {
+				$(this).addClass('sorting')
+					.css('cursor', 'pointer')
+					.css('background', 'url("../img/sort_both.png") no-repeat center right') ;
+			}
+			
+			countTH ++ ;
+		
+		}) ;
+		
+		this.getTable().find('thead th').click(function () {
+			if ($(this).data('sort') !== undefined) {
+				if ($(this).hasClass('sorting-asc')) {
+					dataTable.options.sortDir = 'desc' ;
+					$(this).removeClass('sorting-asc')
+						.addClass('sorting-desc')
+						.css('background-image', 'url("../img/sort_desc.png")') ;
+				}
+				else if ($(this).hasClass('sorting-desc')) {
+					dataTable.options.sortDir = 'asc' ;
+					$(this).removeClass('sorting-desc') 
+						.addClass('sorting-asc') 
+						.css('background-image', 'url("../img/sort_asc.png")') ;
+				}
+				else {
+					$(this).parent('tr').find('th').removeClass('sorting-desc').removeClass('sorting-asc') ;
+					dataTable.options.sortDir = 'asc' ;
+					dataTable.options.sortKey = $(this).data('sort') ;
+					$(this).addClass('sorting-asc')
+						.css('background-image', 'url("../img/sort_asc.png")') ;
+				}
+				dataTable.sort () ;
+				dataTable.refresh () ;
+			}
+		}) ;
+	
+	}
+	
+	var typewatch = (function(){
+		var timer = 0;
+		return function(callback, ms){
+			clearTimeout (timer);
+			timer = setTimeout(callback, ms);
+		};
+	})();
+	
+	/* Add filter where it's needed. */
+	
+	if (this.options.filters) {
+		var tr = $('<tr></tr>').insertAfter(this.getTable().find('thead tr').last()) ;
+		for (var field in this.options.filters) {
+			if (this.options.filters[field]) {
+				var td = $('<td></td>') ;
+				if (this.options.filters[field] === true) {
+					var input = $('<input type="text" class="search-field" data-sort="' + field + '" />') ;
+					dataTable.filterVals[field] = input.val() ;
+					input.keyup(function (field) {
+						return function () {
+							var val = $(this).val().toUpperCase() ;
+							typewatch (function () {
+								// dataTable.options.filter = field ;
+								dataTable.filterVals[field] = val ;
+								dataTable.filter () ; 
+							}, 300) ;
+						} ;
+					} (field)) ;
+					td.append(input) ;
+					dataTable.addFilter(field, function (data, val) {
+						return data.toUpperCase().indexOf(val) !== -1;
+					}) ;
+				}
+				else {
+					var values = [], selected ;
+					if ('values' in this.options.filters[field]) {
+						values = this.options.filters[field]['values'] ;
+						selected = this.options.filters[field]['default'];
+					}
+					else {
+						values = this.options.filters[field] ;
+						selected = values ;
+					}
+					var select = $('<select multiple="multiple" class="selectpicker" data-sort="' + field + '"></select>') ;
+					for (var key in values) {
+						select.append('<option value="' + key + '" ' + (key in selected ? 'selected' : '') + '>' + values[key] + '</option>') ;
+					}
+					dataTable.filterVals[field] = select.val() ;
+					select.change (function (field) {
+						return function () {
+							var val = $(this).val() ;
+							// dataTable.options.filter = field ;
+							dataTable.filterVals[field] = val ;
+							dataTable.filter () ;
+						} ;
+					} (field)) ;
+					td.append(select) ;
+					dataTable.addFilter(field, function (data, val) {
+						if (!val) { return false ; }
+						return val.indexOf(data) !== -1 ;
+					}) ;
+				}
+				tr.append(td) ;
+			}
+			else {
+				tr.append('<td></td>') ;
+			}
+		}
+		if ($.isFunction($().selectpicker())) {
+			$('.selectpicker').selectpicker() ;
+		}
+	}
+	
+	/* If a sort key is specified, sort. */
+		
+	if (jQuery.isFunction(this.options.sort)) {
+		this.sort() ;
+	}
+	else if (this.options.sortKey !== undefined) {
+		this.getTable().find('thead th[data-sort="' + this.options.sortKey + '"]').trigger('click') ;
+	}
+	
+	/* Then filter (and refresh) ! */
+	
+	this.filter () ;
 	
 } ;
 
@@ -462,15 +447,6 @@ DataTable.prototype = {
 					break ;
 				case 'delete':
 					this.datatable.deleteRow(args[1]) ;
-					break ;
-				case 'refresh':
-					this.datatable.refresh () ;
-					break ;
-				case 'option':
-					if (args[1] in this.datatable.options) {
-						this.datatable.options[args[1]] = args[2] ;
-						this.datatable.refresh () ;
-					}
 					break ;
 				}
 			}
@@ -498,8 +474,7 @@ DataTable.prototype = {
 			var res = $('<tr></tr>') ;
 			for (var key in data) { res.append('<td>' + data[key] + '</td>') ; }
 			return res ;
-		},
-		imgFolder: '../img'
+		}
 	} ;
  
 } (jQuery)); 
