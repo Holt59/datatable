@@ -168,8 +168,6 @@
 						select.change (function (field, allKeys, multiple, empty) {
 							return function () {
 								var val = $(this).val() ;
-								console.log(val) ;
-								console.log(!val) ;
 								dataTable.filterVals[field] = multiple ? val : ((empty && !val) ? allKeys : [val]) ;
 								dataTable.filter () ;
 							} ;
@@ -235,7 +233,6 @@
 					this.ajaxThis.updateLoadingDivs () ;
 				},
 				error: function (jqhxr, text, error) {
-					console.log('Load ' + this.ajaxI + ' failed: ' + text + ' (Trying again)') ;
 					this.ajaxThis.getAjaxData(this.ajaxI) ;
 				}
 			}) ;
