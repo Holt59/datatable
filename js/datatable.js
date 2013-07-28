@@ -75,7 +75,7 @@
 			
 			}) ;
 			
-			this.table.find('thead th').click(function () {
+			this.table.find('thead th').on('click.datatable', function () {
 				if ($(this).data('sort') !== undefined) {
 					if ($(this).hasClass('sorting-asc')) {
 						dataTable.options.sortDir = 'desc' ;
@@ -111,7 +111,7 @@
 		/* Add filter where it's needed. */
 		
 		if (this.options.filters) {
-			var tr = $('<tr></tr>').insertAfter(this.table.find('thead tr').last()) ;
+			var tr = $('<tr class="datatable-filter-line"></tr>').insertAfter(this.table.find('thead tr').last()) ;
 			for (var field in this.options.filters) {
 				if (this.options.filters[field]) {
 					var td = $('<td></td>') ;
@@ -319,7 +319,7 @@
 			
 			/* Add callback. */
 			
-			this.getPagingLists().find('a').click (function () {
+			this.getPagingLists().find('a').on('click.datatable', function () {
 				if ($(this).parent('li').hasClass('active')) {
 					return ;
 				}
@@ -437,8 +437,8 @@
 			this.refresh () ;
 		},
 			
-			/** Refresh the page according to current page (DO NOT SORT).
-			This function call options.lineFormat. **/
+		/** Refresh the page according to current page (DO NOT SORT).
+		This function call options.lineFormat. **/
 		refresh: function () {
 			this.options.beforeRefresh () ;
 			this.updatePaging () ;
@@ -452,6 +452,28 @@
 				this.getBody().append(this.options.lineFormat(this.filterIndex[this.currentStart+i], this.data[this.filterIndex[this.currentStart+i]])) ;
 			}
 			this.options.afterRefresh () ;
+		},
+		
+		/** Set en option and refresh the table. **/
+		setOption: function (key, val) {
+			if (key in this.options) {
+				this.options[key] = val ;
+				this.refresh () ;
+			}
+		},
+		
+		/** Remove all the elements added by the datatable. **/
+		destroy: function () {
+			$('thead th').removeClass('sorting sorting-asc sorting-desc')
+				.unbind('click.datatable') ;
+			$(this.options.pagingDivSelector)
+				.removeClass("pagination pagination-centered pagination-data-tables")
+				.html('') ;
+			$('.datatable-filter-line').remove() ;
+			for (var i=0; i<this.data.length; i++) {
+				this.getBody().append(this.options.lineFormat(i, this.data[i])) ;
+			}
+
 		}
 	} ;
  
@@ -472,6 +494,15 @@
 					break ;
 				case 'delete':
 					this.datatable.deleteRow(args[1]) ;
+					break ;
+				case 'option':
+					if (args[1] in this.datatable.options) {
+						this.datatable.setOption(args[1], args[2]) ;
+					}
+					break ;
+				case 'destroy':
+					this.datatable.destroy () ;
+					delete this.datatable ;
 					break ;
 				}
 			}
