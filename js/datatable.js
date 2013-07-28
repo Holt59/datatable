@@ -13,7 +13,7 @@
 		this.filters = [] ;
 		this.filterVals = [] ;
 		
-		this.table.addClass('data-table') ;
+		this.table.addClass('datatable') ;
 		
 		/* If nb columns not specified, count the nunber of column from thead. */
 		if (this.options.nbColumns < 0) {
@@ -408,6 +408,11 @@
 			this.currentStart = parseInt(this.filterIndex.indexOf(this.data.indexOf(data)) / this.options.pageSize, 10) * this.options.pageSize ;
 			this.refresh () ;
 		},
+		
+		/** Get a row from the datas. */
+		row: function (rowId) {
+			return this.data[rowId];
+		},
 			
 		/** Remove a 'row'. */
 		deleteRow: function (rowId) {
@@ -470,6 +475,8 @@
 				.removeClass("pagination pagination-centered pagination-data-tables")
 				.html('') ;
 			$('.datatable-filter-line').remove() ;
+			this.table.removeClass('datatable') ;
+			this.getBody().html('') ;
 			for (var i=0; i<this.data.length; i++) {
 				this.getBody().append(this.options.lineFormat(i, this.data[i])) ;
 			}
@@ -479,13 +486,17 @@
  
     $.fn.datatable = function() {
 		var args = arguments ;
+		var ret = -1, each ;
 		if (args.length === 0) { args = [{}] ; }
-		return this.each(function () {
+		each = this.each(function () {
 			if ($.isPlainObject(args[0])) {
 				this.datatable = new DataTable($(this), $.extend({}, $.fn.datatable.defaults, args[0])) ;
 			}
 			else if (typeof args[0] === 'string') {
 				switch (args[0]) {
+				case 'select':
+					ret = this.datatable.row(args[1]) ;
+					break ;
 				case 'insert':
 					this.datatable.addRow(args[1]) ;
 					break ;
@@ -507,6 +518,7 @@
 				}
 			}
 		}) ;
+		return ret !== -1 ? ret : each ;
     };
 	
 	$.fn.datatable.defaults = {
