@@ -6,7 +6,13 @@ Datatable is a jQuery / bootstrap plugin for dynamic datatables with pagination,
 How to use?
 ===========
 
-Datatable is quite simple to use. If you use bootstrap CSS, you can use datatable-boostrap.css instead of datatable.css.
+Datatable is quite simple to use. Just add the CSS and Js file to your page (do not forget jquery):
+`<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="js/datatable.js"></script>`
+And run:
+`$('#MyTable').datatable() ;`
+
+If you use bootstrap CSS, you can use datatable-boostrap.css instead of datatable.css (which is just the datatable-bootstrap.css with some additional style).
 
 For more information, checkout http://mikael-capelle.fr/articles/view/datatable-a-jquery-plugin-for-dynamics-table or http://holt59.github.io/datatable
 
