@@ -213,7 +213,7 @@
 			this.sort() ;
 		}
 		else if (this.options.sortKey !== undefined) {
-			this.table.each(function () {
+			this.table.find('th').each(function () {
 				if ($(this).data('sort') == dataTable.options.sortKey) {
 					$(this).trigger('click') ;
 				}
