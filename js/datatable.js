@@ -156,7 +156,7 @@
 						}
 						else {
 							multiple = ('multiple' in this.options.filters[field]) && (this.options.filters[field]['multiple'] === true) ;
-							empty = ('empty' in this.options.filters[field]) && (this.options.filters[field]['empty'] === true) ;
+							empty = !(('empty' in this.options.filters[field]) && (this.options.filters[field]['empty'] === true)) ;
 							if ('values' in this.options.filters[field]) {
 								values = this.options.filters[field]['values'] ;
 								if ('default' in this.options.filters[field]) {
@@ -536,7 +536,6 @@
 		sortDir: 'asc',
 		nbColumns: -1,
 		pageSize: 20,
-		pagingSize: 10,
 		pagingNumberOfPages: 9,
 		counterText: function (currentPage, totalPage, firstRow, lastRow, totalRow) {
 			return 'Page ' + currentPage + ' on ' + totalPage + '. Starting at ' + firstRow + ', ending at ' + lastRow + ' over ' + totalRow + ' entries.' ;
