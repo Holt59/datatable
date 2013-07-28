@@ -516,6 +516,7 @@ are:</p>
 <p>If you specify a function as the sorting option, it will be used to sort data, but you won't be able
 to change the sorting direction (asc or desc). The function should take 2 arguments and return -1, 0, or 1 if the first
 argument is resp. lower, equal or greater than the second.</p>
+<p>Currently, it is only possible to specify one function for the whole table (not a function for each column).</p>
 <p><strong>Specifying which column can be sort</strong></p>
 <p>You have 3 ways to specify the columns, depending on the sort option:</p>
 <ul>
@@ -524,6 +525,10 @@ argument is resp. lower, equal or greater than the second.</p>
     <li><code>'*'</code> - All the column will be sortable.</li>
     <li><code>[true, false, true]</code> - Column at index i will be sortable if <code>true</code> (see the example above).</li>
 </ul>
+<p>When the plugin sort the data, it will used a key to find which field in each element it should compare. You can specify
+the sorting key of each column in the <code>data-sort</code> attribute of &lt;th&gt; tag. If you don't specify key but
+you enable sort, the key will be number (first column will be sort according to first value in each element, second column
+according to second value, etc.).</p>
 <p>You can specify a default sort by specifying <code>sortKey</code> and <code>sortDir</code> options.</p>
 
 <h3>filters</h3>
