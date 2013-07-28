@@ -422,10 +422,10 @@
 		}
 	} ;
  
-    $.fn.datatable = function(options) {
+    $.fn.datatable = function() {
 		var args = arguments ;
 		return this.each(function () {
-			if ($.isPlainObject(options)) {
+			if (option === undefined || $.isPlainObject(options)) {
 				this.datatable = new DataTable($(this), $.extend({}, $.fn.datatable.defaults, options)) ;
 			}
 			else if (typeof options === 'string') {
