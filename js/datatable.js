@@ -302,9 +302,7 @@ var DataTable = function (table, opts) {
 			}
 			
 			if ($(this).data('sort') !== undefined) {
-				$(this).addClass('sorting')
-					.css('cursor', 'pointer')
-					.css('background', 'url("../img/sort_both.png") no-repeat center right') ;
+				$(this).addClass('sorting')  ;
 			}
 			
 			countTH ++ ;
@@ -316,21 +314,18 @@ var DataTable = function (table, opts) {
 				if ($(this).hasClass('sorting-asc')) {
 					dataTable.options.sortDir = 'desc' ;
 					$(this).removeClass('sorting-asc')
-						.addClass('sorting-desc')
-						.css('background-image', 'url("../img/sort_desc.png")') ;
+						.addClass('sorting-desc') ;
 				}
 				else if ($(this).hasClass('sorting-desc')) {
 					dataTable.options.sortDir = 'asc' ;
 					$(this).removeClass('sorting-desc') 
-						.addClass('sorting-asc') 
-						.css('background-image', 'url("../img/sort_asc.png")') ;
+						.addClass('sorting-asc') ;
 				}
 				else {
 					$(this).parent('tr').find('th').removeClass('sorting-desc').removeClass('sorting-asc') ;
 					dataTable.options.sortDir = 'asc' ;
 					dataTable.options.sortKey = $(this).data('sort') ;
-					$(this).addClass('sorting-asc')
-						.css('background-image', 'url("../img/sort_asc.png")') ;
+					$(this).addClass('sorting-asc') ;
 				}
 				dataTable.sort () ;
 				dataTable.refresh () ;
