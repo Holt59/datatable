@@ -426,7 +426,7 @@
  
     $.fn.datatable = function() {
 		var args = arguments ;
-		if (args === undefined) { args = {} ; }
+		if (args.length === 0) { args = {} ; }
 		return this.each(function () {
 			if ($.isPlainObject(args[0])) {
 				this.datatable = new DataTable($(this), $.extend({}, $.fn.datatable.defaults, args[0])) ;
@@ -459,7 +459,7 @@
 		pagingSize: 10,
 		pagingNumberOfPages: 9,
 		counterText: function (currentPage, totalPage, firstRow, lastRow, totalRow) {
-			return 'Page ' + currentPage + '/' + totalPage + '. Entrée(s) ' + firstRow + ' à ' + lastRow + ' sur un total de ' + totalRow + '.' ;
+			return 'Page ' + currentPage + ' on ' + totalPage + '. Starting at ' + firstRow + ', ending at ' + lastRow + ' over ' + totalRow + ' entries.' ;
 		},
 		filters: {},
 		beforeRefresh: function () { },
