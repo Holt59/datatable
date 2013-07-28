@@ -7,7 +7,7 @@ How to use?
 ===========
 
 Datatable is quite simple to use. Just add the CSS and Js file to your page (do not forget jquery):
-`<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+`<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>  
 <script type="text/javascript" src="js/datatable.js"></script>`
 And run:
 `$('#MyTable').datatable() ;`
