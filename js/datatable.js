@@ -425,11 +425,11 @@
     $.fn.datatable = function() {
 		var args = arguments ;
 		return this.each(function () {
-			if (option === undefined || $.isPlainObject(options)) {
-				this.datatable = new DataTable($(this), $.extend({}, $.fn.datatable.defaults, options)) ;
+			if (args === undefined || $.isPlainObject(args[0])) {
+				this.datatable = new DataTable($(this), $.extend({}, $.fn.datatable.defaults, args[0])) ;
 			}
-			else if (typeof options === 'string') {
-				switch (options) {
+			else if (typeof args[0] === 'string') {
+				switch (args[0]) {
 				case 'insert':
 					this.datatable.addRow(args[1]) ;
 					break ;
