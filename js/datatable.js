@@ -33,7 +33,7 @@ var DataTable = function (table, opts) {
 	else if (jQuery.isPlainObject(this.options.data)) {
 		var size = parseInt(this.table.data('size'), 10) ;	
 		this.data = [] ;
-		$(this.options.loadingDivSelector).html('<div class="progress progress-striped active" style="width: 100%; margin: 8px 0 ; "><div class="bar" style="width: 0%;"></div></div>') ;
+		$(this.options.loadingDivSelector).html('<div class="progress progress-striped active datatable-load-bar"><div class="bar" style="width: 0%;"></div></div>') ;
 		this.updateLoadingDivs = function () {
 			if (this.data.length === size) {
 				$(this.options.loadingDivSelector).remove() ;
