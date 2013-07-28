@@ -3,7 +3,12 @@ Datatable v0.1 - Alpha
 
 Datatable is a jQuery / bootstrap plugin for dynamic datatables with pagination, filtering and ajax loading.
 
-For more information, checkout https://mikael-capelle.fr/datatable
+How to use?
+===========
+
+Datatable is quite simple to use. If you use bootstrap CSS, you can use datatable-boostrap.css instead of datatable.css.
+
+For more information, checkout http://mikael-capelle.fr/articles/view/datatable-a-jquery-plugin-for-dynamics-table or http://holt59.github.io/datatable
 
 Copyright and license
 =====================
