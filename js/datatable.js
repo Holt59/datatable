@@ -426,7 +426,7 @@
  
     $.fn.datatable = function() {
 		var args = arguments ;
-		if (args.length === 0) { args = {} ; }
+		if (args.length === 0) { args = [{}] ; }
 		return this.each(function () {
 			if ($.isPlainObject(args[0])) {
 				this.datatable = new DataTable($(this), $.extend({}, $.fn.datatable.defaults, args[0])) ;
