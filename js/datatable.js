@@ -135,27 +135,45 @@
 					}
 					else {
 						var values = [], selected ;
+						var multiple = ('multiple' in this.options.filters[field]) && (this.options.filters[field]['multiple'] === true) ;
+						var empty = ('empty' in this.options.filters[field]) && (this.options.filters[field]['empty'] === true) ;
 						if ('values' in this.options.filters[field]) {
 							values = this.options.filters[field]['values'] ;
-							selected = this.options.filters[field]['default'];
+							if ('default' in this.options.filters[field]) {
+								selected = this.options.filters[field]['default'] ;
+							}
+							else if (multiple) {
+								selected = Object.keys(values) ;
+							}
+							else {
+								selected = [] ;
+							}
+							if (!$.isArray(selected)) {
+								selected = [selected] ;
+							}
 						}
 						else {
 							values = this.options.filters[field] ;
-							selected = values ;
+							selected = multiple ? Object.keys(values) : [] ;
 						}
-						var select = $('<select multiple="multiple" class="datatable-select" data-sort="' + field + '"></select>') ;
+						var select = $('<select ' + (multiple ? 'multiple="multiple"' : '') + ' class="datatable-select" data-sort="' + field + '"></select>') ;
+						if (empty) {
+							select.append('<option></option>') ;
+						}
 						for (var key in values) {
-							select.append('<option value="' + key + '" ' + (key in selected ? 'selected' : '') + '>' + values[key] + '</option>') ;
+							select.append('<option value="' + key + '" ' + (selected.indexOf(key) !== -1 ? 'selected' : '') + '>' + values[key] + '</option>') ;
 						}
-						dataTable.filterVals[field] = select.val() ;
-						select.change (function (field) {
+						var val = select.val() ;
+						dataTable.filterVals[field] = multiple ? val : ((empty && !val) ? Object.keys(values) : [val]) ;
+						select.change (function (field, allKeys, multiple, empty) {
 							return function () {
 								var val = $(this).val() ;
-								// dataTable.options.filter = field ;
-								dataTable.filterVals[field] = val ;
+								console.log(val) ;
+								console.log(!val) ;
+								dataTable.filterVals[field] = multiple ? val : ((empty && !val) ? allKeys : [val]) ;
 								dataTable.filter () ;
 							} ;
-						} (field)) ;
+						} (field, Object.keys(values), multiple, empty)) ;
 						td.append(select) ;
 						dataTable.addFilter(field, function (data, val) {
 							if (!val) { return false ; }
