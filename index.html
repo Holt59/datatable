@@ -561,9 +561,9 @@ a key, you have to use the last form.</em></p>
 <h3>lineFormat</h3>
 <p>You can customize the way line are displayed, the function should return a jQuery line (see default function below for example):</p>
 <pre><code class="prettyprint lang-javascript linenums">function (id, data) { 
-    var res = $('<tr></tr>') ;
+    var res = $('&lt;tr&gt;&lt;/tr&gt;') ;
     for (var key in data) { 
-        res.append('<td>' + data[key] + '</td>') ; 
+        res.append('&lt;td&gt;' + data[key] + '&lt;/td&gt;') ; 
     }
     return res ;
 }</code></pre>
