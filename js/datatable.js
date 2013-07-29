@@ -124,7 +124,7 @@
 					if (this.options.filters[field] === true) {
 						var input = $('<input type="text" class="search-field" data-filter="' + field + '" />') ;
 						dataTable.filterVals[field] = input.val() ;
-						input.keydown(function () {
+						input.on('change keyup keydown', function () {
 								var val = $(this).val().toUpperCase() ;
 								var field = $(this).data('filter') ;
 								typewatch (function () {
