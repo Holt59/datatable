@@ -318,7 +318,6 @@
         },
         
         createFilter: function () {
-            var dataTable = this ;
             this.filters = [] ;
             this.filterVals = [] ;
             if (this.options.filters) {
@@ -441,12 +440,18 @@
             if (jQuery.isFunction(this.options.sort)) {
                 this.sort() ;
             }
-            else if (this.options.sortKey !== undefined) {
-                this.table.find('th').each(function () {
-                    if ($(this).data('sort') == dataTable.options.sortKey) {
-                        $(this).trigger('click') ;
-                    }
-                }) ;
+            else if (this.options.sortKey !== false) {
+                var th ;
+                this.table.find('th').each(function (sortKey) {
+                    return function () {
+                        if ($(this).data('sort') === sortKey) {
+                            th = $(this) ;
+                        } 
+                    } ;
+                } (this.options.sortKey)) ;
+                if (th !== undefined) {
+                    th.trigger('click') ;
+                }
             }
         },
         
@@ -553,7 +558,7 @@
                 this.createSort () ;
                 this.triggerSort () ;
             }
-            if ('sortKey' in options || 'sortDir' in options) {
+            else if ('sortKey' in options || 'sortDir' in options) {
                 this.sort() ;
             }
             if ('filters' in options) {
@@ -629,7 +634,7 @@
 		counterDivSelector: '.counter',
 		loadingDivSelector: '.loading',
 		sort: false,
-		sortKey: undefined,
+		sortKey: false,
 		sortDir: 'asc',
 		nbColumns: -1,
 		pageSize: 20,
