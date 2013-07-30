@@ -15,7 +15,7 @@ And run:
 
 If you use bootstrap CSS, you can use datatable-boostrap.css instead of datatable.css (which is just the datatable-bootstrap.css with some additional style).
 
-For more information, checkout http://mikael-capelle.fr/articles/view/datatable-a-jquery-plugin-for-dynamics-table or http://holt59.github.io/datatable
+For more information, check out http://holt59.github.io/datatable
 
 How to modify CSS?
 ==================
