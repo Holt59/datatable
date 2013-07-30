@@ -232,7 +232,7 @@
         
         createTextFilter: function (field) {
             var placeholder = this.options.filterText ? ('placeholder="' + this.options.filterText + '"') : '' ; 
-            var input = $('<input type="text" class="datatable-input-text" data-filter="' + field + '" ' + placeholder + '/>') ;
+            var input = $('<input type="text" class="datatable-filter datatable-input-text" data-filter="' + field + '" ' + placeholder + '/>') ;
             var dataTable = this ;
             this.filterVals[field] = '' ;
             var typewatch = (function(){
@@ -293,7 +293,7 @@
                     selected = multiple ? Object.keys(values) : [] ;
                 }
             }
-            var select = $('<select ' + (multiple ? 'multiple="multiple"' : '') + ' class="datatable-select" data-filter="' + field + '"></select>') ;
+            var select = $('<select ' + (multiple ? 'multiple="multiple"' : '') + ' class="datatable-filter datatable-select" data-filter="' + field + '"></select>') ;
             if (empty) {
                 select.append('<option value="">' + emptyValue + '</option>') ;
             }
