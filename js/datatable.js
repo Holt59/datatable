@@ -117,7 +117,11 @@
 			return $(this.options.pagingDivSelector).find('ul') ;
 		},
 			
-		/** Update the paging div. **/
+		getLastPageNumber: function () {
+            return parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
+        },
+        
+        /** Update the paging div. **/
 		updatePaging: function () {
 		
 			/* Be carefull if you change something here, all this part calculate the first and last page to display.
@@ -126,7 +130,7 @@
 			var nbPages = this.options.pagingNumberOfPages;
 			var dataTable = this ;
 			var cp = parseInt(this.currentStart / this.options.pageSize, 10) + 1;
-			var lp = parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
+			var lp = this.getLastPageNumber () ;
 			var start ;
 			var end ;
 
@@ -502,10 +506,16 @@
 		/** Change the current page and refresh. **/
 		loadPage: function (page) {
             var oldPage = this.currentStart / this.options.pageSize ;
-			this.currentStart = (page - 1) * this.options.pageSize  ;
-			this.refresh () ;
-            this.options.onChange (oldPage + 1, page) ;
+            if (page > 0 && page <= this.getLastPageNumber()) {
+                this.currentStart = (page - 1) * this.options.pageSize  ;
+                this.refresh () ;
+                this.options.onChange (oldPage + 1, page) ;
+            }
 		},
+        
+        getCurrentPage: function () {
+            return this.currentStart / this.options.pageSize + 1 ;
+        },
 			
 		/** Refresh the page according to current page (DO NOT SORT).
 		This function call options.lineFormat. **/
@@ -602,6 +612,14 @@
 			}
 			else if (typeof args[0] === 'string') {
 				switch (args[0]) {
+                case 'page':
+                    if (1 in args) {
+                        this.datatable.loadPage(parseInt(args[1])) ;
+                    }
+                    else {
+                        ret = this.datatable.getCurrentPage () ;
+                    }
+                    break ;
 				case 'select':
 					ret = this.datatable.row(args[1]) ;
 					break ;
