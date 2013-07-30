@@ -21,6 +21,7 @@ How to modify CSS?
 ==================
 
 The datatable plugin come with small CSS files, one for non-bootstrap theme and others for bootstrap theme. These CSS files does not modify tables skin, they just:
+
 1. Add background-img to sorting header
 2. Add margin to ajax load bar
 3. Create skin for pagination div (non-boostrap only)
