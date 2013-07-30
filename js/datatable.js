@@ -506,11 +506,15 @@
 		/** Change the current page and refresh. **/
 		loadPage: function (page) {
             var oldPage = this.currentStart / this.options.pageSize ;
-            if (page > 0 && page <= this.getLastPageNumber()) {
-                this.currentStart = (page - 1) * this.options.pageSize  ;
-                this.refresh () ;
-                this.options.onChange (oldPage + 1, page) ;
+            if (page < 1) {
+                page = 1 ;
             }
+            else if (page > this.getLastPageNumber()) {
+                page = this.getLastPageNumber () ;
+            }   
+            this.currentStart = (page - 1) * this.options.pageSize  ;
+            this.refresh () ;
+            this.options.onChange (oldPage + 1, page) ;
 		},
         
         getCurrentPage: function () {
