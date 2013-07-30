@@ -226,7 +226,7 @@
         },
         
         changePlaceHolder: function () {
-            var placeholder = this.options.filterText ? ('placeholder="' + this.options.filterText + '"') : '' ;
+            var placeholder = this.options.filterText ? this.options.filterText : '' ;
             $('.datatable-filter-line input[type="text"]').attr('placeholder', placeholder) ;
         },
         
