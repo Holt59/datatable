@@ -25,7 +25,17 @@
 		/* DATA ! */
 		
 		var dataTable = this ;
-		
+        
+        if (this.table.find('thead').length === 0) {
+            var head = $('<thead></thead>') ;
+            head.append(this.table.find('th').parent('tr')) ;
+            this.table.prepend(head) ;
+        }
+        
+        if (this.table.find('tbody').length === 0) {
+            $('<tbody></tbody>').insertAfter(this.table.find('thead').first()) ;
+        }
+        
 		if (jQuery.isArray(this.options.data)) {
 			this.data = this.options.data ;
 		}
@@ -212,9 +222,15 @@
 			
 		/** Return a sort function according options.sortKey & options.sortDir **/
 		getSortFunction: function () {
+            if (this.options.sort === false) {
+                return false ;
+            }
 			if (jQuery.isFunction(this.options.sort)) {
 				return this.options.sort ;
 			}
+            if (this.data.length === 0 || !(this.options.sortKey in this.data[0])) {
+                return false ;
+            }
 			var key = this.options.sortKey ;
 			var asc = this.options.sortDir === 'asc';
 			return function (a,b) {
@@ -389,7 +405,7 @@
         createSort: function () {
             var dataTable = this ;
             if (!jQuery.isFunction(this.options.sort)) {
-            
+                      
                 var countTH = 0 ;
                 
                 this.table.find('thead th').each (function () {
@@ -400,8 +416,17 @@
                     else if (dataTable.options.sort === '*') {
                         $(this).data('sort', countTH) ;
                     }
-                    else if (jQuery.isArray(dataTable.options.sort) && dataTable.options.sort[countTH]) {
-                        $(this).data('sort', countTH) ;
+                    else {
+                        var key ;
+                        if (jQuery.isArray(dataTable.options.sort)) {
+                            key = countTH ;
+                        }
+                        else if (jQuery.isPlainObject(dataTable.options.sort)) {
+                            key = Object.keys(dataTable.options.sort)[countTH] ;
+                        }
+                        if (key !== undefined && dataTable.options.sort[key]) {
+                            $(this).data('sort', key) ;
+                        }
                     }
                     
                     if ($(this).data('sort') !== undefined) {
@@ -461,10 +486,11 @@
         
         /** Sort the data (WITHOUT REFRESHING). **/
 		sort: function () {
-			if (!this.options.sort) {
+            var fnSort = this.getSortFunction () ;
+			if (fnSort === false) {
 				return ;
 			}
-			this.data.sort(this.getSortFunction()) ;
+			this.data.sort(fnSort) ;
 		},
 			
 		/** Add a 'row' (a data). **/
