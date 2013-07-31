@@ -663,9 +663,7 @@
 					this.datatable.deleteRow(args[1]) ;
 					break ;
 				case 'option':
-					if (args[1] in this.datatable.options) {
-						this.datatable.setOption(args[1], args[2]) ;
-					}
+					this.datatable.setOption(args[1], args[2]) ;
 					break ;
 				case 'destroy':
 					this.datatable.destroy () ;
