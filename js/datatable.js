@@ -40,18 +40,20 @@
 			this.data = this.options.data ;
 		}
 		else if (jQuery.isPlainObject(this.options.data)) {
-			var size ; 
 			if (this.table.data('size')) {
-				size = parseInt(this.table.data('size'), 10) ;	
-			}
-			else {
-				size = this.options.data.size ;
+				this.options.data.size = parseInt(this.table.data('size'), 10) ;	
 			}
 			this.data = [] ;
-			$(this.options.loadingDivSelector).html('<div class="progress progress-striped active datatable-load-bar"><div class="bar" style="width: 0%;"></div></div>') ;
-			for (var i=0 ; i < size; i += this.options.pageSize * this.options.pagingNumberOfPages ) {
-				this.getAjaxData (i) ;
-			}
+            if (this.options.data.size !== undefined) {
+                $(this.options.loadingDivSelector).html('<div class="progress progress-striped active datatable-load-bar"><div class="bar" style="width: 0%;"></div></div>') ;
+                for (var i=0 ; i < this.options.data.size; i += this.options.pageSize * this.options.pagingNumberOfPages ) {
+                    this.getAjaxDataAsync (i) ;
+                }
+            }
+            else {
+                $(this.options.loadingDivSelector).html('<div class="progress progress-striped active datatable-load-bar"><div class="bar" style="width: 100%;"></div></div>') ;
+                this.getAjaxDataSync () ;
+            }
 		}
 		else {
 			this.data = [] ;
@@ -79,17 +81,34 @@
 	DataTable.prototype = {
 	
 		constructor: DataTable,
+        
+        /**
+            This function should be call when a ajax loading is finished.
+            It clears size and set timeout if necessary.
+        **/
+        clearAjaxLoading: function () {
+            if (this.options.data.refresh) {
+                this.refreshTimeOut = setTimeout((function (datatable) {
+                    return function () { datatable.getAjaxDataSync(0, true) ; }
+                }) (this), this.options.data.refresh) ;
+            }
+        },
+        
+        hideLoadingDivs: function () {
+            $(this.options.loadingDivSelector).remove() ;
+        },
 	
 		updateLoadingDivs: function () {
-			if (this.data.length === size) {
-				$(this.options.loadingDivSelector).remove() ;
+			if (this.data.length === this.options.data.size) {
+                this.clearAjaxLoading () ;
+				this.hideLoadingDivs () ;
 			}
 			else {
-				$(this.options.loadingDivSelector).find('div.progress .bar').css('width', parseInt(100 * this.data.length / size, 10) + '%') ;
+				$(this.options.loadingDivSelector).find('div.progress .bar').css('width', parseInt(100 * this.data.length / this.options.data.size, 10) + '%') ;
 			}
 		},
 				
-		getAjaxData: function (start) {
+		getAjaxDataAsync: function (start) {
 			$.ajax({
 				url: this.options.data.url,
 				type: this.options.data.type,
@@ -106,7 +125,59 @@
 					this.ajaxThis.updateLoadingDivs () ;
 				},
 				error: function (jqhxr, text, error) {
-					this.ajaxThis.getAjaxData(this.ajaxI) ;
+					this.ajaxThis.getAjaxDataAsync(this.ajaxI) ;
+				}
+			}) ;
+		},
+        
+        getAjaxDataSync: function (start, allInOne) {
+            if (typeof start === 'undefined') {
+                start = 0 ;
+            }
+            if (typeof allInOne === 'undefined') {
+                allInOne = false ;
+            }
+            if (allInOne && this.syncData === undefined) {
+                this.syncData = [] ;
+            }
+			$.ajax({
+				url: this.options.data.url,
+				type: this.options.data.type,
+				data: {
+					offset: start,
+					limit: this.options.pageSize * this.options.pagingNumberOfPages 
+				},
+				ajaxI: start,
+                ajaxAllInOne: allInOne,
+				ajaxThis: this,
+				success: function (data, text, jqxhr) {
+                    var dt = $.parseJSON(data) ;
+                    if (dt.length !== 0) {
+                        if (this.ajaxAllInOne) {
+                            this.ajaxThis.syncData = this.ajaxThis.syncData.concat(dt) ;
+                        }
+                        else {
+                            this.ajaxThis.data = this.ajaxThis.data.concat(dt) ;
+                            this.ajaxThis.sort() ;
+                            this.ajaxThis.filter () ;
+                        }
+                        this.ajaxThis.getAjaxDataSync(this.ajaxI + this.ajaxThis.options.pageSize * this.ajaxThis.options.pagingNumberOfPages,
+                                this.ajaxAllInOne) ;
+                    }
+                    else {
+                        if (this.ajaxAllInOne) {
+                            console.log('refresh ok') ;
+                            this.ajaxThis.data = this.ajaxThis.syncData ;
+                            delete this.ajaxThis.syncData ;
+                        }
+                        this.ajaxThis.clearAjaxLoading () ;
+                        this.ajaxThis.hideLoadingDivs () ;
+                        this.ajaxThis.sort() ;
+                        this.ajaxThis.filter () ;
+                    }
+				},
+				error: function (jqhxr, text, error) {
+					this.ajaxThis.getAjaxDataSync(this.ajaxI, this.ajaxAllInOne) ;
 				}
 			}) ;
 		},
@@ -318,7 +389,8 @@
                 select.append('<option value="">' + emptyValue + '</option>') ;
             }
             for (var key in values) {
-                select.append('<option value="' + key + '" ' + (selected.indexOf(key) !== -1 ? 'selected' : '') + '>' + values[key] + '</option>') ;
+                select.append('<option value="' + key + '" ' + 
+                    ((selected.indexOf(key) !== -1  || selected.indexOf(parseInt(key)) !== -1) ? 'selected' : '') + '>' + values[key] + '</option>') ;
             }
             var val = select.val() ;
             this.filterVals[field] = multiple ? val : ((empty && !val) ? Object.keys(values) : [val]) ;
@@ -613,6 +685,9 @@
 		
 		/** Remove all the elements added by the datatable. **/
 		destroy: function () {
+            if (this.refreshTimeOut !== undefined) {
+                clearTimeout(this.refreshTimeOut) ;
+            }
 			this.destroySort () ;
 			$(this.options.pagingDivSelector)
 				.removeClass("pagination pagination-centered pagination-data-tables")
