@@ -43,6 +43,9 @@
 			if (this.table.data('size')) {
 				this.options.data.size = parseInt(this.table.data('size'), 10) ;	
 			}
+            if (this.options.data.refresh === undefined) {
+                this.options.data.refresh = false ;
+            }
 			this.data = [] ;
             if (this.options.data.size !== undefined) {
                 $(this.options.loadingDivSelector).html('<div class="progress progress-striped active datatable-load-bar"><div class="bar" style="width: 0%;"></div></div>') ;
