@@ -47,8 +47,6 @@
 
 <p>A custom datatable plugin for jQuery, allowing pagination, filtering, ajax loading.</p>
 
-<p><strong style="color: red ;"><em>The plugin has been updated but all the new availables options are not shown here, I'll update this page as soon as possible.</em></strong></p>
-
 <h2>
 <a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
 
@@ -363,11 +361,12 @@
 <pre><code class="prettyprint lang-javascript linenums">$('#example-table').datatable({
     pageSize: 5,
     sort: [true, true, false],
-    filters: [true, false, 'select']
+    filters: [true, false, 'select'],
+    filterText: 'Type to filter... '
 }) ;</code></pre>
 
 <h2>
-<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Available options</h2>
+<a name="available-options" class="anchor" href="#available-options"><span class="octicon octicon-link"></span></a>Available options</h2>
 <p>The current available options that can be passed to datatable are shown in the following table:</p>
 <table>
     <thead>
@@ -375,92 +374,111 @@
             <th>Option</th>
             <th>Default value</th>
             <th>Explanation</th>
-            <th>Data Attribute</th>
         </tr>
     </thead>
     <tbody>
         <tr>
             <td>data</td>
-            <td colspan="3">See the data part below for more information.</td>
+            <td colspan="2">See the data part below for more information.</td>
         </tr>
         <tr>
             <td>pagingDivSelector</td>
             <td><code>'.paging'</code></td>
             <td>The jQuery selector for paging divs.</td>
-            <td></td>
         </tr>
         <tr>
             <td>counterDivSelector</td>
             <td><code>'.loading'</code></td>
             <td>The jQuery selector for counter divs.</td>
-            <td></td>
         </tr>
         <tr>
             <td>counterText</td>
-            <td colspan="3">See below.</td>
+            <td colspan="2">See below.</td>
         </tr>
         <tr>
             <td>loadingDivSelector</td>
             <td><code>'.loading'</code></td>
             <td>The jQuery selector for the ajax loading div.</td>
-            <td></td>
         </tr>
         <tr>
             <td>sort</td>
             <td><code>false</code></td>
             <td>See the sort part below for more information.</td>
-            <td><code>data-sort</code></td>
         </tr>
         <tr>
             <td>sortKey</td>
             <td><code>undefined</code></td>
             <td>The default sort key (if sort enable).</td>
-            <td></td>
         </tr>
         <tr>
             <td>sortDir</td>
             <td><code>'asc'</code></td>
             <td>The default sort direction (<code>'asc'</code> or <code>'desc'</code>).</td>
-            <td></td>
         </tr>
         <tr>
             <td>nbColumns</td>
             <td><code>-1</code></td>
             <td>The number of columns. If not specified will be find according to the number of
             &lt;th&gt; tags in the head of the table.</td>
-            <td></td>
         </tr>
         <tr>
             <td>pageSize</td>
             <td><code>20</code></td>
             <td>The number of elements that will be shown on each page.</td>
-            <td></td>
+        </tr>
+        <tr>
+            <td>identify</td>
+            <td><code>false</code></td>
+            <td>The key to use for check if 2 element are equals. Can also be a function.</td>
         </tr>
         <tr>
             <td>pagingNumberOfPages</td>
             <td><code>9</code></td>
             <td>The number of pages that will be shown on the pagination list.</td>
-            <td></td>
         </tr>
         <tr>
             <td>filters</td>
-            <td colspan="3">See the filter part below for more information.</td>
+            <td colspan="2">See the filter part below for more information.</td>
+        </tr>
+        <tr>
+            <td>filterText</td>
+            <td><code>Search... </code></td>
+            <td>The placeholder for the filter input.</td>
+        </tr>
+        <tr>
+            <td>onChange</td>
+            <td><code>function (oldPageNumber, newPageNumber) {}</code></td>
+            <td>A callback call before page is changed.</td>
         </tr>
         <tr>
             <td>beforeRefresh</td>
             <td><code>function () {}</code></td>
             <td>A callback call before each refresh.</td>
-            <td></td>
         </tr>
         <tr>
             <td>afterRefresh</td>
             <td><code>function () {}</code></td>
             <td>A callback call after each refresh.</td>
-            <td></td>
         </tr>
         <tr>
             <td>lineFormat</td>
             <td colspan="3">See below.</td>
+        </tr>
+        <tr>
+            <td>firstPage</td>
+            <td>First page link text (set to false to do not show the link).</td>
+        </tr>
+        <tr>
+            <td>prevPage</td>
+            <td>Previous page link text (set to false to do not show the link).</td>
+        </tr>
+        <tr>
+            <td>nextPage</td>
+            <td>Next page link text (set to false to do not show the link).</td>
+        </tr>
+        <tr>
+            <td>lastPage</td>
+            <td>Last page link text (set to false to do not show the link).</td>
         </tr>
     </tbody>
 </table>   
@@ -500,7 +518,12 @@ are:</p>
     data: {
         url: "http://my-web-site/datas/get", // The service URL
         type: "post", // The type of request (post or get)
-        size: 157 // The total amount of data, this parameter can be given as a data-size attribute on the table
+ /* The total amount of data, this parameter can be given as a data-size attribute on the table. If not specified,
+    the data will be load asynchronously block by block until the server return an empty array (slower mode). */
+        size: 157,
+ /* The number of milliseconds between each refresh of ajax data (using asynchronous mode). If you do not want to enable
+    this feature, just set this option to false. */
+        refresh: 5000
     }
 }) ;</code></pre>
 
@@ -559,6 +582,8 @@ column can take different values:</p>
 }</code></pre>
 <p><em>The test between the 2 previous form is done according to 'values' key. If you have an option that use 'values' as
 a key, you have to use the last form.</em></p>
+<p>You can custom the default text in the input filter by specifying filterText option (See the example). If you specify a string for 'empty' option
+for, it will be displayed when no options is selected (ex: 'Pick to filter... ').</p>
 
 <h3>lineFormat</h3>
 <p>You can customize the way line are displayed, the function should return a jQuery line (see default function below for example):</p>
@@ -569,7 +594,72 @@ a key, you have to use the last form.</em></p>
     }
     return res ;
 }</code></pre>
-        
+
+<a name="comand" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Available commands</h2>
+<p>Some commands are available with datatable plugin, you can call a command like in any other plugin: </p>
+<pre><code class="prettyprint lang-javascript linenums">$('#MyTable').datatable(command, args) ; </code></pre>
+<p>Available commands are: </p>
+<table>
+    <thead>
+        <tr>
+            <td>Command</td>
+            <td>Args</td>
+            <td>Info</td>
+        </tr>
+    </thead>
+    <body>
+        <tr>
+            <td><code>destroy</code></td>
+            <td></td>
+            <td>Remove the datatable.</td>
+        </tr>
+        <tr>
+            <td><code>option</code></td>
+            <td>Option name, option value</td>
+            <td>Set a option value (the data options can not be set this way).</td>
+        </tr>
+        <tr>
+            <td><code>page</code></td>
+            <td>Page number</td>
+            <td>If a argument is specified, load the specified page, otherwize return current page number.</td>
+        </tr>
+        <tr>
+            <td><code>select</code></td>
+            <td>ID</td>
+            <td>Retrieve the first element found with the specified ID.</td>
+        </tr>
+        <tr>
+            <td><code>insert</code></td>
+            <td>Element</td>
+            <td>Add the specified element to the data array.</td>
+        </tr>
+        <tr>
+            <td><code>update</code></td>
+            <td>ID, Element</td>
+            <td>Update the first element found with the specified ID with the new specified data.</td>
+        </tr>
+        <tr>
+            <td><code>delete</code></td>
+            <td>ID</td>
+            <td>Remove the first element found with the specified ID.</td>
+        </tr>
+    </tbody>
+</table>
+<p>Some options required an ID, how element are compared is specified by <code>identify</code> option. If <code>identify</code> is
+a string, then element are compared using this key. If <code>identify</code> is a function, 2 elements are equals if <code>identify</code> returns true. Examples: </p>
+<pre><code class="prettyprint lang-javascript linenums">/* EXAMPLE 1 */
+
+/* Two elements E1 and E2 are equals if E1.id === E2.id. */
+$('#MyTable').datatable({identify: 'id'}) ;
+/* Delete the first element E found such as E.id === 4. */
+$('#MyTable').datatable('delete', 4) ;
+
+/* EXAMPLE 2 */
+
+$('#MyTable').datatable({identify: function (id, E) { return id.toUpperCase() === (E.firstname.toUpperCase() + ' ' + E.lastname.toUpperCase() ; }}) ;
+/* Update ISAAC NEWTON. The update function will update all the field contains in the second parameter. */
+$('#MyTable').datatable('update', 'ISAAC NEWTON', {field: "Mathematics"}) ;
+</code></pre>
       </section>
     </div>
 
@@ -591,7 +681,8 @@ a key, you have to use the last form.</em></p>
         $('#example-table').datatable({
             pageSize: 5,
             sort: [true, true, false],
-            filters: [true, false, 'select']
+            filters: [true, false, 'select'],
+            filterText: 'Type to filter... '
         }) ;
     
 		$('#show-initial-table').click(function () {
