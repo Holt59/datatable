@@ -881,6 +881,10 @@
                         this.data[index][key] = data[key] ;
                     }
                 }
+                this.sort() ;
+                this.filter () ;
+                this.currentStart = parseInt(this.filterIndex.indexOf(this.indexOf(id)) / this.options.pageSize, 10) * this.options.pageSize ;
+                this.refresh () ;
             }
 		},
 		
