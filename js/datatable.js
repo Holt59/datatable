@@ -86,8 +86,13 @@
 		constructor: DataTable,
         
         /**
-            This function should be call when a ajax loading is finished.
-            It clears size and set timeout if necessary.
+        
+            Clear size option and set timeout (if specified) for refresh.
+        
+            Note: This function should be call when a ajax loading is finished.
+            
+            @update refreshTimeOut The new timeout
+        
         **/
         clearAjaxLoading: function () {
             if (this.options.data.refresh) {
@@ -97,20 +102,44 @@
             }
         },
         
+        /**
+            
+            Hide the loading divs.
+            
+        **/
         hideLoadingDivs: function () {
-            $(this.options.loadingDivSelector).remove() ;
+            this.getLoadingDivs().remove() ;
         },
 	
+    
+        /**
+        
+            Update the loading divs with the current % of data load (according to this.options.data.size).
+            
+            Note: Call clearAjaxLoading & hideLoadingDivs if all the data have been loaded.
+        
+        **/
 		updateLoadingDivs: function () {
 			if (this.data.length === this.options.data.size) {
                 this.clearAjaxLoading () ;
 				this.hideLoadingDivs () ;
 			}
 			else {
-				$(this.options.loadingDivSelector).find('div.progress .bar').css('width', parseInt(100 * this.data.length / this.options.data.size, 10) + '%') ;
+				this.getLoadingDivs().find('div.progress .bar').css('width', parseInt(100 * this.data.length / this.options.data.size, 10) + '%') ;
 			}
 		},
 				
+        /**
+        
+            Get data according to this.options.data, asynchronously, using recursivity.
+           
+            @param start The first offset to send to the server
+            
+            @update data Concat data received from server to old data
+            
+            Note: Each call increment start by pageSize * pagingNumberOfPages.
+           
+        **/
 		getAjaxDataAsync: function (start) {
 			$.ajax({
 				url: this.options.data.url,
@@ -124,7 +153,7 @@
 				success: function (data, text, jqxhr) {
 					this.ajaxThis.data = this.ajaxThis.data.concat($.parseJSON(data)) ;
 					this.ajaxThis.sort() ;
-					this.ajaxThis.filter () ;
+					this.ajaxThis.filter (true) ;
 					this.ajaxThis.updateLoadingDivs () ;
 				},
 				error: function (jqhxr, text, error) {
@@ -133,6 +162,22 @@
 			}) ;
 		},
         
+        /**
+        
+            Load "synchronously" data from server: Each new request is send only after the last
+            one have been received.
+           
+            @param start The first offset to send to the server
+            @param allInOne true if all the real data (this.data) should be updated only at the
+                end of the load. If not specified or false, the data are refreshed after each request.
+            
+            @update syncData Temporary data used if allInOne is true (Should not be used
+                in another method)
+            @update data Concat data received from server to old data
+            
+            Note: Each call increment start by pageSize * pagingNumberOfPages.
+           
+        **/
         getAjaxDataSync: function (start, allInOne) {
             if (typeof start === 'undefined') {
                 start = 0 ;
@@ -162,21 +207,21 @@
                         else {
                             this.ajaxThis.data = this.ajaxThis.data.concat(dt) ;
                             this.ajaxThis.sort() ;
-                            this.ajaxThis.filter () ;
+                            this.ajaxThis.filter (true) ;
                         }
                         this.ajaxThis.getAjaxDataSync(this.ajaxI + this.ajaxThis.options.pageSize * this.ajaxThis.options.pagingNumberOfPages,
                                 this.ajaxAllInOne) ;
                     }
                     else {
                         if (this.ajaxAllInOne) {
-                            console.log('refresh ok') ;
+                            // console.log('refresh ok') ;
                             this.ajaxThis.data = this.ajaxThis.syncData ;
                             delete this.ajaxThis.syncData ;
                         }
                         this.ajaxThis.clearAjaxLoading () ;
                         this.ajaxThis.hideLoadingDivs () ;
                         this.ajaxThis.sort() ;
-                        this.ajaxThis.filter () ;
+                        this.ajaxThis.filter (true) ;
                     }
 				},
 				error: function (jqhxr, text, error) {
@@ -185,27 +230,65 @@
 			}) ;
 		},
 		
+        /**
+        
+            @return The header of the table
+        
+        **/
 		getHead: function () {
 			return this.table.find('thead').first() ;
 		},
 			
+        /**
+        
+            @return The body of the table
+        
+        **/
 		getBody: function () {
 			return this.table.find('tbody').first() ;
 		},
 		
+        /**
+        
+            @return The counter divs
+        
+        **/
 		getCounter: function () {
 			return $(this.options.counterDivSelector) ;
 		},
+        
+        /**
+        
+            @return The loading divs
+            
+        **/
+        getLoadingDivs: function () {
+            return $(this.options.loadingDivSelector) ;
+        },
 		
+        /**
+        
+            @return The paging lists created in the paging divs
+            
+        **/
 		getPagingLists: function () {
 			return $(this.options.pagingDivSelector).find('ul') ;
 		},
 			
+        /**
+        
+            @return The last page number according to options.pageSize and current number of filtered elements.
+        
+        **/
 		getLastPageNumber: function () {
             return parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
         },
         
-        /** Update the paging div. **/
+        /** 
+        
+            Update the paging divs. 
+                        
+        **/
 		updatePaging: function () {
 		
 			/* Be carefull if you change something here, all this part calculate the first and last page to display.
@@ -286,7 +369,12 @@
 		
 		},
 			
-		updateCounter: function () {
+		/**
+        
+            Update the counter divs.
+            
+        **/
+        updateCounter: function () {
 			var cp = this.filterIndex.length ? parseInt(this.currentStart / this.options.pageSize, 10) + 1 : 0 ;
 			var lp = parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
 			var first = this.filterIndex.length ? this.currentStart + 1 : 0 ;
@@ -294,7 +382,13 @@
 			this.getCounter().html(this.options.counterText(cp, lp, first, last, this.filterIndex.length)) ;
 		},
 			
-		/** Return a sort function according options.sortKey & options.sortDir **/
+		/** 
+        
+            @return The sort function according to options.sort, options.sortKey & options.sortDir.
+            
+            Note: This function could return false if no sort function can be generated.
+            
+        **/
 		getSortFunction: function () {
             if (this.options.sort === false) {
                 return false ;
@@ -315,15 +409,36 @@
 			} ;
 		},
         
+        /** 
+        
+            Destroy the filters (remove the filter line).
+            
+        **/
         destroyFilter: function () {
   			$('.datatable-filter-line').remove() ;
         },
         
+        /**
+        
+            Change the text input filter placeholder according to this.options.filterText.
+            
+        **/
         changePlaceHolder: function () {
             var placeholder = this.options.filterText ? this.options.filterText : '' ;
             $('.datatable-filter-line input[type="text"]').attr('placeholder', placeholder) ;
         },
         
+        /**
+        
+            Create a text filter for the specified field.
+            
+            @param field The field corresponding to the filter
+            
+            @update filters Add the new filter to the list of filter (calling addFilter)
+                        
+            @return The input filter
+            
+        **/
         createTextFilter: function (field) {
             var placeholder = this.options.filterText ? ('placeholder="' + this.options.filterText + '"') : '' ; 
             var input = $('<input type="text" class="datatable-filter datatable-input-text" data-filter="' + field + '" ' + placeholder + '/>') ;
@@ -352,6 +467,17 @@
             return input ;
         },
         
+        /**
+        
+            Create a select filter for the specified field.
+            
+            @param field The field corresponding to the filter
+            
+            @update filters Add the new filter to the list of filter (calling addFilter)
+            
+            @return The select filter.
+            
+        **/
         createSelectFilter: function (field) {
             var values = {}, selected = [], multiple = false, empty = true, emptyValue = "" ;
             if (this.options.filters[field] === 'select') {
@@ -412,6 +538,11 @@
             return select ;
         },
         
+        /**
+        
+            Create the filter line according to options.filters.
+             
+        **/
         createFilter: function () {
             this.filters = [] ;
             this.filterVals = [] ;
@@ -432,16 +563,49 @@
             }
         },
 			
-		/** Return the length of data after filtering. **/
-		filter: function () {
+		/** 
+            
+            Filter data and refresh.
+            
+            @param keepCurrentPage true if the current page should not be changed (on refresh
+                for example), if not specified or false, the current page will be set to 0.
+                
+            @update filterIndex Will contain the new filtered indexes
+            @update currentStart The new starting point
+            
+        **/
+		filter: function (keepCurrentPage) {
+            if (typeof keepCurrentPage === 'undefined') {
+                keepCurrentPage = false ;
+            }
+            var oldCurrentStart = this.currentStart ;
 			this.currentStart = 0 ;
 			this.filterIndex = []  ;
 			for (var i = 0 ; i < this.data.length ; i++) { 
 				if (this.checkFilter(this.data[i])) { this.filterIndex.push(i) ; }
 			}
+            if (keepCurrentPage) {
+                this.currentStart = oldCurrentStart ;
+                while (this.currentStart >= this.filterIndex.length) {
+                    this.currentStart -= this.options.pageSize ;
+                }
+                if (this.currentStart < 0) {
+                    this.currentStart = 0 ;
+                }
+            }
 			this.refresh () ;
 		},
 			
+        /**
+        
+            Check if the specified data match the filters according to this.filters
+            and this.filterVals.
+            
+            @param data The data to check
+            
+            @return true if the data match the filters, false otherwize
+        
+        **/
 		checkFilter: function (data) {
 			var ok = true ;
 			for (var fk in this.filters) {
@@ -453,10 +617,25 @@
 			return ok ;
 		},
 			
+        /**
+        
+            Add a new filter.
+            
+            @update filters
+            
+        **/
 		addFilter: function (field, filter) {
 			this.filters[field] = filter ;
 		},
         
+        /**
+        
+            Get the filter select options for a specified field according
+            to this.data.
+            
+            @return The options found.
+        
+        **/
         getFilterOptions: function (field) {
         	var options = {}, values = [];
 			for (var key in this.data) {
@@ -471,12 +650,25 @@
             return options ;
         },
 		
+        /**
+        
+            Remove class, data and event on sort headers.
+            
+        **/
         destroySort: function () {
             $('thead th').removeClass('sorting sorting-asc sorting-desc')
 				.unbind('click.datatable')
                 .removeData('sort') ;
         },
         
+        /**
+        
+            Add class, event & data to headers according to this.options.sort or data-sort attribute
+            of headers.
+            
+            @update options.sort Will be set to true if not already and a data-sort attribute is found.
+        
+        **/
         createSort: function () {
             var dataTable = this ;
             if (!jQuery.isFunction(this.options.sort)) {
@@ -538,8 +730,12 @@
             }
         },
         
-		/** Trigger sort on the table: If options.sort is a function, sort
-        the table, otherwize trigger click on the column specifid by options.sortKey. **/
+		/** 
+        
+            Trigger sort event on the table: If options.sort is a function, 
+            sort the table, otherwize trigger click on the column specifid by options.sortKey. 
+            
+        **/
         triggerSort: function () {
             if (jQuery.isFunction(this.options.sort)) {
                 this.sort() ;
@@ -559,7 +755,13 @@
             }
         },
         
-        /** Sort the data (WITHOUT REFRESHING). **/
+        /** 
+        
+            Sort the data (WITHOUT REFRESHING). 
+        
+            @update data
+        
+        **/
 		sort: function () {
             var fnSort = this.getSortFunction () ;
 			if (fnSort === false) {
@@ -568,7 +770,15 @@
 			this.data.sort(fnSort) ;
 		},
 			
-		/** Add a 'row' (a data). **/
+		/** 
+        
+            Add an element to the data array.
+
+            @param data The element to add
+            
+            @update data
+            
+        **/
 		addRow: function (data) {
 			this.data.push(data) ; 
 			this.sort() ;
@@ -576,17 +786,71 @@
 			this.currentStart = parseInt(this.filterIndex.indexOf(this.data.indexOf(data)) / this.options.pageSize, 10) * this.options.pageSize ;
 			this.refresh () ;
 		},
+        
+        /**
+        
+            Try to identify the specified data with the specify identifier according
+            to this.options.identify.
+            
+            @return true if the data match, false otherwize
+            
+        **/
+        identify: function (id, data) {
+            if (this.options.identify === false) {
+                return false ;
+            }
+            if ($.isFunction(this.options.identify)) {
+                return this.options.identify(id, data) ;
+            }
+            return data[this.options.identify] == id ;
+        },
+        
+        /**
+        
+            Find the index of the first element matching id in the data array.
+            
+            @param The id to find (will be match according to this.options.identify)
+            
+            @return The index of the first element found, or -1 if no element is found
+        
+        **/
+        indexOf: function (id) {
+            var index = -1 ;
+            for (var i = 0 ; i < this.data.length && index === -1 ; i++) {
+                if (this.identify(id, this.data[i])) {
+                    index = i ;
+                }
+            }
+            return index ;
+        },
 		
-		/** Get a row from the datas. */
-		row: function (rowId) {
-			return this.data[rowId];
+		/** 
+        
+            Get an elements from the data array. 
+            
+            @param id An identifier for the element (see this.options.identify)
+            
+        **/
+		row: function (id) {
+			return this.data[this.indexOf(id)];
 		},
 			
-		/** Remove a 'row'. */
-		deleteRow: function (rowId) {
+		/** 
+        
+            Remove an element from the data array.
+            
+            @param id An identifier for the element (see this.options.identify)
+            
+        **/
+		deleteRow: function (id) {
 			var oldCurrentStart = this.currentStart ;
-			this.data.splice(rowId, 1) ;
-			this.filterIndex.splice(this.filterIndex.indexOf(rowId), 1) ;
+            var index = this.indexOf(id) ;
+            if (index === -1) {
+                console.log('No data found with id: ' + id) ;
+                return ;
+            }
+			this.data.splice(index, 1) ;
+            var indexFilter = this.filterIndex.indexOf(index) ;
 			this.filter () ;
 			if (oldCurrentStart < this.filterIndex.length) {
 				this.currentStart = oldCurrentStart ;
@@ -598,13 +862,34 @@
 			this.refresh () ;
 		},
 			
-		/** Update a 'row' (data). **/
-		updateRow: function (rowId, data) {
-			this.data.splice(rowId, 1);
-			this.addRow(data) ;
+		/** 
+        
+            Update an element in the data array. Will add the element if it is not found.
+            
+            @param id An identifier for the element (see this.options.identify)
+            @param data The new data (identifier value will be set to id)
+            
+        **/
+		updateRow: function (id, data) {
+            var index = this.indexOf(id) ;
+            if (index !== -1) {
+                this.data.splice(index, 1);
+			}
+            if (!$.isFunction(this.options.identify)) {
+                data[this.options.identify] = id ;
+            }
+            this.addRow(data) ;
 		},
 		
-		/** Change the current page and refresh. **/
+		/** 
+        
+            Change the current page and refresh. 
+
+            @param page The number of the page to load
+            
+            @update currentStart
+        
+        **/
 		loadPage: function (page) {
             var oldPage = this.currentStart / this.options.pageSize ;
             if (page < 1) {
@@ -618,12 +903,21 @@
             this.options.onChange (oldPage + 1, page) ;
 		},
         
+        /**
+        
+            @return The current page
+        
+        **/
         getCurrentPage: function () {
             return this.currentStart / this.options.pageSize + 1 ;
         },
 			
-		/** Refresh the page according to current page (DO NOT SORT).
-		This function call options.lineFormat. **/
+		/** 
+        
+            Refresh the page according to current page (DO NOT SORT).
+            This function call options.lineFormat. 
+            
+        **/
 		refresh: function () {
 			this.options.beforeRefresh () ;
 			this.updatePaging () ;
@@ -639,7 +933,16 @@
 			this.options.afterRefresh () ;
 		},
 		
-		/** Set en option and refresh the table. **/
+		/** 
+        
+            Set a option and refresh the table if necessary.
+
+            @param key The name of the option to change
+            @param val The new option value
+            
+            @update options
+            
+        **/
 		setOption: function (key, val) {
 			if (key in this.options) {
 				this.options[key] = val ;
@@ -662,6 +965,15 @@
 			}
 		},
         
+        /** 
+        
+            Set a list of options and refresh the table if necessary.
+
+            @param options A list of options to set (plain object)
+            
+            @update options
+            
+        **/
         setOptions: function (options) {
             for (var key in options) {
                 if (key in this.options) {
@@ -686,7 +998,11 @@
             this.filter () ;
         },
 		
-		/** Remove all the elements added by the datatable. **/
+		/** 
+        
+            Remove all the elements added by the datatable. 
+            
+        **/
 		destroy: function () {
             if (this.refreshTimeOut !== undefined) {
                 clearTimeout(this.refreshTimeOut) ;
@@ -763,6 +1079,7 @@
 		nbColumns: -1,
 		pageSize: 20,
 		pagingNumberOfPages: 9,
+        identify: false,
         onChange: function (oldPage, newPage) { },
 		counterText: function (currentPage, totalPage, firstRow, lastRow, totalRow) {
 			return 'Page ' + currentPage + ' on ' + totalPage + '. Starting at ' + firstRow + ', ending at ' + lastRow + ' over ' + totalRow + ' entries.' ;
