@@ -770,23 +770,6 @@
 			this.data.sort(fnSort) ;
 		},
 			
-		/** 
-        
-            Add an element to the data array.
-
-            @param data The element to add
-            
-            @update data
-            
-        **/
-		addRow: function (data) {
-			this.data.push(data) ; 
-			this.sort() ;
-			this.filter () ;
-			this.currentStart = parseInt(this.filterIndex.indexOf(this.data.indexOf(data)) / this.options.pageSize, 10) * this.options.pageSize ;
-			this.refresh () ;
-		},
-        
         /**
         
             Try to identify the specified data with the specify identifier according
@@ -834,6 +817,23 @@
 		row: function (id) {
 			return this.data[this.indexOf(id)];
 		},
+        
+        /** 
+        
+            Add an element to the data array.
+
+            @param data The element to add
+            
+            @update data
+            
+        **/
+		addRow: function (data) {
+			this.data.push(data) ; 
+			this.sort() ;
+			this.filter () ;
+			this.currentStart = parseInt(this.filterIndex.indexOf(this.data.indexOf(data)) / this.options.pageSize, 10) * this.options.pageSize ;
+			this.refresh () ;
+		},
 			
 		/** 
         
@@ -873,12 +873,15 @@
 		updateRow: function (id, data) {
             var index = this.indexOf(id) ;
             if (index !== -1) {
-                this.data.splice(index, 1);
-			}
-            if (!$.isFunction(this.options.identify)) {
-                data[this.options.identify] = id ;
+                if (id in data) {
+                    delete data[id] ;
+                }
+                for (var key in this.data[index]) {
+                    if (key in data) {
+                        this.data[index][key] = data[key] ;
+                    }
+                }
             }
-            this.addRow(data) ;
 		},
 		
 		/** 
