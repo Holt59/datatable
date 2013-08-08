@@ -738,9 +738,11 @@
         triggerSort: function () {
             if (jQuery.isFunction(this.options.sort)) {
                 this.sort() ;
+                this.refresh () ;
             }
             else if (this.options.sortKey !== false) {
                 var th ;
+                this.table.find('tr th').removeClass('sorting-desc').removeClass('sorting-asc') ;
                 this.table.find('th').each(function (sortKey) {
                     return function () {
                         if ($(this).data('sort') === sortKey) {
@@ -749,7 +751,7 @@
                     } ;
                 } (this.options.sortKey)) ;
                 if (th !== undefined) {
-                    th.trigger('click') ;
+                    th.addClass('sorting-' + this.options.sortDir) ;
                 }
             }
         },
