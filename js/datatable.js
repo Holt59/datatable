@@ -62,7 +62,7 @@
             this.data = [] ;
             this.table.find('tbody tr').each(function () {
                 var line = [] ;
-                $(this).find('td').each(function () { line.push($(this).text()) ; }) ;
+                $(this).find('td').each(function () { line.push($(this).html()) ; }) ;
                 dataTable.data.push(line) ;
             }) ;
         }
