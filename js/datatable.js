@@ -151,7 +151,8 @@
                 ajaxI: start,
                 ajaxThis: this,
                 success: function (data, text, jqxhr) {
-                    this.ajaxThis.data = this.ajaxThis.data.concat($.parseJSON(data)) ;
+                    console.log(data) ;
+                    this.ajaxThis.data = this.ajaxThis.data.concat(data) ;
                     this.ajaxThis.sort() ;
                     this.ajaxThis.filter (true) ;
                     this.ajaxThis.updateLoadingDivs () ;
@@ -198,13 +199,12 @@
                 ajaxAllInOne: allInOne,
                 ajaxThis: this,
                 success: function (data, text, jqxhr) {
-                    var dt = $.parseJSON(data) ;
-                    if (dt.length !== 0) {
+                    if (data.length !== 0) {
                         if (this.ajaxAllInOne) {
-                            this.ajaxThis.syncData = this.ajaxThis.syncData.concat(dt) ;
+                            this.ajaxThis.syncData = this.ajaxThis.syncData.concat(data) ;
                         }
                         else {
-                            this.ajaxThis.data = this.ajaxThis.data.concat(dt) ;
+                            this.ajaxThis.data = this.ajaxThis.data.concat(data) ;
                             this.ajaxThis.sort() ;
                             this.ajaxThis.filter (true) ;
                         }
@@ -752,6 +752,8 @@
                 } (this.options.sortKey)) ;
                 if (th !== undefined) {
                     th.addClass('sorting-' + this.options.sortDir) ;
+                    this.sort() ;
+                    this.refresh () ;
                 }
             }
         },
