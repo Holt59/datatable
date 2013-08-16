@@ -151,7 +151,6 @@
                 ajaxI: start,
                 ajaxThis: this,
                 success: function (data, text, jqxhr) {
-                    console.log(data) ;
                     this.ajaxThis.data = this.ajaxThis.data.concat(data) ;
                     this.ajaxThis.sort() ;
                     this.ajaxThis.filter (true) ;
@@ -498,7 +497,15 @@
                         selected = this.options.filters[field]['default'] ;
                     }
                     else if (multiple) {
-                        selected = Object.keys(values) ;
+                        selected = [] ;
+                        for (var k in values) {
+                            if ($.isPlainObject(values[k])) {
+                                selected = selected.concat(Object.keys(values[k])) ;
+                            }
+                            else {
+                                selected.push(k) ;
+                            }
+                        }
                     }
                     else {
                         selected = [] ;
@@ -516,12 +523,26 @@
             if (empty) {
                 select.append('<option value="">' + emptyValue + '</option>') ;
             }
+            var allKeys = [];
             for (var key in values) {
-                select.append('<option value="' + key + '" ' + 
-                    ((selected.indexOf(key) !== -1  || selected.indexOf(parseInt(key)) !== -1) ? 'selected' : '') + '>' + values[key] + '</option>') ;
+                if ($.isPlainObject(values[key])) {
+                    var optgroup = $('<optgroup label="' + key + '"></optgroup>') ;
+                    for (var skey in values[key]) {
+                        allKeys.push(skey) ;
+                        optgroup.append('<option value="' + skey + '" ' + 
+                            ((selected.indexOf(skey) !== -1  || selected.indexOf(parseInt(skey)) !== -1) ? 'selected' : '') + '>' + 
+                                values[key][skey] + '</option>') ;
+                    }
+                    select.append(optgroup) ;
+                }
+                else {
+                    allKeys.push(key) ;
+                    select.append('<option value="' + key + '" ' + 
+                        ((selected.indexOf(key) !== -1  || selected.indexOf(parseInt(key)) !== -1) ? 'selected' : '') + '>' + values[key] + '</option>') ;
+                }
             }
             var val = select.val() ;
-            this.filterVals[field] = multiple ? val : ((empty && !val) ? Object.keys(values) : [val]) ;
+            this.filterVals[field] = multiple ? val : ((empty && !val) ? allKeys : [val]) ;
             select.change (function (allKeys, multiple, empty, datatable) {
                 return function () {
                     var val = $(this).val() ;
@@ -529,7 +550,7 @@
                     datatable.filterVals[field] = multiple ? val : ((empty && !val) ? allKeys : [val]) ;
                     datatable.filter () ;
                 } ;
-            } (Object.keys(values), multiple, empty, this)) ;
+            } (allKeys, multiple, empty, this)) ;
             this.addFilter(field, function (data, val) {
                 if (!val) { return false ; }
                 return val.indexOf(data) !== -1 ;
