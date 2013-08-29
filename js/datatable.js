@@ -187,6 +187,7 @@
             if (allInOne && this.syncData === undefined) {
                 this.syncData = [] ;
             }
+            console.log("Call data sync : " + start + " - " + allInOne + " - " + this.syncData.length) ;
             $.ajax({
                 url: this.options.data.url,
                 type: this.options.data.type,
