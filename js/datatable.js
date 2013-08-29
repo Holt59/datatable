@@ -157,6 +157,7 @@
                     this.ajaxThis.updateLoadingDivs () ;
                 },
                 error: function (jqhxr, text, error) {
+                    console.log("ERROR: " + error + " - " + text) ;
                     this.ajaxThis.getAjaxDataAsync(this.ajaxI) ;
                 }
             }) ;
@@ -224,6 +225,7 @@
                     }
                 },
                 error: function (jqhxr, text, error) {
+                    console.log("ERROR: " + error + " - " + text) ;
                     this.ajaxThis.getAjaxDataSync(this.ajaxI, this.ajaxAllInOne) ;
                 }
             }) ;
