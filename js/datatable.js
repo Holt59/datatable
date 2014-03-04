@@ -19,8 +19,13 @@
         
         /* Create the base for pagination. */
         $(this.options.pagingDivSelector)
-            .addClass("pagination pagination-centered pagination-data-tables")
-            .html('<ul></ul>') ;
+            .addClass('pagination-data-tables')
+            .addClass(this.options.pagingDivClass) ;
+        var ul = $('<ul></ul>') ;
+        ul.addClass(this.options.pagingListClass) ;
+        $(this.options.pagingDivSelector)
+            .html('')
+            .append(ul) ;
         
         /* DATA ! */
         
@@ -97,7 +102,7 @@
         clearAjaxLoading: function () {
             if (this.options.data.refresh) {
                 this.refreshTimeOut = setTimeout((function (datatable) {
-                    return function () { datatable.getAjaxDataSync(0, true) ; }
+                    return function () { datatable.getAjaxDataSync(0, true) ; } ;
                 }) (this), this.options.data.refresh) ;
             }
         },
@@ -150,13 +155,13 @@
                 },
                 ajaxI: start,
                 ajaxThis: this,
-                success: function (data, text, jqxhr) {
+                success: function (data, _jqxhr, _text) {
                     this.ajaxThis.data = this.ajaxThis.data.concat(data) ;
                     this.ajaxThis.sort() ;
                     this.ajaxThis.filter (true) ;
                     this.ajaxThis.updateLoadingDivs () ;
                 },
-                error: function (jqhxr, text, error) {
+                error: function (_jqxhr, text, error) {
                     console.log("ERROR: " + error + " - " + text) ;
                     this.ajaxThis.getAjaxDataAsync(this.ajaxI) ;
                 }
@@ -443,7 +448,6 @@
         createTextFilter: function (field) {
             var placeholder = this.options.filterText ? ('placeholder="' + this.options.filterText + '"') : '' ; 
             var input = $('<input type="text" class="datatable-filter datatable-input-text" data-filter="' + field + '" ' + placeholder + '/>') ;
-            var dataTable = this ;
             this.filterVals[field] = '' ;
             var typewatch = (function(){
                 var timer = 0;
@@ -465,6 +469,7 @@
             this.addFilter(field, function (data, val) {
                 return data.toUpperCase().indexOf(val) !== -1;
             }) ;
+            input.addClass(this.options.filterInputClass) ;
             return input ;
         },
         
@@ -485,19 +490,18 @@
                 values = this.getFilterOptions (field) ;
             }
             else {
-                multiple = ('multiple' in this.options.filters[field]) && (this.options.filters[field]['multiple'] === true) ;
-                empty = ('empty' in this.options.filters[field]) && this.options.filters[field]['empty'] ;
-                emptyValue = (('empty' in this.options.filters[field]) 
-                    && (typeof this.options.filters[field]['empty'] === 'string')) ? this.options.filters[field]['empty'] : '' ;
+                multiple = ('multiple' in this.options.filters[field]) && (this.options.filters[field].multiple === true) ;
+                empty = ('empty' in this.options.filters[field]) && this.options.filters[field].empty ;
+                emptyValue = (('empty' in this.options.filters[field]) && (typeof this.options.filters[field].empty === 'string')) ? this.options.filters[field].empty : '' ;
                 if ('values' in this.options.filters[field]) {
-                    if (this.options.filters[field]['values'] === 'auto') {
+                    if (this.options.filters[field].values === 'auto') {
                         values = this.getFilterOptions (field) ;
                     }
                     else {
-                        values = this.options.filters[field]['values'] ;
+                        values = this.options.filters[field].values ;
                     }
                     if ('default' in this.options.filters[field]) {
-                        selected = this.options.filters[field]['default'] ;
+                        selected = this.options.filters[field].default ;
                     }
                     else if (multiple) {
                         selected = [] ;
@@ -531,10 +535,12 @@
                 if ($.isPlainObject(values[key])) {
                     var optgroup = $('<optgroup label="' + key + '"></optgroup>') ;
                     for (var skey in values[key]) {
-                        allKeys.push(skey) ;
-                        optgroup.append('<option value="' + skey + '" ' + 
-                            ((selected.indexOf(skey) !== -1  || selected.indexOf(parseInt(skey)) !== -1) ? 'selected' : '') + '>' + 
+                        if (values[key].hasOwnProperty(skey)) {
+                            allKeys.push(skey) ;
+                            optgroup.append('<option value="' + skey + '" ' + 
+                                ((selected.indexOf(skey) !== -1  || selected.indexOf(parseInt(skey)) !== -1) ? 'selected' : '') + '>' + 
                                 values[key][skey] + '</option>') ;
+                        }
                     }
                     select.append(optgroup) ;
                 }
@@ -554,10 +560,14 @@
                     datatable.filter () ;
                 } ;
             } (allKeys, multiple, empty, this)) ;
-            this.addFilter(field, function (data, val) {
-                if (!val) { return false ; }
-                return val.indexOf(data) !== -1 ;
-            }) ;
+            this.addFilter(field, function (aKeys) {
+                return function (data, val) {
+                    if (!val) { return false ; }
+                    if (val == aKeys && !data) { return true ; }
+                    return val.indexOf(data) !== -1 ;
+                } ;
+            } (allKeys)) ;
+            select.addClass(this.options.filterSelectClass) ;
             return select ;
         },
         
@@ -572,16 +582,18 @@
             if (this.options.filters) {
                 var tr = $('<tr class="datatable-filter-line"></tr>').insertAfter(this.table.find('thead tr').last()) ;
                 for (var field in this.options.filters) {
-                    var td = $('<td></td>') ;
-                    if (this.options.filters[field] !== false) {
-                        if (this.options.filters[field] === true) {
-                            td.append(this.createTextFilter(field)) ;
+                    if (this.options.filters.hasOwnProperty(field)) {
+                        var td = $('<td></td>') ;
+                        if (this.options.filters[field] !== false) {
+                            if (this.options.filters[field] === true) {
+                                td.append(this.createTextFilter(field)) ;
+                            }
+                            else {
+                                td.append(this.createSelectFilter(field)) ;
+                            }
                         }
-                        else {
-                            td.append(this.createSelectFilter(field)) ;
-                        }
+                        tr.append(td) ;
                     }
-                    tr.append(td) ;
                 }
             }
         },
@@ -633,6 +645,9 @@
             var ok = true ;
             for (var fk in this.filters) {
                 if (!this.filters[fk](data[fk], this.filterVals[fk])) {
+                    if (data['serie'] == 'Absurdomanies') {
+                        console.log('absurde = ' + fk + ', ' + data[fk] + ', ' + this.filterVals[fk]) ;
+                    }
                     ok = false ;
                     break ;
                 }
@@ -668,7 +683,9 @@
             }
             values.sort() ;
             for (var i in values) {
-                options[values[i]] = values[i] ;
+                if (values.hasOwnProperty(i)) {
+                    options[values[i]] = values[i] ;
+                }
             }
             return options ;
         },
@@ -877,7 +894,6 @@
                 return ;
             }
             this.data.splice(index, 1) ;
-            var indexFilter = this.filterIndex.indexOf(index) ;
             this.filter () ;
             if (oldCurrentStart < this.filterIndex.length) {
                 this.currentStart = oldCurrentStart ;
@@ -1105,6 +1121,8 @@
     
     $.fn.datatable.defaults = {
         pagingDivSelector: '.paging',
+        pagingDivClass: 'pagination pagination-centered',
+        pagingListClass: '',
         counterDivSelector: '.counter',
         loadingDivSelector: '.loading',
         sort: false,
@@ -1124,11 +1142,18 @@
         lastPage: '&gt;&gt;',
         filters: {},
         filterText: 'Search... ',
+        filterInputClass: '',
+        filterSelectClass: '',
         beforeRefresh: function () { },
         afterRefresh: function () { },
         lineFormat: function (id, data) { 
             var res = $('<tr></tr>') ;
-            for (var key in data) { res.append('<td>' + data[key] + '</td>') ; }
+            res.data('id', id) ;
+            for (var key in data) { 
+                if (data.hasOwnProperty(key)) { 
+                    res.append('<td>' + data[key] + '</td>') ; 
+                } 
+            }
             return res ;
         }
     } ;
