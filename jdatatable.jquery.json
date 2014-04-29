@@ -1,6 +1,6 @@
 {
     "name": "jdatatable",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "title": "Datatable - A jQuery plugin for smart Data Tables",
     "author": {
         "name": "Mikaël Capelle (Holt59)",
@@ -16,7 +16,12 @@
     "description": "Datatable is a smart plugin for jQuery allowing you to easily create dynamic 'datatables' (with pagination, filtering and sorting) for better management of big quantity of data.",
     "keywords": [
         "datatable",
-        "pagination"
+        "pagination",
+		"ajax",
+		"data",
+		"jquery",
+		"filtering",
+		"sorting"
     ],
     "homepage": "http://holt59.github.io/datatable/",
     "docs": "http://holt59.github.io/datatable/",
