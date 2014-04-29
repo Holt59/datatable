@@ -1,6 +1,6 @@
 {
-    "name": "datatable",
-    "version": "1.0.0",
+    "name": "jdatatable",
+    "version": "1.0.1",
     "title": "Datatable - A jQuery plugin for smart Data Tables",
     "author": {
         "name": "Mikaël Capelle (Holt59)",
