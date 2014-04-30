@@ -29,7 +29,9 @@ The datatable plugin come with small CSS files, one for non-bootstrap theme and 
 
 Bootstrap CSS files use bootstrap pagination div and loading bar.
 
-If you want to add a theme, do not hesitate to push it on github! If you need more information on how to customize table CSS, do not hesitate to contact me.
+<strong>Warning: </strong> If you use bootstrap 3, you need to manually set the <code>pagingListClass</code> and <code>pagingDivClass</code> options to match bootstrap 3 pagination classes.
+
+If you want to add a theme, do not hesitate to send me a mail! If you need more information on how to customize table CSS, do not hesitate to contact me.
 
 Copyright and license
 =====================
