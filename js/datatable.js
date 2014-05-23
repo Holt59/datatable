@@ -10,7 +10,7 @@
         this.currentStart = 0 ; // different from currentPage * pageSize because there is a filter
         this.filterIndex = [] ;
         
-        this.table.addClass('datatable') ;
+        this.table.addClass(this.options.tableClass) ;
         
         /* If nb columns not specified, count the nunber of column from thead. */
         if (this.options.nbColumns < 0) {
@@ -1062,7 +1062,7 @@
                 .removeClass("pagination pagination-centered pagination-data-tables")
                 .html('') ;
             this.destroyFilter () ;
-            this.table.removeClass('datatable') ;
+            this.table.removeClass(this.options.tableClass) ;
             this.getBody().html('') ;
             for (var i=0; i<this.data.length; i++) {
                 this.getBody().append(this.options.lineFormat(i, this.data[i])) ;
@@ -1120,6 +1120,7 @@
     };
     
     $.fn.datatable.defaults = {
+        tableClass: 'datatable',
         pagingDivSelector: '.paging',
         pagingDivClass: 'pagination pagination-centered',
         pagingListClass: '',
