@@ -19,7 +19,7 @@
         
         /* Create the base for pagination. */
         $(this.options.pagingDivSelector)
-            .addClass('pagination-data-tables')
+            .addClass('pagination-datatables')
             .addClass(this.options.pagingDivClass) ;
         var ul = $('<ul></ul>') ;
         ul.addClass(this.options.pagingListClass) ;
@@ -1059,7 +1059,8 @@
             }
             this.destroySort () ;
             $(this.options.pagingDivSelector)
-                .removeClass("pagination pagination-centered pagination-data-tables")
+                .removeClass(this.options.pagingDivClass)
+                .removeClass('pagination-datatable')
                 .html('') ;
             this.destroyFilter () ;
             this.table.removeClass(this.options.tableClass) ;
