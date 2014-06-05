@@ -859,6 +859,9 @@
          * 
         **/
         row: function (id) {
+            if (this.options.identify === true) {
+                return this.data[id] ;
+            }
             return this.data[this.indexOf(id)];
         },
         
