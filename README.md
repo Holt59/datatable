@@ -1,4 +1,4 @@
-Datatable v1.0.3
+Datatable v1.0.4
 =========
 
 Datatable is a jQuery plugin for dynamic datatables with pagination, filtering and ajax loading.
