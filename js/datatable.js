@@ -40,7 +40,7 @@
         if (this.table.find('tbody').length === 0) {
             $('<tbody></tbody>').insertAfter(this.table.find('thead').first()) ;
         }
-        
+                
         if (jQuery.isArray(this.options.data)) {
             this.data = this.options.data ;
         }
@@ -67,9 +67,26 @@
             this.data = [] ;
             this.table.find('tbody tr').each(function () {
                 var line = [] ;
-                $(this).find('td').each(function () { line.push($(this).html()) ; }) ;
+                $(this).find('td').each(function () { 
+                    line.push($(this).html()) ; 
+                }) ;
                 dataTable.data.push(line) ;
             }) ;
+            if (!this.options.forceStrings && this.data.length) {
+                for (var c = 0; c < this.data[0].length; ++c) {
+                    var isNumeric = true ;
+                    for (var i = 0; i < this.data.length; ++i) {
+                        if (!$.isNumeric(this.data[i][c])) {
+                            isNumeric = false ;
+                        }
+                    }
+                    if (isNumeric) {
+                        for (var i = 0; i < this.data.length; ++i) {
+                            this.data[i][c] = parseFloat(this.data[i][c]) ;
+                        }
+                    }
+                }
+            }
         }
         
         /* Add sorting class to all th and add callback. */
@@ -1124,6 +1141,7 @@
     };
     
     $.fn.datatable.defaults = {
+        forceStrings: false,
         tableClass: 'datatable',
         pagingDivSelector: '.paging',
         pagingDivClass: 'pagination pagination-centered',
