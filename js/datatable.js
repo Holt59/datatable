@@ -492,7 +492,7 @@
             this.addFilter(field, regexp ? function (data, val) {
                 return new RegExp(val).test(data);
             } : function (data, val) {
-                return data.toUpperCase().indexOf(val) !== -1;
+                return String(data).toUpperCase().indexOf(val) !== -1;
             }) ;
             input.addClass(this.options.filterInputClass) ;
             return input ;
@@ -627,7 +627,8 @@
             this.filters = [] ;
             this.filterVals = [] ;
             if (this.options.filters) {
-                var tr = $('<tr class="datatable-filter-line"></tr>').insertAfter(this.table.find('thead tr').last()) ;
+                
+                var tr = $('<tr class="datatable-filter-line"></tr>') ;
                 for (var field in this.options.filters) {
                     if (this.options.filters.hasOwnProperty(field)) {
                         var td = $('<td></td>') ;
@@ -641,6 +642,9 @@
                         }
                         tr.append(td) ;
                     }
+                }
+                if (tr.find('td').length > 0) {
+                    tr.insertAfter(this.table.find('thead tr').last()) ;
                 }
             }
         },
