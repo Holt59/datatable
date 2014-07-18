@@ -491,6 +491,22 @@
         },
         
         /**
+         * Check if the specified value is in the specified array, without strict type checking.
+         *
+         * @param val The val to search
+         * @param arr The array
+         *
+         * @return true if the value was found in the array
+        **/
+        _isIn: function (val, arr) {
+            var found = false ;
+            for (var i = 0 ; i < arr.length && !found ; ++i) {
+                found = arr[i] == val ;
+            }
+            return found ;
+        },
+        
+        /**
          * 
          * Create a select filter for the specified field.
          * 
@@ -577,13 +593,13 @@
                     datatable.filter () ;
                 } ;
             } (allKeys, multiple, empty, this)) ;
-            this.addFilter(field, function (aKeys) {
+            this.addFilter(field, function (aKeys, datatable) {
                 return function (data, val) {
                     if (!val) { return false ; }
                     if (val == aKeys && !data) { return true ; }
-                    return val.indexOf(data) !== -1 ;
+                    return datatable._isIn(data, val) ;
                 } ;
-            } (allKeys)) ;
+            } (allKeys, this)) ;
             select.addClass(this.options.filterSelectClass) ;
             return select ;
         },
