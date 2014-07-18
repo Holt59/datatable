@@ -603,6 +603,7 @@ column can take different values:</p>
 <ul>
     <li><code>false</code> - No filter for the specified column.</li>
     <li><code>true</code> - Text input filter (see &laquo;Firstname&raquo; column on the example above).</li>
+    <li><code>'regexp'</code> - Regexp input filter.</li>
     <li><code>'select'</code> - Select input: The options are find according to the current data set. This value should never be used with ajax loading.</li>
     <li><code>{0: "Option 0", 1: "Option 1"}</code> - Select input with specified options.</li>
 </ul>
@@ -620,10 +621,12 @@ column can take different values:</p>
     /* True for multiple select, false for simple. Default value is false. */
     multiple: false
 }</code></pre>
-<p><em>The test between the 2 previous form is done according to 'values' key. If you have an option that use 'values' as
-a key, you have to use the last form.</em></p>
-<p>You can custom the default text in the input filter by specifying filterText option (See the example). If you specify a string for 'empty' option
-for, it will be displayed when no options is selected (ex: 'Pick to filter... ').</p>
+<p><strong>Warning: </strong>The difference between the two <code>'select'</code> filters is done according to the <code>'values'</code> key. If one of your options uses <code>'values'</code> as
+a key, you have to use the latest form.</p>
+<p>You can customize the default text in the input filter (i.e. the placeholder) by specifying <code>filterText</code> option (See the example). If you specify a string for the 
+<code>'empty'</code> option, it will be displayed when no options are selected (ex: 'Pick to filter... ').</p>
+<p>It is possible to directly specify a jQuery element (like <code>$('#my-input')</code>) as an element of the <code>filters</code> option, this element will not be moved
+inside the table (use it if you want your filter to add a filter outside the table).</p>
 
 <h3>lineFormat</h3>
 <p>You can customize the way line are displayed, the function should return a jQuery line (see default function below for example):</p>
