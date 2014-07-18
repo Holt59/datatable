@@ -490,7 +490,7 @@
             }) (this)) ;
             var regexp = this.options.filters[field] === 'regexp' || input.attr('data-regexp') ;
             this.addFilter(field, regexp ? function (data, val) {
-                return new RegExp(val).test(data);
+                return new RegExp(val).test(String(data));
             } : function (data, val) {
                 return String(data).toUpperCase().indexOf(val) !== -1;
             }) ;
