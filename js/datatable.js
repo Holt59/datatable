@@ -464,7 +464,12 @@
         **/
         createTextFilter: function (field) {
             var placeholder = this.options.filterText ? ('placeholder="' + this.options.filterText + '"') : '' ; 
-            var input = $('<input type="text" class="datatable-filter datatable-input-text" data-filter="' + field + '" ' + placeholder + '/>') ;
+            var input = this.options.filters[field] instanceof jQuery ? this.options.filters[field] : $('<input type="text" />') ;
+            if (this.options.filterText) {
+                input.attr('placeholder', this.options.filterText) ;
+            }
+            input.addClass('datatable-filter datatable-input-text');
+            input.attr('data-filter', field) ;
             this.filterVals[field] = '' ;
             var typewatch = (function(){
                 var timer = 0;
@@ -483,7 +488,10 @@
                     }, 300) ;
                 };
             }) (this)) ;
-            this.addFilter(field, function (data, val) {
+            var regexp = this.options.filters[field] === 'regexp' || input.attr('data-regexp') ;
+            this.addFilter(field, regexp ? function (data, val) {
+                return new RegExp(val).test(data);
+            } : function (data, val) {
                 return data.toUpperCase().indexOf(val) !== -1;
             }) ;
             input.addClass(this.options.filterInputClass) ;
@@ -519,7 +527,8 @@
         **/
         createSelectFilter: function (field) {
             var values = {}, selected = [], multiple = false, empty = true, emptyValue = "" ;
-            if (this.options.filters[field] === 'select') {
+            var tag = this.options.filters[field] instanceof jQuery ? this.options.filters[field] : false;
+            if (tag || this.options.filters[field] === 'select') {
                 values = this.getFilterOptions (field) ;
             }
             else {
@@ -559,7 +568,12 @@
                     selected = multiple ? Object.keys(values) : [] ;
                 }
             }
-            var select = $('<select ' + (multiple ? 'multiple="multiple"' : '') + ' class="datatable-filter datatable-select" data-filter="' + field + '"></select>') ;
+            var select = tag ? tag : $('<select></select>') ;
+            if (multiple) {
+                select.attr('multiple', 'multiple') ;
+            }
+            select.addClass('datatable-filter datatable-select') ;
+            select.attr('data-filter', field) ;
             if (empty) {
                 select.append('<option value="">' + emptyValue + '</option>') ;
             }
@@ -618,11 +632,11 @@
                     if (this.options.filters.hasOwnProperty(field)) {
                         var td = $('<td></td>') ;
                         if (this.options.filters[field] !== false) {
-                            if (this.options.filters[field] === true) {
-                                td.append(this.createTextFilter(field)) ;
-                            }
-                            else {
-                                td.append(this.createSelectFilter(field)) ;
+                            var opt = this.options.filters[field] ;
+                            var input = (opt === true || opt === 'regexp' || opt === 'input') || (opt instanceof jQuery && opt.is('input')) ;
+                            var filter = input ? this.createTextFilter(field) : this.createSelectFilter(field) ;
+                            if (!(opt instanceof jQuery)) {
+                                td.append(filter) ;
                             }
                         }
                         tr.append(td) ;
