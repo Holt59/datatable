@@ -532,7 +532,7 @@
             if (opt instanceof jQuery) { 
                 tag = opt ;
             }
-            else if ($.isPlainObject(opt) && 'element' in opt) {
+            else if ($.isPlainObject(opt) && 'element' in opt && opt['element']) {
                 tag = opt['element'] ;
             }
             if (opt instanceof jQuery || opt === 'select') {
