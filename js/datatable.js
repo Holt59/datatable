@@ -658,7 +658,6 @@
                     tr.insertAfter(this.table.find('thead tr').last()) ;
                 }
             }
-            this.resetFilters () ;
         },
             
         /** 
