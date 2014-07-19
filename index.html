@@ -612,15 +612,14 @@ column can take different values:</p>
 <pre><code class="prettyprint lang-javascript">{
     /* The jQuery element to use (if you want to use a custom select element), if not specified, a new select
     will be created. */
-    element: $('#my-select'),
-    /* The list of options. */
-    values: {0: "Option 0", 1: "Option 1"}, 
-    /* The select option(s), can be either a value or an array (for multiple select). If not specified, no value
-    will be selected (for simple select), or all the values (for multiple select). */
+    element: $('#my-select') | null,
+    /* The list of options. Notice that {0: "Option 0"} will output &lt;option value=0&gt;Option 0&lt;/option&gt;, so the value used to filter is 0, not "Option 0". 
+    HINT: If you don't want to specify the values manually, you can set this values: "auto" which will retrieve values from the table. */
+    values: {0: "Option 0", 1: "Option 1"} | "auto", 
+    /* The select default selected options, can be either a value or an array (for multiple select). If not specified, no value will be selected (for simple select), or all the values (for multiple select). */
     default: 0,
-    /* Specify if an empty entrie should be added. Default value is true. When no option is selected,
-    all the row are visible for this filter. This parameter as no effect on multiple select. */
-    empty: true,
+    /* Specify if an empty entry should be added. Default value is true. This parameter as no effect on multiple select. */
+    empty: true | "Pick to filter... ",
     /* True for multiple select, false for simple. Default value is false. */
     multiple: false
 }</code></pre>
