@@ -526,24 +526,31 @@
          * 
         **/
         createSelectFilter: function (field) {
+            var opt = this.options.filters[field] ;
             var values = {}, selected = [], multiple = false, empty = true, emptyValue = "" ;
-            var tag = this.options.filters[field] instanceof jQuery ? this.options.filters[field] : false;
-            if (tag || this.options.filters[field] === 'select') {
+            var tag = false ;
+            if (opt instanceof jQuery) { 
+                tag = opt ;
+            }
+            else if ($.isPlainObject(opt) && 'element' in opt) {
+                tag = opt['element'] ;
+            }
+            if (opt instanceof jQuery || opt === 'select') {
                 values = this.getFilterOptions (field) ;
             }
             else {
-                multiple = ('multiple' in this.options.filters[field]) && (this.options.filters[field].multiple === true) ;
-                empty = ('empty' in this.options.filters[field]) && this.options.filters[field].empty ;
-                emptyValue = (('empty' in this.options.filters[field]) && (typeof this.options.filters[field].empty === 'string')) ? this.options.filters[field].empty : '' ;
-                if ('values' in this.options.filters[field]) {
-                    if (this.options.filters[field].values === 'auto') {
+                multiple = ('multiple' in opt) && (opt.multiple === true) ;
+                empty = ('empty' in opt) && opt.empty ;
+                emptyValue = (('empty' in opt) && (typeof opt.empty === 'string')) ? opt.empty : '' ;
+                if ('values' in opt) {
+                    if (opt.values === 'auto') {
                         values = this.getFilterOptions (field) ;
                     }
                     else {
-                        values = this.options.filters[field].values ;
+                        values = opt.values ;
                     }
-                    if ('default' in this.options.filters[field]) {
-                        selected = this.options.filters[field].default ;
+                    if ('default' in opt) {
+                        selected = opt.default ;
                     }
                     else if (multiple) {
                         selected = [] ;
@@ -564,7 +571,7 @@
                     }
                 }
                 else {
-                    values = this.options.filters[field] ;
+                    values = opt ;
                     selected = multiple ? Object.keys(values) : [] ;
                 }
             }
@@ -572,10 +579,13 @@
             if (multiple) {
                 select.attr('multiple', 'multiple') ;
             }
+            if (opt.default) {
+                select.attr('data-default', opt.default) ;
+            }
             select.addClass('datatable-filter datatable-select') ;
             select.attr('data-filter', field) ;
             if (empty) {
-                select.append('<option value="">' + emptyValue + '</option>') ;
+                select.append('<option value="" data-empty="true">' + emptyValue + '</option>') ;
             }
             var allKeys = [];
             for (var key in values) {
@@ -625,9 +635,9 @@
         **/
         createFilter: function () {
             this.filters = [] ;
+            this.filterTags = [] ;
             this.filterVals = [] ;
             if (this.options.filters) {
-                
                 var tr = $('<tr class="datatable-filter-line"></tr>') ;
                 for (var field in this.options.filters) {
                     if (this.options.filters.hasOwnProperty(field)) {
@@ -636,7 +646,8 @@
                             var opt = this.options.filters[field] ;
                             var input = (opt === true || opt === 'regexp' || opt === 'input') || (opt instanceof jQuery && opt.is('input')) ;
                             var filter = input ? this.createTextFilter(field) : this.createSelectFilter(field) ;
-                            if (!(opt instanceof jQuery)) {
+                            this.filterTags.push(filter);
+                            if (!filter.parents('html').length) {
                                 td.append(filter) ;
                             }
                         }
@@ -647,6 +658,7 @@
                     tr.insertAfter(this.table.find('thead tr').last()) ;
                 }
             }
+            this.resetFilters () ;
         },
             
         /** 
@@ -682,6 +694,55 @@
             this.refresh () ;
         },
             
+
+        /**
+         *
+         * Reset all filters.
+         *
+        **/
+        resetFilters: function () {
+            var dtable = this ;
+            this.filterTags.forEach(function (e, i, a) {
+                var field = e.data('filter') ;
+                if (e.is('input')) {
+                    e.val('') ;
+                    dtable.filterVals[field] = '' ;
+                }
+                else {
+                    if (e.attr('multiple')) {
+                        var allKeys = [] ;
+                        e.find('option').each(function () {
+                            $(this).attr('selected', 'selected') ;
+                            allKeys.push($(this).val()) ;
+                        }) ;
+                        dtable.filterVals[field] = allKeys ;
+                    }
+                    else if (e.data('default') && e.find('option[value="' + e.data('default') + '"]').length > 0) {
+                        e.find('option').attr('selected', false) ;
+                        e.find('option[value="' + e.data('default') + '"]').attr('selected', 'selected') ;
+                        dtable.filterVals[field] = [e.data('default')];
+                    }
+                    else if (e.find('option').length > 0) {
+                        e.find('option').attr('selected', false) ;
+                        e.find('option').first().attr('selected', 'selected') ;
+                        if (e.find('option').first().data('empty')) {
+                            var allKeys = [] ;
+                            e.find('option').each(function () {
+                                if (!$(this).data('empty')) {
+                                    allKeys.push($(this).val()) ;
+                                }
+                            }) ;
+                            dtable.filterVals[field] = allKeys ;
+                        }
+                        else {
+                            dtable.filterVals[field] = [e.find('option').first().val()] ;
+                        }
+                    }
+                }
+            }) ;
+            this.filter() ;
+        },
+            
         /**
          * 
          * Check if the specified data match the filters according to this.filters
@@ -689,16 +750,13 @@
          * 
          * @param data The data to check
          * 
-         * @return true if the data match the filters, false otherwize
+         * @return true if the data match the filters, false otherwise
          * 
         **/
         checkFilter: function (data) {
             var ok = true ;
             for (var fk in this.filters) {
                 if (!this.filters[fk](data[fk], this.filterVals[fk])) {
-                    if (data['serie'] == 'Absurdomanies') {
-                        console.log('absurde = ' + fk + ', ' + data[fk] + ', ' + this.filterVals[fk]) ;
-                    }
                     ok = false ;
                     break ;
                 }
@@ -1148,6 +1206,9 @@
                     else {
                         ret = this.datatable.getCurrentPage () ;
                     }
+                    break ;
+                case 'reset-filters':
+                    this.datatable.resetFilters() ;
                     break ;
                 case 'select':
                     ret = this.datatable.row(args[1]) ;
