@@ -610,6 +610,9 @@ column can take different values:</p>
 <p>In the select form, the comparison is done according to option value, not option text.</p>
 <p>Another form exist to create select filter, which is specified as a plain javascript object: </p>
 <pre><code class="prettyprint lang-javascript">{
+    /* The jQuery element to use (if you want to use a custom select element), if not specified, a new select
+    will be created. */
+    element: $('#my-select'),
     /* The list of options. */
     values: {0: "Option 0", 1: "Option 1"}, 
     /* The select option(s), can be either a value or an array (for multiple select). If not specified, no value
@@ -665,6 +668,11 @@ inside the table (use it if you want your filter to add a filter outside the tab
             <td><code>page</code></td>
             <td>Page number</td>
             <td>If a argument is specified, load the specified page, otherwize return current page number.</td>
+        </tr>
+        <tr>
+            <td><code>reset-filters</code></td>
+            <td></td>
+            <td>Reset all filters.</td>
         </tr>
         <tr>
             <td><code>select</code></td>
