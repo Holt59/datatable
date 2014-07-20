@@ -610,13 +610,14 @@ according to second value, etc.).</p>
 <p>You can add filters on some columns if you want. The filter are text input or select (multiple or not).</p>
 <p>To add filters, you should specify the filters option which is an array. Each element of the array correspond to a
 column can take different values:</p>
-<ul>
-    <li><code>false</code> - No filter for the specified column.</li>
-    <li><code>true</code> - Text input filter (see &laquo;Firstname&raquo; column on the example above).</li>
-    <li><code>'regexp'</code> - Regexp input filter.</li>
-    <li><code>'select'</code> - Select input: The options are find according to the current data set. This value should never be used with ajax loading.</li>
-    <li><code>{0: "Option 0", 1: "Option 1"}</code> - Select input with specified options.</li>
-</ul>
+<table>
+    <tr><td><code>false</code></td><td>No filter for the specified column.</td></tr>
+    <tr><td><code>true</code></td><td>Text input filter (see &laquo;Firstname&raquo; column on the example above).</td></tr>
+    <tr><td><code>function (data, text) { }</code></td><td>Custom <code>&lt;input&gt;</code> filter, the first parameter is the value to test and the second one is the current input value (upper case).</td></tr>
+    <tr><td><code>'regexp'</code></td><td>Regexp input filter.</td></tr>
+    <tr><td><code>'select'</code></td><td>Select input: The options are find according to the current data set. This value should never be used with ajax loading.</td></tr>
+    <tr><td><code>{0: "Option 0", 1: "Option 1"}</code></td><td>Select filter options.</td></tr>
+</table>
 <p>In the select form, the comparison is done according to option value, not option text.</p>
 <p>Another form exist to create select filter, which is specified as a plain javascript object: </p>
 <pre><code class="prettyprint lang-javascript">{
