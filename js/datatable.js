@@ -944,6 +944,7 @@
                 return ;
             }
             this.data.sort(fnSort) ;
+            this.filter();
         },
             
         /**
