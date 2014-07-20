@@ -614,13 +614,18 @@
                     datatable.filter () ;
                 } ;
             } (allKeys, multiple, empty, this)) ;
-            this.addFilter(field, function (aKeys, datatable) {
-                return function (data, val) {
-                    if (!val) { return false ; }
-                    if (val == aKeys && !data) { return true ; }
-                    return datatable._isIn(data, val) ;
-                } ;
-            } (allKeys, this)) ;
+            if ($.isPlainObject(opt) && typeof opt.fn === 'function') {
+                this.addFilter(field, opt.fn) ;
+            }
+            else {
+                this.addFilter(field, function (aKeys, datatable) {
+                    return function (data, val) {
+                        if (!val) { return false ; }
+                        if (val == aKeys && !data) { return true ; }
+                        return datatable._isIn(data, val) ;
+                    } ;
+                } (allKeys, this)) ;
+            }
             select.addClass(this.options.filterSelectClass) ;
             return select ;
         },
