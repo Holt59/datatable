@@ -470,8 +470,18 @@
         </tr>
         <tr>
             <td>filterText</td>
-            <td><code>Search... </code></td>
-            <td>The placeholder for the filter input.</td>
+            <td><code>'Search... '</code></td>
+            <td>The placeholder for the input filter (text and regexp).</td>
+        </tr>
+        <tr>
+            <td>filterEmptySelect</td>
+            <td><code>''</code></td>
+            <td>The default empty text for select filter.</td>
+        </tr>
+        <tr>
+            <td>filterSelectOptions</td>
+            <td><code>false</code></td>
+            <td>If enable, select options will be filtered according to other filters.</td>
         </tr>
         <tr>
             <td>filterInputClass</td>
@@ -621,7 +631,22 @@ column can take different values:</p>
     /* Specify if an empty entry should be added. Default value is true. This parameter as no effect on multiple select. */
     empty: true | "Pick to filter... ",
     /* True for multiple select, false for simple. Default value is false. */
-    multiple: false
+    multiple: false,
+    /* A custom filter function to specify if you don't want the value to be filtered according to the options key. */
+    fn: function (data, selected) {
+        /* Note that selected is always an array of string. */
+        if (selected.length === 1) { // Only one option selected
+            if (selected[0] === "1") { // Values are always strings
+                return data < 10 ;
+            }
+            else {
+                return data >= 10 ;
+            }
+        }
+        /* Note that when using multiple select, selected will contain selected keys.
+        When the empty value is picked, the selected array will contain all available keys. */
+        return true ;
+    }
 }</code></pre>
 <p><strong>Warning: </strong>The difference between the two <code>'select'</code> filters is done according to the <code>'values'</code> key. If one of your options uses <code>'values'</code> as
 a key, you have to use the latest form.</p>
