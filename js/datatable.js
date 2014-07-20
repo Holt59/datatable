@@ -460,8 +460,9 @@
          * 
         **/
         createTextFilter: function (field) {
+            var opt = this.options.filters[field] ;
             var placeholder = this.options.filterText ? ('placeholder="' + this.options.filterText + '"') : '' ; 
-            var input = this.options.filters[field] instanceof jQuery ? this.options.filters[field] : $('<input type="text" />') ;
+            var input = opt instanceof jQuery ? opt : $('<input type="text" />') ;
             if (this.options.filterText) {
                 input.attr('placeholder', this.options.filterText) ;
             }
@@ -485,12 +486,20 @@
                     }, 300) ;
                 };
             }) (this)) ;
-            var regexp = this.options.filters[field] === 'regexp' || input.attr('data-regexp') ;
-            this.addFilter(field, regexp ? function (data, val) {
-                return new RegExp(val).test(String(data));
-            } : function (data, val) {
-                return String(data).toUpperCase().indexOf(val) !== -1;
-            }) ;
+            var regexp = opt === 'regexp' || input.attr('data-regexp') ;
+            if (jQuery.isFunction(opt)) {
+                this.addFilter(field, opt) ;
+            }
+            else if (regexp) {
+                this.addFilter(field, function (data, val) {
+                    return new RegExp(val).test(String(data));
+                }) ;
+            }
+            else {
+                this.addFilter(field, function (data, val) {
+                    return String(data).toUpperCase().indexOf(val) !== -1;
+                }) ;
+            }
             input.addClass(this.options.filterInputClass) ;
             return input ;
         },
@@ -646,7 +655,7 @@
                         var td = $('<td></td>') ;
                         if (this.options.filters[field] !== false) {
                             var opt = this.options.filters[field] ;
-                            var input = (opt === true || opt === 'regexp' || opt === 'input') || (opt instanceof jQuery && opt.is('input')) ;
+                            var input = (opt === true || opt === 'regexp' || opt === 'input' || jQuery.isFunction(opt)) || (opt instanceof jQuery && opt.is('input')) ;
                             var filter = input ? this.createTextFilter(field) : this.createSelectFilter(field) ;
                             this.filterTags.push(filter);
                             if (!filter.parents('html').length) {
