@@ -657,7 +657,7 @@
                             var opt = this.options.filters[field] ;
                             var input = (opt === true || opt === 'regexp' || opt === 'input' || jQuery.isFunction(opt)) || (opt instanceof jQuery && opt.is('input')) ;
                             var filter = input ? this.createTextFilter(field) : this.createSelectFilter(field) ;
-                            this.filterTags.push(filter);
+                            this.filterTags[field] = filter;
                             if (!filter.parents('html').length) {
                                 td.append(filter) ;
                             }
@@ -715,7 +715,7 @@
                 }
                 for (var k = 0 ; k < allKeys.length ; ++k) {
                     var keys = Object.keys(allKeys[k]) ;
-                    if (this.filterTags[k].is('select')) {
+                    if (this.filterTags[k] && this.filterTags[k].is('select')) {
                         this.filterTags[k].find('option:not([data-empty])').hide () ;
                         this.filterTags[k].find('option').filter(function () {
                             return dtable._isIn($(this).val(), keys) ;
