@@ -10,8 +10,6 @@
         this.currentStart = 0 ; // different from currentPage * pageSize because there is a filter
         this.filterIndex = [] ;
         
-        this.table.addClass(this.options.tableClass) ;
-        
         /* If nb columns not specified, count the nunber of column from thead. */
         if (this.options.nbColumns < 0) {
             this.options.nbColumns = this.table.find('thead tr').first().find('th').length ;
@@ -88,10 +86,10 @@
                 }
             }
         }
-        
+                        
         /* Add sorting class to all th and add callback. */
         this.createSort () ;
-        
+                
         /* Add filter where it's needed. */
         this.createFilter () ;
         
@@ -236,7 +234,6 @@
                     }
                     else {
                         if (this.ajaxAllInOne) {
-                            // console.log('refresh ok') ;
                             this.ajaxThis.data = this.ajaxThis.syncData ;
                             delete this.ajaxThis.syncData ;
                         }
@@ -527,7 +524,7 @@
         **/
         createSelectFilter: function (field) {
             var opt = this.options.filters[field] ;
-            var values = {}, selected = [], multiple = false, empty = true, emptyValue = "" ;
+            var values = {}, selected = [], multiple = false, empty = true, emptyValue = this.options.filterEmptySelect ;
             var tag = false ;
             if (opt instanceof jQuery) { 
                 tag = opt ;
@@ -541,7 +538,7 @@
             else {
                 multiple = ('multiple' in opt) && (opt.multiple === true) ;
                 empty = ('empty' in opt) && opt.empty ;
-                emptyValue = (('empty' in opt) && (typeof opt.empty === 'string')) ? opt.empty : '' ;
+                emptyValue = (('empty' in opt) && (typeof opt.empty === 'string')) ? opt.empty : this.options.filterEmptySelect ;
                 if ('values' in opt) {
                     if (opt.values === 'auto') {
                         values = this.getFilterOptions (field) ;
@@ -688,6 +685,28 @@
                 }
                 if (this.currentStart < 0) {
                     this.currentStart = 0 ;
+                }
+            }
+            if (this.options.filterSelectOptions && this.filterIndex.length > 0) {
+                var dtable = this ;
+                var allKeys = [] ;
+                for (var j = 0 ; j < this.data[0].length ; ++j) {
+                    allKeys.push({}) ;
+                }
+                for (var i = 0 ; i < this.filterIndex.length ; ++i) {
+                    var row = this.data[this.filterIndex[i]] ;
+                    for (var j = 0 ; j < row.length ; ++j) {
+                        allKeys[j][row[j]] = true ;
+                    }
+                }
+                for (var k = 0 ; k < allKeys.length ; ++k) {
+                    var keys = Object.keys(allKeys[k]) ;
+                    if (this.filterTags[k].is('select')) {
+                        this.filterTags[k].find('option:not([data-empty])').hide () ;
+                        this.filterTags[k].find('option').filter(function () {
+                            return dtable._isIn($(this).val(), keys) ;
+                        }).show() ;
+                    }
                 }
             }
             this.refresh () ;
@@ -1259,6 +1278,8 @@
         lastPage: '&gt;&gt;',
         filters: {},
         filterText: 'Search... ',
+        filterEmptySelect: '',
+        filterSelectOptions: false,
         filterInputClass: '',
         filterSelectClass: '',
         beforeRefresh: function () { },
