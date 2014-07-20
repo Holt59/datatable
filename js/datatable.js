@@ -625,6 +625,7 @@
             } (allKeys, multiple, empty, this)) ;
             if ($.isPlainObject(opt) && typeof opt.fn === 'function') {
                 this.addFilter(field, opt.fn) ;
+                select.data('filterType', 'function') ;
             }
             else {
                 this.addFilter(field, function (aKeys, datatable) {
@@ -634,6 +635,7 @@
                         return datatable._isIn(data, val) ;
                     } ;
                 } (allKeys, this)) ;
+                select.data('filterType', 'default') ;
             }
             select.addClass(this.options.filterSelectClass) ;
             return select ;
@@ -715,7 +717,7 @@
                 }
                 for (var k = 0 ; k < allKeys.length ; ++k) {
                     var keys = Object.keys(allKeys[k]) ;
-                    if (this.filterTags[k] && this.filterTags[k].is('select')) {
+                    if (this.filterTags[k] && this.filterTags[k].is('select') && this.filterTags[k].data('filterType') == 'default') {
                         this.filterTags[k].find('option:not([data-empty])').hide () ;
                         this.filterTags[k].find('option').filter(function () {
                             return dtable._isIn($(this).val(), keys) ;
