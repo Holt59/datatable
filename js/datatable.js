@@ -421,6 +421,15 @@
             }
             var key = this.options.sortKey ;
             var asc = this.options.sortDir === 'asc';
+            var fn ;
+            if (jQuery.isFunction(this.options.sort[key])) {
+                return function  (s) {
+                    return function (a, b) {
+                        var vala = a[key], valb = b[key] ;
+                        return asc ? s(vala, valb) : -s(vala, valb) ;
+                    } ;
+                } (this.options.sort[key]) ;
+            }
             return function (a,b) {
                 var vala = a[key], valb = b[key] ;
                 if (vala > valb) { return asc ?  1 : -1 ; }
@@ -661,13 +670,14 @@
                             var filter = input ? this.createTextFilter(field) : this.createSelectFilter(field) ;
                             this.filterTags[field] = filter;
                             if (!filter.parents('html').length) {
+                                td.addClass('datatable-filter-cell') ;
                                 td.append(filter) ;
                             }
                         }
                         tr.append(td) ;
                     }
                 }
-                if (tr.find('td').length > 0) {
+                if (tr.find('td.datatable-filter-cell').length > 0) {
                     tr.insertAfter(this.table.find('thead tr').last()) ;
                 }
             }
