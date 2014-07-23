@@ -39,10 +39,10 @@
             $('<tbody></tbody>').insertAfter(this.table.find('thead').first()) ;
         }
                 
-        if (jQuery.isArray(this.options.data)) {
+        if ($.isArray(this.options.data)) {
             this.data = this.options.data ;
         }
-        else if (jQuery.isPlainObject(this.options.data)) {
+        else if ($.isPlainObject(this.options.data)) {
             if (this.table.data('size')) {
                 this.options.data.size = parseInt(this.table.data('size'), 10) ;    
             }
@@ -219,7 +219,7 @@
                 ajaxI: start,
                 ajaxAllInOne: allInOne,
                 ajaxThis: this,
-                success: function (data, text, jqxhr) {
+                success: function (data, _text, _jqxhr) {
                     if (data.length !== 0) {
                         if (this.ajaxAllInOne) {
                             this.ajaxThis.syncData = this.ajaxThis.syncData.concat(data) ;
@@ -243,7 +243,7 @@
                         this.ajaxThis.filter (true) ;
                     }
                 },
-                error: function (jqhxr, text, error) {
+                error: function (_jqhxr, text, error) {
                     console.log("ERROR: " + error + " - " + text) ;
                     this.ajaxThis.getAjaxDataSync(this.ajaxI, this.ajaxAllInOne) ;
                 }
@@ -413,7 +413,7 @@
             if (this.options.sort === false) {
                 return false ;
             }
-            if (jQuery.isFunction(this.options.sort)) {
+            if ($.isFunction(this.options.sort)) {
                 return this.options.sort ;
             }
             if (this.data.length === 0 || !(this.options.sortKey in this.data[0])) {
@@ -421,8 +421,7 @@
             }
             var key = this.options.sortKey ;
             var asc = this.options.sortDir === 'asc';
-            var fn ;
-            if (jQuery.isFunction(this.options.sort[key])) {
+            if ($.isFunction(this.options.sort[key])) {
                 return function  (s) {
                     return function (a, b) {
                         var vala = a[key], valb = b[key] ;
@@ -470,8 +469,7 @@
         **/
         createTextFilter: function (field) {
             var opt = this.options.filters[field] ;
-            var placeholder = this.options.filterText ? ('placeholder="' + this.options.filterText + '"') : '' ; 
-            var input = opt instanceof jQuery ? opt : $('<input type="text" />') ;
+            var input = opt instanceof $ ? opt : $('<input type="text" />') ;
             if (this.options.filterText) {
                 input.attr('placeholder', this.options.filterText) ;
             }
@@ -496,7 +494,7 @@
                 };
             }) (this)) ;
             var regexp = opt === 'regexp' || input.attr('data-regexp') ;
-            if (jQuery.isFunction(opt)) {
+            if ($.isFunction(opt)) {
                 this.addFilter(field, opt) ;
             }
             else if (regexp) {
@@ -544,13 +542,13 @@
             var opt = this.options.filters[field] ;
             var values = {}, selected = [], multiple = false, empty = true, emptyValue = this.options.filterEmptySelect ;
             var tag = false ;
-            if (opt instanceof jQuery) { 
+            if (opt instanceof $) { 
                 tag = opt ;
             }
-            else if ($.isPlainObject(opt) && 'element' in opt && opt['element']) {
-                tag = opt['element'] ;
+            else if ($.isPlainObject(opt) && 'element' in opt && opt.element) {
+                tag = opt.element ;
             }
-            if (opt instanceof jQuery || opt === 'select') {
+            if (opt instanceof $ || opt === 'select') {
                 values = this.getFilterOptions (field) ;
             }
             else {
@@ -666,7 +664,7 @@
                         var td = $('<td></td>') ;
                         if (this.options.filters[field] !== false) {
                             var opt = this.options.filters[field] ;
-                            var input = (opt === true || opt === 'regexp' || opt === 'input' || jQuery.isFunction(opt)) || (opt instanceof jQuery && opt.is('input')) ;
+                            var input = (opt === true || opt === 'regexp' || opt === 'input' || $.isFunction(opt)) || (opt instanceof $ && opt.is('input')) ;
                             var filter = input ? this.createTextFilter(field) : this.createSelectFilter(field) ;
                             this.filterTags[field] = filter;
                             if (!filter.parents('html').length) {
@@ -746,7 +744,7 @@
         **/
         resetFilters: function () {
             var dtable = this ;
-            this.filterTags.forEach(function (e, i, a) {
+            this.filterTags.forEach(function (e, _i, _a) {
                 var field = e.data('filter') ;
                 if (e.is('input')) {
                     e.val('') ;
@@ -864,7 +862,7 @@
         **/
         createSort: function () {
             var dataTable = this ;
-            if (!jQuery.isFunction(this.options.sort)) {
+            if (!$.isFunction(this.options.sort)) {
                       
                 var countTH = 0 ;
                 
@@ -878,10 +876,10 @@
                     }
                     else {
                         var key ;
-                        if (jQuery.isArray(dataTable.options.sort)) {
+                        if ($.isArray(dataTable.options.sort)) {
                             key = countTH ;
                         }
-                        else if (jQuery.isPlainObject(dataTable.options.sort)) {
+                        else if ($.isPlainObject(dataTable.options.sort)) {
                             key = Object.keys(dataTable.options.sort)[countTH] ;
                         }
                         if (key !== undefined && dataTable.options.sort[key]) {
@@ -930,7 +928,7 @@
          * 
         **/
         triggerSort: function () {
-            if (jQuery.isFunction(this.options.sort)) {
+            if ($.isFunction(this.options.sort)) {
                 this.sort() ;
                 this.refresh () ;
             }
