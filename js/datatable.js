@@ -528,6 +528,43 @@
         },
         
         /**
+         * Return the index of the specified element in the object.
+         *
+         * @param v
+         * @param a
+         *
+         * @return The index, or -1
+        **/
+        _index: function (v, a) {
+            if (a === undefined || a === null) {
+                return -1 ;
+            }
+            var index = -1;
+            for (var i = 0 ; i < a.length && index == -1 ; ++i) {
+                if (a[i] === v) index = i ;
+            }
+            return index ;
+        },
+        
+        /**
+         * Return the keys of the specified object.
+         *
+         * @param obj
+         *
+         * @return The keys of the specified object.
+        **/
+        _keys: function (obj) {
+            if (obj === undefined || obj === null) {
+                return undefined ;
+            }
+            var keys = [];
+            for (var k in obj) {
+                if (obj.hasOwnProperty(k)) keys.push(k) ;
+            }
+            return keys ;
+        },
+        
+        /**
          * 
          * Create a select filter for the specified field.
          * 
@@ -563,13 +600,13 @@
                         values = opt.values ;
                     }
                     if ('default' in opt) {
-                        selected = opt.default ;
+                        selected = opt['default'] ;
                     }
                     else if (multiple) {
                         selected = [] ;
                         for (var k in values) {
                             if ($.isPlainObject(values[k])) {
-                                selected = selected.concat(Object.keys(values[k])) ;
+                                selected = selected.concat(this._keys(values[k])) ;
                             }
                             else {
                                 selected.push(k) ;
@@ -585,15 +622,15 @@
                 }
                 else {
                     values = opt ;
-                    selected = multiple ? Object.keys(values) : [] ;
+                    selected = multiple ? this._keys(values) : [] ;
                 }
             }
             var select = tag ? tag : $('<select></select>') ;
             if (multiple) {
                 select.attr('multiple', 'multiple') ;
             }
-            if (opt.default) {
-                select.attr('data-default', opt.default) ;
+            if (opt['default']) {
+                select.attr('data-default', opt['default']) ;
             }
             select.addClass('datatable-filter datatable-select') ;
             select.attr('data-filter', field) ;
@@ -608,7 +645,7 @@
                         if (values[key].hasOwnProperty(skey)) {
                             allKeys.push(skey) ;
                             optgroup.append('<option value="' + skey + '" ' + 
-                                ((selected.indexOf(skey) !== -1  || selected.indexOf(parseInt(skey)) !== -1) ? 'selected' : '') + '>' + 
+                                (this._isIn(skey, selected) ? 'selected' : '') + '>' + 
                                 values[key][skey] + '</option>') ;
                         }
                     }
@@ -617,7 +654,7 @@
                 else {
                     allKeys.push(key) ;
                     select.append('<option value="' + key + '" ' + 
-                        ((selected.indexOf(key) !== -1  || selected.indexOf(parseInt(key)) !== -1) ? 'selected' : '') + '>' + values[key] + '</option>') ;
+                        (this._isIn(key, selected) ? 'selected' : '') + '>' + values[key] + '</option>') ;
                 }
             }
             var val = select.val() ;
@@ -724,7 +761,7 @@
                     }
                 }
                 for (var k = 0 ; k < allKeys.length ; ++k) {
-                    var keys = Object.keys(allKeys[k]) ;
+                    var keys = this._keys(allKeys[k]) ;
                     if (this.filterTags[k] && this.filterTags[k].is('select') && this.filterTags[k].data('filterType') == 'default') {
                         this.filterTags[k].find('option:not([data-empty])').hide () ;
                         this.filterTags[k].find('option').filter(function () {
@@ -744,7 +781,7 @@
         **/
         resetFilters: function () {
             var dtable = this ;
-            this.filterTags.forEach(function (e, _i, _a) {
+            $.each(this.filterTags, function (_i, e) {
                 var field = e.data('filter') ;
                 if (e.is('input')) {
                     e.val('') ;
@@ -880,7 +917,7 @@
                             key = countTH ;
                         }
                         else if ($.isPlainObject(dataTable.options.sort)) {
-                            key = Object.keys(dataTable.options.sort)[countTH] ;
+                            key = this._keys(dataTable.options.sort)[countTH] ;
                         }
                         if (key !== undefined && dataTable.options.sort[key]) {
                             $(this).data('sort', key) ;
@@ -1030,7 +1067,7 @@
             this.data.push(data) ; 
             this.sort() ;
             this.filter () ;
-            this.currentStart = parseInt(this.filterIndex.indexOf(this.data.indexOf(data)) / this.options.pageSize, 10) * this.options.pageSize ;
+            this.currentStart = parseInt(this._index(this._index(data, this.data), this.filterIndex) / this.options.pageSize, 10) * this.options.pageSize ;
             this.refresh () ;
         },
             
@@ -1081,7 +1118,7 @@
                 }
                 this.sort() ;
                 this.filter () ;
-                this.currentStart = parseInt(this.filterIndex.indexOf(this.indexOf(id)) / this.options.pageSize, 10) * this.options.pageSize ;
+                this.currentStart = parseInt(this._index(this.indexOf(id), this.filterIndex) / this.options.pageSize, 10) * this.options.pageSize ;
                 this.refresh () ;
             }
         },
