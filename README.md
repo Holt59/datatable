@@ -1,5 +1,5 @@
-Datatable v1.0.4
-=========
+Datatable v1.0.5
+================
 
 Datatable is a jQuery plugin for dynamic datatables with pagination, filtering and ajax loading.
 
@@ -7,31 +7,23 @@ How to use?
 ===========
 
 Datatable is quite simple to use. Just add the CSS and Js file to your page (do not forget jquery):
-`<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>` 
-`<script type="text/javascript" src="js/datatable.js"></script>`
+
+```
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="js/datatable.js"></script>
+```
 
 And run:
-`$('#MyTable').datatable() ;`
 
-If you use bootstrap CSS, you can use datatable-boostrap.css instead of datatable.css (which is just the datatable-bootstrap.css with some additional style).
+```
+$('#MyTable').datatable() ;
+```
 
-For more information, check out http://holt59.github.io/datatable
+**Note:** If you use bootstrap CSS, you use `datatable-boostrap.css` instead of `datatable.css`.
 
-How to modify CSS?
-==================
+The full plugin documentation is available here: http://holt59.github.io/datatable
 
-The datatable plugin come with small CSS files, one for non-bootstrap theme and others for bootstrap theme. These CSS files does not modify tables skin, they just:
-
-1. Add background-img to sorting header
-2. Add margin to ajax load bar
-3. Create skin for pagination div (non-boostrap only)
-4. Create skin for ajax loading bar (non-boostrap only)
-
-Bootstrap CSS files use bootstrap pagination div and loading bar.
-
-<strong>Warning: </strong> If you use bootstrap 3, you need to manually set the <code>pagingListClass</code> and <code>pagingDivClass</code> options to match bootstrap 3 pagination classes.
-
-If you want to add a theme, do not hesitate to send me a mail! If you need more information on how to customize table CSS, do not hesitate to contact me.
+**Warning:** If you use bootstrap 3, you need to manually set the <code>pagingListClass</code> and <code>pagingDivClass</code> options to match bootstrap 3 pagination classes.
 
 Copyright and license
 =====================
