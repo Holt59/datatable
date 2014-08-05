@@ -19,7 +19,7 @@ And run:
 $('#MyTable').datatable() ;
 ```
 
-**Note:** If you use bootstrap CSS, you use `datatable-boostrap.css` instead of `datatable.css`.
+**Note:** If you are using bootstrap, use `datatable-boostrap.css` instead of `datatable.css`.
 
 The full plugin documentation is available here: http://holt59.github.io/datatable
 
