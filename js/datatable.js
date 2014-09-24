@@ -835,7 +835,11 @@
         checkFilter: function (data) {
             var ok = true ;
             for (var fk in this.filters) {
-                if (!this.filters[fk](data[fk], this.filterVals[fk])) {
+                var currentData = data[fk];
+                if ($(currentData).is('*')) {
+                    currentData = $(currentData).text() ;
+                } 
+                if (!this.filters[fk](currentData, this.filterVals[fk])) {
                     ok = false ;
                     break ;
                 }
@@ -872,7 +876,13 @@
             values.sort() ;
             for (var i in values) {
                 if (values.hasOwnProperty(i)) {
-                    options[values[i]] = values[i] ;
+                    if ($(values[i]).is('*')) {
+                        var txt = $(values[i]).text() ;
+                        options[txt] = txt ;
+                    } 
+                    else {
+                        options[values[i]] = values[i] ;
+                    }                   
                 }
             }
             return options ;
