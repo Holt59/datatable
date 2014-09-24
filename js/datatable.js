@@ -399,7 +399,7 @@
             var lp = parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
             var first = this.filterIndex.length ? this.currentStart + 1 : 0 ;
             var last = (this.currentStart + this.options.pageSize) > this.filterIndex.length ? this.filterIndex.length : this.currentStart + this.options.pageSize ;
-            this.getCounter().html(this.options.counterText(cp, lp, first, last, this.filterIndex.length)) ;
+            this.getCounter().html(this.options.counterText(cp, lp, first, last, this.filterIndex.length, this.data.length)) ;
         },
             
         /** 
@@ -835,7 +835,11 @@
         checkFilter: function (data) {
             var ok = true ;
             for (var fk in this.filters) {
-                if (!this.filters[fk](data[fk], this.filterVals[fk])) {
+                var currentData = data[fk];
+                if ($(currentData).is('*')) {
+                    currentData = $(currentData).text() ;
+                } 
+                if (!this.filters[fk](currentData, this.filterVals[fk])) {
                     ok = false ;
                     break ;
                 }
@@ -872,7 +876,13 @@
             values.sort() ;
             for (var i in values) {
                 if (values.hasOwnProperty(i)) {
-                    options[values[i]] = values[i] ;
+                    if ($(values[i]).is('*')) {
+                        var txt = $(values[i]).text() ;
+                        options[txt] = txt ;
+                    } 
+                    else {
+                        options[values[i]] = values[i] ;
+                    }                   
                 }
             }
             return options ;
@@ -1331,8 +1341,13 @@
         pagingNumberOfPages: 9,
         identify: false,
         onChange: function (oldPage, newPage) { },
-        counterText: function (currentPage, totalPage, firstRow, lastRow, totalRow) {
-            return 'Page ' + currentPage + ' on ' + totalPage + '. Starting at ' + firstRow + ', ending at ' + lastRow + ' over ' + totalRow + ' entries.' ;
+        counterText: function (currentPage, totalPage, firstRow, lastRow, totalRow, totalRowUnfiltered) {
+            var counterText = 'Page ' + currentPage + ' on ' + totalPage + '. Showing ' + firstRow + ' to ' + lastRow + ' of ' + totalRow + ' entries' ;
+            if(totalRow != totalRowUnfiltered) {
+                counterText += ' (filtered from ' + totalRowUnfiltered + ' total entries)' ;
+            }
+            counterText += '.' ;
+            return counterText ;
         },
         firstPage: '&lt;&lt;',
         prevPage: '&lt;',
