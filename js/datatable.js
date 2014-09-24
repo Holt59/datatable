@@ -399,7 +399,7 @@
             var lp = parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
             var first = this.filterIndex.length ? this.currentStart + 1 : 0 ;
             var last = (this.currentStart + this.options.pageSize) > this.filterIndex.length ? this.filterIndex.length : this.currentStart + this.options.pageSize ;
-            this.getCounter().html(this.options.counterText(cp, lp, first, last, this.filterIndex.length)) ;
+            this.getCounter().html(this.options.counterText(cp, lp, first, last, this.filterIndex.length, this.data.length)) ;
         },
             
         /** 
@@ -1331,8 +1331,13 @@
         pagingNumberOfPages: 9,
         identify: false,
         onChange: function (oldPage, newPage) { },
-        counterText: function (currentPage, totalPage, firstRow, lastRow, totalRow) {
-            return 'Page ' + currentPage + ' on ' + totalPage + '. Starting at ' + firstRow + ', ending at ' + lastRow + ' over ' + totalRow + ' entries.' ;
+        counterText: function (currentPage, totalPage, firstRow, lastRow, totalRow, totalRowUnfiltered) {
+            var counterText = 'Page ' + currentPage + ' on ' + totalPage + '. Showing ' + firstRow + ' to ' + lastRow + ' of ' + totalRow + ' entries' ;
+            if(totalRow != totalRowUnfiltered) {
+                counterText += ' (filtered from ' + totalRowUnfiltered + ' total entries)' ;
+            }
+            counterText += '.' ;
+            return counterText ;
         },
         firstPage: '&lt;&lt;',
         prevPage: '&lt;',
