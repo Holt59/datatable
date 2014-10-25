@@ -824,6 +824,26 @@
             
         /**
          * 
+         * Check if str is a valid HTML tag.
+         *
+         * @param str The string to check.
+         *
+         * @return true if str is a valid HTML tag, false otherwise.
+         *
+        **/
+        isHtml: function (str) {
+            var _isHtml = false ;
+            try {
+                _isHtml = $(str).is('*') ;
+            }
+            catch (err) {
+                _isHtml = false ;
+            }
+            return _isHtml ;
+        },
+        
+        /**
+         * 
          * Check if the specified data match the filters according to this.filters
          * and this.filterVals.
          * 
@@ -836,7 +856,7 @@
             var ok = true ;
             for (var fk in this.filters) {
                 var currentData = data[fk];
-                if ($(currentData).is('*')) {
+                if (this.isHtml(currentData)) {
                     currentData = $(currentData).text() ;
                 } 
                 if (!this.filters[fk](currentData, this.filterVals[fk])) {
@@ -876,7 +896,7 @@
             values.sort() ;
             for (var i in values) {
                 if (values.hasOwnProperty(i)) {
-                    if ($(values[i]).is('*')) {
+                    if (this.isHtml(values[i])) {
                         var txt = $(values[i]).text() ;
                         options[txt] = txt ;
                     } 
