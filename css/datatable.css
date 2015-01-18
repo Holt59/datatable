@@ -29,7 +29,7 @@
 
 .pagination ul li a {
 	cursor: pointer ;
-	width: 20px;
+	min-width: 20px;
 	display: block;
 	background-color: white;
 	color: #7AF;
