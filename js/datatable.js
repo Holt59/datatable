@@ -947,7 +947,7 @@
                             key = countTH ;
                         }
                         else if ($.isPlainObject(dataTable.options.sort)) {
-                            key = this._keys(dataTable.options.sort)[countTH] ;
+                            key = dataTable._keys(dataTable.options.sort)[countTH] ;
                         }
                         if (key !== undefined && dataTable.options.sort[key]) {
                             $(this).data('sort', key) ;
