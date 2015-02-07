@@ -832,6 +832,9 @@
          *
         **/
         isHtml: function (str) {
+            if (typeof str !== "string") {
+                return false ;
+            }
             var _isHtml = false ;
             try {
                 _isHtml = $(str).is('*') ;
