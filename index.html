@@ -595,10 +595,18 @@ argument is resp. lower, equal or greater than the second.</p>
 <p><strong>Specifying which column can be sort</strong></p>
 <p>You have 3 ways to specify the columns, depending on the sort option:</p>
 <ul>
-    <li><code>false</code> - No sortable columns</li>
-    <li><code>true</code> - The sortable columns will be find according to <code>data-sort</code> attribute of &lt;th&gt; tags.</li>
-    <li><code>'*'</code> - All the column will be sortable.</li>
-    <li><code>[true, false, true]</code> - Column at index i will be sortable if <code>true</code> (see the example above).</li>
+    <li><code class="prettyprint lang-javascript">false</code> - No sortable columns</li>
+    <li><code class="prettyprint lang-javascript">true</code> - The sortable columns will be find according to <code>data-sort</code> attribute of &lt;th&gt; tags.</li>
+    <li><code class="prettyprint lang-javascript">'*'</code> - All the column will be sortable.</li>
+    <li><code class="prettyprint lang-javascript">[true, false, function (l, r) { }, true]</code>
+        <ul>
+            <li><code class="prettyprint lang-javascript">function (l, r) { }</code> (return values must be -1, 0 or 1 if l is lower, equal or greater than r), the column
+            is sortable, and the order is computed using the specified function (for this column).</li>
+            <li><code class="prettyprint lang-javascript">false</code>, the column is not sortable.</li>
+            <li><code class="prettyprint lang-javascript">true</code>, shortcut for the following function: <code class="prettyprint lang-javascript">function (l, r) { return l < r ? -1 : (l > r ? 1 : 0) ; }</code>,
+            which is a standard sort function.</li>
+        </ul>
+    </li>
 </ul>
 <p>When the plugin sort the data, it will used a key to find which field in each element it should compare. You can specify
 the sorting key of each column in the <code>data-sort</code> attribute of &lt;th&gt; tag. If you don't specify key but
@@ -666,16 +674,31 @@ inside the table (use it if you want your filter to add a filter outside the tab
     return res ;
 }</code></pre>
 
+<p><em><strong>Hint:</strong></em> You can use this function to store <code>data</code> into your row or to display hidden columns:</p>
+<pre><code class="prettyprint lang-javascript linenums">function (id, data) { 
+    var res = $('&lt;tr&gt;&lt;/tr&gt;') ;
+    res.data('data', data) ; // Store the data
+    res.attr('data-id', id) ; // Store the id
+    for (var key in data) {
+        var td = $('&lt;td&gt;' + data[key] + '&lt;/td&gt;') ;
+        if (key === 'field') {
+            td.hide() ; // Don't display the field column
+        }
+        res.append(td) ; 
+    }
+    return res ;
+}</code></pre>
+
 <h2><a name="comand" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Available commands</h2>
 <p>Some commands are available with datatable plugin, you can call a command like this way: </p>
-<pre><code class="prettyprint lang-javascript linenums">$('#MyTable').datatable(command, args) ; </code></pre>
+<pre><code class="prettyprint lang-javascript linenums">$('#MyTable').datatable(command, args1, args2, ...) ; </code></pre>
 <p>Available commands are: </p>
 <table>
     <thead>
         <tr>
-            <td>Command</td>
-            <td>Args</td>
-            <td>Info</td>
+            <th>Command</th>
+            <th>Args</th>
+            <th>Info</th>
         </tr>
     </thead>
     <body>
@@ -732,7 +755,11 @@ $('#MyTable').datatable('delete', 4) ;
 
 /* EXAMPLE 2 */
 
-$('#MyTable').datatable({identify: function (id, E) { return id.toUpperCase() === (E.firstname.toUpperCase() + ' ' + E.lastname.toUpperCase() ; }}) ;
+$('#MyTable').datatable({
+    identify: function (id, E) { 
+        return id.toUpperCase() === E.fullname.toUpperCase() ; 
+    }
+}) ;
 /* Update ISAAC NEWTON. The update function will update all the field contains in the second parameter. */
 $('#MyTable').datatable('update', 'ISAAC NEWTON', {field: "Mathematics"}) ;
 </code></pre>
