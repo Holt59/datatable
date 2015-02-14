@@ -52,12 +52,20 @@
             if (this.options.data.refresh === undefined) {
                 this.options.data.refresh = false;
             }
+            if (this.options.data.allInOne === undefined) {
+                this.options.data.allInOne = false;
+            }
             this._timeout = -1;
             this.data = [];
             if (this.options.data.size !== undefined) {
                 $(this.options.loadingDivSelector).html('<div class="progress progress-striped active datatable-load-bar"><div class="bar" style="width: 0%;"></div></div>');
-                for (var i = 0; i < this.options.data.size; i += this.options.pageSize * this.options.pagingNumberOfPages) {
-                    this.getAjaxDataAsync(i);
+                if (this.options.data.allInOne) {
+                    this.getAjaxDataAsync(true);
+                }
+                else {
+                    for (var i = 0; i < this.options.data.size; i += this.options.pageSize * this.options.pagingNumberOfPages) {
+                        this.getAjaxDataAsync(i);
+                    }
                 }
             }
             else {
@@ -162,10 +170,11 @@
             $.ajax({
                 url: this.options.data.url,
                 type: this.options.data.type,
-                data: {
+                data: start === true ? {} : {
                     offset: start,
                     limit: this.options.pageSize * this.options.pagingNumberOfPages
                 },
+                dataType: 'json',
                 ajaxI: start,
                 ajaxThis: this,
                 success: function (data, _jqxhr, _text) {
@@ -232,6 +241,7 @@
                     offset: start,
                     limit: this.options.pageSize * this.options.pagingNumberOfPages
                 },
+                dataType: 'json',
                 ajaxI: start,
                 ajaxAllInOne: allInOne,
                 ajaxThis: this,
@@ -731,7 +741,9 @@
                                 td.append(filter);
                             }
                         }
-                        tr.append(td);
+                        if (!$.isPlainObject(this.options.filters[field]) || !this.options.filters[field].noColumn) {
+                            tr.append(td);
+                        }
                     }
                 }
                 if (tr.find('td.datatable-filter-cell').length > 0) {
@@ -1113,9 +1125,20 @@
         *
         * Retrieve all data.
         *
+        *
         **/
-        all: function () {
-            return this.data ;
+        all: function (filter) {
+            if (typeof filter === "undefined"
+                || filter === true) {
+                return this.data;
+            }
+            var returnData = [];
+            for (var i = 0; i < this.data.length; ++i) {
+                if (filter(this.data[i])) {
+                    returnData.push(this.data[i]);
+                }
+            }
+            return returnData;
         },
 
         /** 
@@ -1137,6 +1160,23 @@
 
         /** 
         * 
+        * Add elements to the data array.
+        * 
+        * @param data Array of elements to add
+        * 
+        * @update data
+        * 
+        **/
+        addRows: function (data) {
+            this.data = this.data.concat(data);
+            this.sort();
+            this.filter();
+            this.currentStart = parseInt(this._index(this._index(data, this.data), this.filterIndex) / this.options.pageSize, 10) * this.options.pageSize;
+            this.refresh();
+        },
+
+        /** 
+        * 
         * Remove an element from the data array.
         * 
         * @param id An identifier for the element (see this.options.identify)
@@ -1150,6 +1190,31 @@
                 return;
             }
             this.data.splice(index, 1);
+            this.filter();
+            if (oldCurrentStart < this.filterIndex.length) {
+                this.currentStart = oldCurrentStart;
+            }
+            else {
+                this.currentStart = oldCurrentStart - this.options.pageSize;
+                if (this.currentStart < 0) { this.currentStart = 0; }
+            }
+            this.refresh();
+        },
+
+        /**
+        *
+        * Delete all elements matching the filter arg.
+        *
+        **/
+        deleteAll: function (filter) {
+            var oldCurrentStart = this.currentStart
+            var newData = [];
+            for (var i = 0; i < this.data.length; ++i) {
+                if (!filter(this.data[i])) {
+                    newData.push(this.data[i]);
+                }
+            }
+            this.data = newData;
             this.filter();
             if (oldCurrentStart < this.filterIndex.length) {
                 this.currentStart = oldCurrentStart;
@@ -1359,21 +1424,31 @@
                         this.datatable.resetFilters();
                         break;
                     case 'select':
-                        if (1 in args) {
+                        if (1 in args && !$.isFunction(args[1])) {
                             ret = this.datatable.row(args[1]);
                         }
                         else {
-                            ret = this.datatable.all();
+                            ret = this.datatable.all(args[1]);
                         }
                         break;
                     case 'insert':
-                        this.datatable.addRow(args[1]);
+                        if ($.isArray(args[1])) {
+                            this.datatable.addRows(args[1]);
+                        }
+                        else {
+                            this.datatable.addRow(args[1]);
+                        }
                         break;
                     case 'update':
                         this.datatable.updateRow(args[1], args[2]);
                         break;
                     case 'delete':
-                        this.datatable.deleteRow(args[1]);
+                        if ($.isFunction(args[1])) {
+                            this.datatable.deleteAll(args[1]);
+                        }
+                        else {
+                            this.datatable.deleteRow(args[1]);
+                        }
                         break;
                     case 'option':
                         this.datatable.setOption(args[1], args[2]);
