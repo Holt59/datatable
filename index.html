@@ -697,11 +697,16 @@ inside the table (use it if you want your filter to add a filter outside the tab
     <thead>
         <tr>
             <th>Command</th>
-            <th>Args</th>
+            <th style="width: 25%;">Args</th>
             <th>Info</th>
         </tr>
     </thead>
     <body>
+        <tr>
+            <td><code>'refresh'</code></td>
+            <td></td>
+            <td>Refresh the datatable output.</td>
+        </tr>
         <tr>
             <td><code>'destroy'</code></td>
             <td></td>
@@ -709,7 +714,7 @@ inside the table (use it if you want your filter to add a filter outside the tab
         </tr>
         <tr>
             <td><code>'option'</code></td>
-            <td>Option name, option value</td>
+            <td>Name, Value</td>
             <td>Set a option value (the data options can not be set this way).</td>
         </tr>
         <tr>
@@ -724,13 +729,19 @@ inside the table (use it if you want your filter to add a filter outside the tab
         </tr>
         <tr>
             <td><code>'select'</code></td>
-            <td>ID</td>
-            <td>Retrieve the first element found with the specified ID.</td>
+            <td><code class="prettyprint lang-javascript">null</code> <i class="arg-sep">/</i> ID <i class="arg-sep">/</i> <code class="prettyprint lang-javascript">function</code></td>
+            <td>Retrieve : 
+                <ul>
+                    <li>All the elements if no argument is specified</li>
+                    <li>A filtered set of elements if a function is specified</li>
+                    <li>The first the first element found with the specified ID otherwise</li>
+                </ul>
+            </td>
         </tr>
         <tr>
             <td><code>'insert'</code></td>
-            <td>Element</td>
-            <td>Add the specified element to the data array.</td>
+            <td>Element <i class="arg-sep">/</i> <code class="prettyprint lang-javascript">[E1, E2, ...]</code></td>
+            <td>Add the specified element(s) to the data array.</td>
         </tr>
         <tr>
             <td><code>'update'</code></td>
@@ -739,8 +750,13 @@ inside the table (use it if you want your filter to add a filter outside the tab
         </tr>
         <tr>
             <td><code>'delete'</code></td>
-            <td>ID</td>
-            <td>Remove the first element found with the specified ID.</td>
+            <td>ID <i class="arg-sep">/</i> <code class="prettyprint lang-javascript">function</code</td>
+            <td>Remove:
+                <ul>
+                    <li>All the element matching the specified function if a function is specified</li>
+                    <li>The first element found with the specified ID otherwise</li>
+                </ul>
+            </td>
         </tr>
     </tbody>
 </table>
@@ -760,8 +776,22 @@ $('#MyTable').datatable({
         return id.toUpperCase() === E.fullname.toUpperCase() ; 
     }
 }) ;
-/* Update ISAAC NEWTON. The update function will update all the field contains in the second parameter. */
+/* Update ISAAC NEWTON. The update function will update any field found in the second parameter. */
 $('#MyTable').datatable('update', 'ISAAC NEWTON', {field: "Mathematics"}) ;
+
+/* EXAMPLE 3 */
+
+function myFilter (data) {
+    return data.field == "Mathematics" ;
+}
+
+$('#MyTable').datatable();
+/* Retrieve all mathematicians. */
+var savedData = $('#MyTable').datatable('select', myFilter);
+/* Delete all mathematicians. */
+$('#MyTable').datatable('delete', myFilter);
+/* Insert all the mathematicians. */
+$('#MyTable').datatable('insert', savedData);
 </code></pre>
       </section>
     </div>
