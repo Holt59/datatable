@@ -97,12 +97,6 @@
         /* Add filter where it's needed. */
         this.createFilter();
 
-        /* If a sort key is specified, sort. */
-        this.triggerSort();
-
-        /* Then filter (and refresh) ! */
-        this.filter();
-
     };
 
     DataTable.prototype = {
@@ -427,7 +421,7 @@
             var lp = parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
             var first = this.filterIndex.length ? this.currentStart + 1 : 0;
             var last = (this.currentStart + this.options.pageSize) > this.filterIndex.length ? this.filterIndex.length : this.currentStart + this.options.pageSize;
-            this.getCounter().html(this.options.counterText(cp, lp, first, last, this.filterIndex.length, this.data.length));
+            this.getCounter().html(this.options.counterText.call(this.table, cp, lp, first, last, this.filterIndex.length, this.data.length));
         },
 
         /** 
@@ -1115,6 +1109,15 @@
             return this.data[this.indexOf(id)];
         },
 
+        /**
+        *
+        * Retrieve all data.
+        *
+        **/
+        all: function () {
+            return this.data ;
+        },
+
         /** 
         * 
         * Add an element to the data array.
@@ -1203,7 +1206,7 @@
             }
             this.currentStart = (page - 1) * this.options.pageSize;
             this.refresh();
-            this.options.onChange(oldPage + 1, page);
+            this.options.onChange.call(this.table, oldPage + 1, page);
         },
 
         /**
@@ -1222,7 +1225,7 @@
         * 
         **/
         refresh: function () {
-            this.options.beforeRefresh();
+            this.options.beforeRefresh.call(this.table);
             this.updatePaging();
             this.updateCounter();
             this.getBody().html('');
@@ -1231,9 +1234,9 @@
                 return;
             }
             for (var i = 0; i < this.options.pageSize && i + this.currentStart < this.filterIndex.length; i++) {
-                this.getBody().append(this.options.lineFormat(this.filterIndex[this.currentStart + i], this.data[this.filterIndex[this.currentStart + i]]));
+                this.getBody().append(this.options.lineFormat.call(this.table, this.filterIndex[this.currentStart + i], this.data[this.filterIndex[this.currentStart + i]]));
             }
-            this.options.afterRefresh();
+            this.options.afterRefresh.call(this.table);
         },
 
         /** 
@@ -1333,6 +1336,10 @@
             if ($.isPlainObject(args[0])) {
                 if (this.datatable === undefined) {
                     this.datatable = new DataTable($(this), $.extend({}, $.fn.datatable.defaults, args[0]));
+                    /* If a sort key is specified, sort. */
+                    this.datatable.triggerSort();
+                    /* Then filter (and refresh) ! */
+                    this.datatable.filter();
                 }
                 else {
                     this.datatable.setOptions(args[0]);
@@ -1352,7 +1359,12 @@
                         this.datatable.resetFilters();
                         break;
                     case 'select':
-                        ret = this.datatable.row(args[1]);
+                        if (1 in args) {
+                            ret = this.datatable.row(args[1]);
+                        }
+                        else {
+                            ret = this.datatable.all();
+                        }
                         break;
                     case 'insert':
                         this.datatable.addRow(args[1]);
@@ -1360,14 +1372,14 @@
                     case 'update':
                         this.datatable.updateRow(args[1], args[2]);
                         break;
-                    case 'refresh':
-                        this.datatable.refresh();
-                        break;
                     case 'delete':
                         this.datatable.deleteRow(args[1]);
                         break;
                     case 'option':
                         this.datatable.setOption(args[1], args[2]);
+                        break;
+                    case 'refresh':
+                        this.datatable.refresh();
                         break;
                     case 'destroy':
                         this.datatable.destroy();
