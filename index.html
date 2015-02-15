@@ -668,7 +668,7 @@ inside the table (use it if you want your filter to add a filter outside the tab
 
 <p><strong>Note: </strong>It is possible to create a filter which is not linked to a specific field, such filter is called a "lambda" filter. To create a lambda filter, you need to use
 a javascript object for the <code>filter</code> option and specify a fieldname starting with a <code>_</code>.</p>
-<pre><code class="prettyprint lang-javascript linenums">$('#myTable').datatable({
+<pre><code class="prettyprint lang-javascript">$('#myTable').datatable({
     filters: {
         firstname: true, // A normal text filter
         _1: function (data, text) { // A lambda filter, which will be placed in the second column
