@@ -892,7 +892,7 @@
         checkFilter: function (data) {
             var ok = true;
             for (var fk in this.filters) {
-                var currentData = data[fk];
+                var currentData = fk[0] === '_' ? data : data[fk];
                 if (this.isHtml(currentData)) {
                     currentData = $(currentData).text();
                 }
