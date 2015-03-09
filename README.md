@@ -6,11 +6,25 @@ Datatable is a jQuery plugin for dynamic datatables with pagination, filtering a
 How to use?
 ===========
 
-Datatable is quite simple to use. Just add the CSS and Js file to your page (do not forget jquery):
+Datatable is quite simple to use. Just add the CSS and Js file to your page:
+
+```html
+<script type="text/javascript" src="js/datatable.min.js"></script>
+```
+
+And run:
+
+```javascript
+var table = document.getElementById('MyTable');
+var datatable = new DataTable(table);
+```
+
+If you use jQuery:
 
 ```html
 <script type="text/javascript" src="js/jquery.min.js"></script> 
 <script type="text/javascript" src="js/datatable.min.js"></script>
+<script type="text/javascript" src="js/datatable.jquerymin.js"></script>
 ```
 
 And run:
