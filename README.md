@@ -16,7 +16,18 @@ And run:
 
 ```javascript
 var table = document.getElementById('MyTable');
-var datatable = new DataTable(table);
+var options = DataTable.defaultOptions ;
+options.pageSize = 15;
+options.sort = '*';
+var datatable = new DataTable(table, options);
+datatable.triggerSort();
+datatable.filter();
+
+datatable.loadPage(3);
+var data = datatable.all();
+datatable.deleteAll(function (e) {
+    return e.title.trim().length > 0;
+});
 ```
 
 If you use jQuery:
@@ -24,13 +35,23 @@ If you use jQuery:
 ```html
 <script type="text/javascript" src="js/jquery.min.js"></script> 
 <script type="text/javascript" src="js/datatable.min.js"></script>
-<script type="text/javascript" src="js/datatable.jquerymin.js"></script>
+<script type="text/javascript" src="js/datatable.jquery.min.js"></script>
 ```
 
 And run:
 
 ```javascript
-$('#MyTable').datatable() ;
+$('#MyTable').datatable({
+    pageSize: 15,
+    sort: '*'
+}) ;
+
+$('#MyTable').datatable('page', 3);
+var data = $('#MyTable').datatable('select');
+$('#MyTable').datatable('delete', function (e) {
+    return e.title.trim().length > 0;
+});
+
 ```
 
 **Note:** If you are using bootstrap, use `datatable-boostrap.css` instead of `datatable.css`.
