@@ -1,12 +1,12 @@
-Datatable v1.0.5
+Datatable v2.0.0
 ================
 
-Datatable is a jQuery plugin for dynamic datatables with pagination, filtering and ajax loading.
+Datatable is a javascript plugin for dynamic datatables with pagination, filtering and ajax loading. This plugin **does not require jQuery** any longer since version 2.0.0.
 
 How to use?
 ===========
 
-Datatable is quite simple to use. Just add the CSS and Js file to your page:
+Datatable is quite simple to use. Just add the CSS and Javascript files to your page:
 
 ```html
 <script type="text/javascript" src="js/datatable.min.js"></script>
