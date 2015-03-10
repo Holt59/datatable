@@ -57,7 +57,7 @@ $('#MyTable').datatable('delete', function (e) {
 
 The full plugin documentation is available here: http://holt59.github.io/datatable
 
-**Warning:** If you use bootstrap 3, you need to manually set the <code>pagingListClass</code> and <code>pagingDivClass</code> options to match bootstrap 3 pagination classes.
+**Warning:** If you use bootstrap 2, you need to manually set the <code>pagingListClass</code> and <code>pagingDivClass</code> options to match bootstrap 2 pagination classes.
 
 Copyright and license
 =====================
