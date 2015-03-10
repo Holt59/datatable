@@ -7,30 +7,30 @@ var DataTable = function (table, opts) {
     this.currentPage = 0;
     this.currentStart = 0; // different from currentPage * pageSize because there is a filter
     this.filterIndex = [];
-    
+
     for (var k in opts) {
-        this.options[k] = opts[k] ;
+        this.options[k] = opts[k];
     }
 
     /* If nb columns not specified, count the number of column from thead. */
     if (this.options.nbColumns < 0) {
-        this.options.nbColumns = this.table.tHead.rows[0].cells.length ;
+        this.options.nbColumns = this.table.tHead.rows[0].cells.length;
     }
 
     /* Create the base for pagination. */
     this.pagingDivs = document.querySelectorAll(this.options.pagingDivSelector);
-    for (var i = 0 ; i < this.pagingDivs.length ; ++i) {
+    for (var i = 0; i < this.pagingDivs.length; ++i) {
         var div = this.pagingDivs[i];
         this.addClass(div, 'pagination-datatables');
         this.addClass(div, this.options.pagingDivClass);
-        var ul = document.createElement('ul'); 
+        var ul = document.createElement('ul');
         this.addClass(ul, this.options.pagingListClass);
         div.appendChild(ul);
     }
     this.pagingLists = document.querySelectorAll(this.options.pagingDivSelector + ' ul');
     this.counterDivs = document.querySelectorAll(this.options.counterDivSelector);
     this.loadingDiv = document.querySelector(this.options.loadingDivSelector);
-    
+
     /* DATA ! */
 
     var dataTable = this;
@@ -48,17 +48,13 @@ var DataTable = function (table, opts) {
         this.data = this.options.data;
     }
     else if (this.options.data instanceof Object) {
+        var ajaxOptions = DataTable.defaultAjaxOptions;
+        for (var k in this.options.data) {
+            ajaxOptions[k] = this.options.data[k];
+        }
+        this.options.data = ajaxOptions;
         if (this.table.dataset.size !== undefined) {
             this.options.data.size = parseInt(this.table.dataset.size, 10);
-        }
-        if (this.options.data.timeout === undefined) {
-            this.options.data.timeout = 2000;
-        }
-        if (this.options.data.refresh === undefined) {
-            this.options.data.refresh = false;
-        }
-        if (this.options.data.allInOne === undefined) {
-            this.options.data.allInOne = false;
         }
         this.data = [];
         if (this.options.data.size !== undefined) {
@@ -79,10 +75,10 @@ var DataTable = function (table, opts) {
     }
     else {
         this.data = [];
-        var rows = this.table.tBodies[0].rows ;
-        for (var i = 0 ; i < rows.length ; ++i) {
+        var rows = this.table.tBodies[0].rows;
+        for (var i = 0; i < rows.length; ++i) {
             var line = [];
-            for (var j = 0 ; j < rows[i].cells.length; ++j) {
+            for (var j = 0; j < rows[i].cells.length; ++j) {
                 line.push(rows[i].cells[j].innerHTML);
             }
             dataTable.data.push(line);
@@ -690,7 +686,7 @@ DataTable.prototype = {
             } (allKeys, this));
             select.dataset.filterType = 'default';
         }
-        this.addClass(this, this.options.filterSelectClass);
+        this.addClass(select, this.options.filterSelectClass);
         return select;
     },
 
@@ -1392,8 +1388,8 @@ DataTable.defaultOptions = {
     forceStrings: false,
     tableClass: 'datatable',
     pagingDivSelector: '.paging',
-    pagingDivClass: 'pagination pagination-centered',
-    pagingListClass: '',
+    pagingDivClass: 'text-center',
+    pagingListClass: 'pagination',
     counterDivSelector: '.counter',
     loadingDivSelector: '.loading',
     sort: false,
@@ -1420,8 +1416,8 @@ DataTable.defaultOptions = {
     filterText: 'Search... ',
     filterEmptySelect: '',
     filterSelectOptions: false,
-    filterInputClass: '',
-    filterSelectClass: '',
+    filterInputClass: 'form-control',
+    filterSelectClass: 'form-control',
     beforeRefresh: function () { },
     afterRefresh: function () { },
     lineFormat: function (id, data) {
@@ -1434,4 +1430,13 @@ DataTable.defaultOptions = {
         }
         return res;
     }
+};
+
+DataTable.defaultAjaxOptions = {
+    url: null,
+    size: null,
+    refresh: false,
+    allInOne: false,
+    timeout: 2000,
+    cache: false
 };

@@ -1,7 +1,7 @@
 (function ($) {
 
     "use strict";
-    
+
     $.fn.datatable = function () {
         var args = arguments;
         var ret = -1, each;
@@ -9,6 +9,13 @@
         each = this.each(function () {
             if ($.isPlainObject(args[0])) {
                 if (this.datatable === undefined) {
+                    if ('lineFormat' in args[0]) {
+                        args[0].lineFormat = function (f) {
+                            return function (i, d) {
+                                return f(i, d).get(0);
+                            }
+                        } (args[0].lineFormat);
+                    }
                     this.datatable = new DataTable(this, args[0]);
                     /* If a sort key is specified, sort. */
                     this.datatable.triggerSort();
@@ -74,5 +81,5 @@
         });
         return ret !== -1 ? ret : each;
     };
-    
+
 } (window.jQuery));
