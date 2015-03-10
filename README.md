@@ -15,11 +15,10 @@ Datatable is quite simple to use. Just add the CSS and Javascript files to your 
 And run:
 
 ```javascript
-var table = document.getElementById('MyTable');
-var options = DataTable.defaultOptions ;
-options.pageSize = 15;
-options.sort = '*';
-var datatable = new DataTable(table, options);
+var datatable = new DataTable(document.getElementById('MyTable'), {
+    pageSize: 15,
+    sort: '*'
+});
 datatable.triggerSort();
 datatable.filter();
 
