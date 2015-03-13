@@ -53,24 +53,30 @@ var DataTable = function (table, opts) {
             ajaxOptions[k] = this.options.data[k];
         }
         this.options.data = ajaxOptions;
-        if (this.table.dataset.size !== undefined) {
-            this.options.data.size = parseInt(this.table.dataset.size, 10);
+        var fetchData = true;
+        if (this.options.data.cache !== false) {
+            
         }
-        this.data = [];
-        if (this.options.data.size !== undefined) {
-            this.loadingDiv.innerHTML = '<div class="progress datatable-load-bar"><div class="progress-bar progress-bar-striped active" style="width: 0%;"></div></div>';
-            if (this.options.data.allInOne) {
-                this.getAjaxDataAsync(true);
+        if (fetchData) {
+            if (this.table.dataset.size !== undefined) {
+                this.options.data.size = parseInt(this.table.dataset.size, 10);
             }
-            else {
-                for (var i = 0; i < this.options.data.size; i += this.options.pageSize * this.options.pagingNumberOfPages) {
-                    this.getAjaxDataAsync(i);
+            this.data = [];
+            if (this.options.data.size !== undefined) {
+                this.loadingDiv.innerHTML = '<div class="progress datatable-load-bar"><div class="progress-bar progress-bar-striped active" style="width: 0%;"></div></div>';
+                if (this.options.data.allInOne) {
+                    this.getAjaxDataAsync(true);
+                }
+                else {
+                    for (var i = 0; i < this.options.data.size; i += this.options.pageSize * this.options.pagingNumberOfPages) {
+                        this.getAjaxDataAsync(i);
+                    }
                 }
             }
-        }
-        else {
-            this.loadingDiv.innerHTML = '<div class="progress datatable-load-bar"><div class="progress-bar progress-bar-striped active" style="width: 0%;"></div></div>';
-            this.getAjaxDataAsync(0, true);
+            else {
+                this.loadingDiv.innerHTML = '<div class="progress datatable-load-bar"><div class="progress-bar progress-bar-striped active" style="width: 0%;"></div></div>';
+                this.getAjaxDataAsync(0, true);
+            }
         }
     }
     else {
@@ -116,8 +122,8 @@ DataTable.prototype = {
     *
     * Add the specified class(es) to the specified DOM Element.
     *
-    * @param Node The DOM Element
-    * @param Classes (Array or String)
+    * @param node The DOM Element
+    * @param classes (Array or String)
     *
     **/
     addClass: function (node, classes) {
@@ -129,6 +135,17 @@ DataTable.prototype = {
             node.classList.add(c);
         });
     },
+  
+    /**
+    *
+    * Remove the specified node from the DOM.
+    *
+    * @param node The node to removes
+    *
+    **/
+    removeNode: function (node) {
+        node.parentNode.removeChild(node);
+    },
 
     /**
     * 
@@ -139,8 +156,9 @@ DataTable.prototype = {
     * @update refreshTimeOut The new timeout
     *         
     **/
-    clearAjaxLoading: function () {
+    setRefreshTimeout: function () {
         if (this.options.data.refresh) {
+            clearTimeout(this.refreshTimeOut);
             this.refreshTimeOut = setTimeout((function (datatable) {
                 return function () { datatable.getAjaxDataAsync(0, true); };
             })(this), this.options.data.refresh);
@@ -153,7 +171,7 @@ DataTable.prototype = {
     * 
     **/
     hideLoadingDivs: function () {
-        this.loadingDiv.remove();
+        this.removeNode(this.loadingDiv);
     },
 
 
@@ -161,12 +179,12 @@ DataTable.prototype = {
     * 
     * Update the loading divs with the current % of data load (according to this.options.data.size).
     * 
-    * Note: Call clearAjaxLoading & hideLoadingDivs if all the data have been loaded.
+    * Note: Call setRefreshTimeout & hideLoadingDivs if all the data have been loaded.
     *         
     **/
     updateLoadingDivs: function () {
         if (this.data.length >= this.options.data.size) {
-            this.clearAjaxLoading();
+            this.setRefreshTimeout();
             this.hideLoadingDivs();
         }
         else {
@@ -230,7 +248,7 @@ DataTable.prototype = {
                                     }
 
                                     datatable.sort(true);
-                                    datatable.clearAjaxLoading();
+                                    datatable.setRefreshTimeout();
                                 }
                             }
                             else {
@@ -421,7 +439,7 @@ DataTable.prototype = {
     * 
     **/
     destroyFilter: function () {
-        this.table.querySelector('.datatable-filter-line').remove();
+        this.removeNode(this.table.querySelector('.datatable-filter-line'));
     },
 
     /**
@@ -1283,7 +1301,7 @@ DataTable.prototype = {
         this.options.beforeRefresh.call(this.table);
         this.updatePaging();
         this.updateCounter();
-        this.table.tBodies[0].remove();
+        this.removeNode(this.table.tBodies[0]);
         this.table.appendChild(document.createElement('tbody'));
         if (this.currentStart >= this.currentDataLength) {
             this.table.tBodies[0].innerHTML = '<tr><td colspan="' + this.options.nbColumns + '"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></tr>';
@@ -1438,5 +1456,5 @@ DataTable.defaultAjaxOptions = {
     refresh: false,
     allInOne: false,
     timeout: 2000,
-    cache: false
+    cache: false // false, 'onload', int
 };
