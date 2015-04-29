@@ -16,6 +16,13 @@
                             }
                         } (args[0].lineFormat);
                     }
+                    if ('pagingPages' in args[0]) {
+                        args[0].pagingPages = function (f) {
+                            return function (sp, ep, cp, st, en) {
+                                return f(sp, ep, cp, st, en).toArray();
+                            }
+                        } (args[0].pagingPages);
+                    }
                     this.datatable = new DataTable(this, args[0]);
                     /* If a sort key is specified, sort. */
                     this.datatable.triggerSort();

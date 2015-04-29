@@ -299,6 +299,8 @@ DataTable.prototype = {
         var lp = this.getLastPageNumber();
         var start;
         var end;
+        var first = this.filterIndex.length ? this.currentStart + 1 : 0;
+        var last = (this.currentStart + this.options.pageSize) > this.filterIndex.length ? this.filterIndex.length : this.currentStart + this.options.pageSize;
 
         if (cp < nbPages / 2) {
             start = 1;
@@ -336,11 +338,22 @@ DataTable.prototype = {
                 li.innerHTML = '<a data-page="prev">' + dataTable.options.prevPage + '</a>';
                 childs.push(li);
             }
-            for (var k = start; k <= end; k++) {
-                var li = document.createElement('li');
-                if (k === cp) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="' + k + '">' + k + '</a>';
-                childs.push(li);
+            if (dataTable.options.pagingPages) {
+                var _childs = this.options.pagingPages.call(this.table, start, end, cp, first, last);
+                if (_childs instanceof Array) {
+                    childs = childs.concat(_childs);
+                }
+                else {
+                    childs.push(_childs);
+                }
+            }
+            else {
+                for (var k = start; k <= end; k++) {
+                    var li = document.createElement('li');
+                    if (k === cp) { li.classList.add('active'); }
+                    li.innerHTML = '<a data-page="' + k + '">' + k + '</a>';
+                    childs.push(li);
+                }
             }
             if (dataTable.options.nextPage) {
                 var li = document.createElement('li');
@@ -356,27 +369,30 @@ DataTable.prototype = {
             }
             this.pagingLists[i].innerHTML = '';
             childs.forEach(function (e) {
-                e.childNodes[0].addEventListener('click', function () {
-                    if (this.parentNode.classList.contains('active')) {
-                        return;
-                    }
-                    switch (this.dataset.page) {
-                        case 'first':
-                            dataTable.loadPage(1);
-                            break;
-                        case 'prev':
-                            dataTable.loadPage(cp - 1);
-                            break;
-                        case 'next':
-                            dataTable.loadPage(cp + 1);
-                            break;
-                        case 'last':
-                            dataTable.loadPage(lp);
-                            break;
-                        default:
-                            dataTable.loadPage(parseInt(parseInt(this.dataset.page), 10));
-                    }
-                }, false);
+                if (e.childNodes.length > 0) {
+                    e.childNodes[0].addEventListener('click', function () {
+                        if (this.parentNode.classList.contains('active') ||
+                            typeof this.dataset.page === 'undefined') {
+                            return;
+                        }
+                        switch (this.dataset.page) {
+                            case 'first':
+                                dataTable.loadPage(1);
+                                break;
+                            case 'prev':
+                                dataTable.loadPage(cp - 1);
+                                break;
+                            case 'next':
+                                dataTable.loadPage(cp + 1);
+                                break;
+                            case 'last':
+                                dataTable.loadPage(lp);
+                                break;
+                            default:
+                                dataTable.loadPage(parseInt(parseInt(this.dataset.page), 10));
+                        }
+                    }, false);
+                }
                 this.pagingLists[i].appendChild(e);
             }, this);
         }
@@ -1426,8 +1442,9 @@ DataTable.defaultOptions = {
         counterText += '.';
         return counterText;
     },
-    firstPage: '<<',
-    prevPage: '<',
+    firstPage: '&lt;&lt;',
+    prevPage: '&lt;',
+    pagingPages: false,
     nextPage: '&gt;',
     lastPage: '&gt;&gt;',
     filters: {},
