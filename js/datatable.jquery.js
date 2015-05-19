@@ -21,11 +21,23 @@
         each = this.each(function () {
             if ($.isPlainObject(args[0])) {
                 if (this.datatable === undefined) {
-                    if ('lineFormat' in args[0]) {
+                    if (args[0].hasOwnProperty('lineFormat')) {
                         args[0].lineFormat = _toJqueryFn (args[0].lineFormat, true);
                     }
-                    if ('pagingPages' in args[0]) {
+                    if (args[0].hasOwnProperty('pagingPages')) {
                         args[0].pagingPages = _toJqueryFn (args[0].pagingPages);
+                    }
+                    if (args[0].hasOwnProperty('filters')) {
+                        for (var i = 0 ; i < args[0].filters.length ; ++i) {
+                            var filter = args[0].filters[i] ;
+                            if (filter instanceof $) {
+                                filter = filter.get(0) ;
+                            }
+                            else if ((filter instanceof Object) && (filter.element instanceof $)) {
+                                filter.element = filter.element.get(0);
+                            }
+                            args[0].filters[i] = filter;
+                        }
                     }
                     this.datatable = new DataTable(this, args[0]);
                     /* If a sort key is specified, sort. */
