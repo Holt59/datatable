@@ -2,14 +2,21 @@
 
 var DataTable = function (table, opts) {
 
-    this.options = DataTable.defaultOptions;
+    this.options = {};
     this.table = table;
     this.currentPage = 0;
     this.currentStart = 0; // different from currentPage * pageSize because there is a filter
     this.filterIndex = [];
 
-    for (var k in opts) {
-        this.options[k] = opts[k];
+    for (var k in DataTable.defaultOptions) {
+        if (DataTable.defaultOptions.hasOwnProperty(k)) {
+            if (opts.hasOwnProperty(k)) {
+                this.options[k] = opts[k] ;
+            }
+            else {
+                this.options[k] = DataTable.defaultOptions[k] ;
+            }
+        }
     }
 
     /* If nb columns not specified, count the number of column from thead. */
@@ -54,9 +61,6 @@ var DataTable = function (table, opts) {
         }
         this.options.data = ajaxOptions;
         var fetchData = true;
-        if (this.options.data.cache !== false) {
-            
-        }
         if (fetchData) {
             if (this.table.dataset.size !== undefined) {
                 this.options.data.size = parseInt(this.table.dataset.size, 10);
@@ -1472,6 +1476,5 @@ DataTable.defaultAjaxOptions = {
     size: null,
     refresh: false,
     allInOne: false,
-    timeout: 2000,
-    cache: false // false, 'onload', int
+    timeout: 2000
 };

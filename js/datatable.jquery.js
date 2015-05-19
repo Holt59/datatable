@@ -1,6 +1,18 @@
 (function ($) {
 
     "use strict";
+    
+    function _toJqueryFn (fn, singleReturn) {
+        if (typeof singleReturn === 'undefined') {
+            singleReturn = false ;
+        }
+        return function (_f, _s) {
+            return function () {
+                var res = fn.apply(this, arguments) ;
+                return _s ? res.get(0) : res.toArray();
+            } ;
+        } (fn, singleReturn) ;
+    }
 
     $.fn.datatable = function () {
         var args = arguments;
@@ -10,18 +22,10 @@
             if ($.isPlainObject(args[0])) {
                 if (this.datatable === undefined) {
                     if ('lineFormat' in args[0]) {
-                        args[0].lineFormat = function (f) {
-                            return function (i, d) {
-                                return f(i, d).get(0);
-                            }
-                        } (args[0].lineFormat);
+                        args[0].lineFormat = _toJqueryFn (args[0].lineFormat, true);
                     }
                     if ('pagingPages' in args[0]) {
-                        args[0].pagingPages = function (f) {
-                            return function (sp, ep, cp, st, en) {
-                                return f(sp, ep, cp, st, en).toArray();
-                            }
-                        } (args[0].pagingPages);
+                        args[0].pagingPages = _toJqueryFn (args[0].pagingPages);
                     }
                     this.datatable = new DataTable(this, args[0]);
                     /* If a sort key is specified, sort. */
