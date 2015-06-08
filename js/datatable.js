@@ -337,6 +337,15 @@
         getLastPageNumber: function () {
             return parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
         },
+        
+        /**
+        *
+        * @return {Boolean} whether table needs paging
+        * 
+        **/
+        needsPaging: function() {
+            return !(this.getLastPageNumber() === 1);
+        },
 
         /** 
         * 
@@ -1293,8 +1302,10 @@
         **/
         refresh: function () {
             this.options.beforeRefresh.call(this.table);
-            this.updatePaging();
-            this.updateCounter();
+            if (this.needsPaging()) {
+                this.updatePaging();
+                this.updateCounter(); 
+            }
             this.getBody().html('');
             if (this.currentStart >= this.currentDataLength) {
                 this.getBody().append('<tr><td colspan="' + this.options.nbColumns + '"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></tr>');
