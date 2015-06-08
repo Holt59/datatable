@@ -18,6 +18,10 @@ var DataTable = function (table, opts) {
             }
         }
     }
+    
+    if (opts.hasOwnProperty('data')) {
+        this.options.data = opts.data ;
+    }
 
     /* If nb columns not specified, count the number of column from thead. */
     if (this.options.nbColumns < 0) {
