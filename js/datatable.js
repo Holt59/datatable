@@ -101,13 +101,15 @@ var DataTable = function (table, opts) {
             for (var c = 0; c < this.data[0].length; ++c) {
                 var isNumeric = true;
                 for (var i = 0; i < this.data.length; ++i) {
-                    if (isNaN(parseFloat(this.data[i][c]))) {
+                    if (this.data[i][c] !== "" && isNaN(parseFloat(this.data[i][c]))) {
                         isNumeric = false;
                     }
                 }
                 if (isNumeric) {
                     for (var i = 0; i < this.data.length; ++i) {
-                        this.data[i][c] = parseFloat(this.data[i][c]);
+                        if (this.data[i][c] !== "") {
+                            this.data[i][c] = parseFloat(this.data[i][c]);
+                        }
                     }
                 }
             }
