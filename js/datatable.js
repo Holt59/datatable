@@ -154,7 +154,9 @@ DataTable.prototype = {
     *
     **/
     removeNode: function (node) {
-        node.parentNode.removeChild(node);
+        if (node) {
+            node.parentNode.removeChild(node);
+        }
     },
 
     /**
@@ -1414,15 +1416,17 @@ DataTable.prototype = {
             clearTimeout(this.refreshTimeOut);
         }
         this.destroySort();
-        $(this.options.pagingDivSelector)
-            .removeClass(this.options.pagingDivClass)
-            .removeClass('pagination-datatable')
-            .html('');
+        for (var i = 0; i < this.pagingDivs.length; ++i) {
+            this.pagingDivs[i].classList.remove('pagination-datatable');
+            this.pagingDivs[i].classList.remove(this.options.pagingDivClass);
+            this.pagingDivs[i].innerHTML = '';
+        }
         this.destroyFilter();
-        this.table.removeClass(this.options.tableClass);
-        this.getBody().html('');
+        this.table.classList.remove(this.options.tableClass);
+        this.removeNode(this.table.tBodies[0]);
+        this.table.appendChild(document.createElement('tbody'));
         for (var i = 0; i < this.data.length; i++) {
-            this.getBody().append(this.options.lineFormat(i, this.data[i]));
+            this.table.tBodies[0].appendChild(this.options.lineFormat.call(this.table, this.filterIndex[this.currentStart + i], this.data[this.filterIndex[this.currentStart + i]]));
         }
 
     }
