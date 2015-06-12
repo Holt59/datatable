@@ -337,6 +337,15 @@
         getLastPageNumber: function () {
             return parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
         },
+        
+        /**
+        *
+        * @return {Boolean} whether table needs paging
+        * 
+        **/
+        needsPaging: function() {
+            return !(this.getLastPageNumber() === 1);
+        },
 
         /** 
         * 
@@ -1284,6 +1293,22 @@
         getCurrentPage: function () {
             return this.currentStart / this.options.pageSize + 1;
         },
+        
+        /**
+        * 
+        * if table needs paging update and show paging page number and divs
+        * otherwise hide them
+        * 
+        **/
+        updatePagingSection: function() {
+            if (this.needsPaging()) {
+                this.updatePaging();
+                this.updateCounter();
+                $(this.options.pagingDivSelector).removeClass("pagination-hide");
+            } else {
+                $(this.options.pagingDivSelector).addClass("pagination-hide");
+            }
+        },
 
         /** 
         * 
@@ -1293,8 +1318,7 @@
         **/
         refresh: function () {
             this.options.beforeRefresh.call(this.table);
-            this.updatePaging();
-            this.updateCounter();
+            this.updatePagingSection();
             this.getBody().html('');
             if (this.currentStart >= this.currentDataLength) {
                 this.getBody().append('<tr><td colspan="' + this.options.nbColumns + '"><div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div></div></tr>');
