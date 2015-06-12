@@ -1295,11 +1295,11 @@
         },
         
         /**
-         * 
-         * if table needs paging update and show paging page number and divs
-         * otherwise hide them
-         * 
-         * */
+        * 
+        * if table needs paging update and show paging page number and divs
+        * otherwise hide them
+        * 
+        **/
         updatePagingSection: function() {
             if (this.needsPaging()) {
                 this.updatePaging();
