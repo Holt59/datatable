@@ -1091,10 +1091,9 @@ DataTable.prototype = {
     **/
     sort: function (keepCurrentPage) {
         var fnSort = this.getSortFunction();
-        if (fnSort === false) {
-            return;
+        if (fnSort !== false) {
+            this.data.sort(fnSort);
         }
-        this.data.sort(fnSort);
         this.filter(keepCurrentPage);
     },
 
