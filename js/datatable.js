@@ -217,11 +217,6 @@ DataTable.prototype = {
     **/
     getAjaxDataAsync: function (start, recursive) {
         if (typeof recursive === "undefined") { recursive = false; }
-        var formdata = new FormData();
-        if (start !== true) {
-            formdata.append('offset', start);
-            formdata.append('limit', this.options.pageSize * this.options.pagingNumberOfPages);
-        }
         if (recursive && typeof this.syncData === "undefined") {
             this.syncData = {
                 data: [],
@@ -281,7 +276,19 @@ DataTable.prototype = {
                 }
             }
         } (this, start, recursive);
-        xhr.open(this.options.data.type, this.options.data.url, true);
+        var url      = this.options.data.url ;
+        var limit    = this.options.pageSize * this.options.pagingNumberOfPages ;
+        var formdata = new FormData();
+        if (start !== true) {
+            if (this.options.data.type.toUpperCase() == 'GET') {
+                url += '?start=' + start + '&limit=' + limit ;
+            }
+            else {
+                formdata.append('offset', start);
+                formdata.append('limit', limit);
+            }
+        }
+        xhr.open(this.options.data.type, url, true);
         xhr.responseType = 'json';
         xhr.send(formdata);
     },
