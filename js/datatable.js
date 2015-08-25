@@ -22,7 +22,7 @@ var DataTable = function (table, opts) {
     if (opts.hasOwnProperty('data')) {
         this.options.data = opts.data ;
     }
-
+    
     /* If nb columns not specified, count the number of column from thead. */
     if (this.options.nbColumns < 0) {
         this.options.nbColumns = this.table.tHead.rows[0].cells.length;
@@ -49,6 +49,22 @@ var DataTable = function (table, opts) {
     if (!this.table.tHead) {
         this.table.tHead = document.createElement('thead');
         this.table.appendChild(this.table.rows[0]);
+    }
+    
+    /* Compatibility issue (forceStrings => No defined data types). */
+    if (this.options.forceStrings) {
+        this.options.dataTypes = false ;
+    }
+    
+    var ths = this.table.tHead.rows[0].cells ;
+    if (this.options.dataTypes instanceof Array) {
+        if (this.options.dataTypes.length === 0) {
+            for (var i = 0 ; i < ths.length ; ++i)
+                this.options.dataTypes.push(false) ;
+        }
+        for (var i = 0 ; i < ths.length ; ++i) {
+            this.options.dataTypes[i] = ths[i].dataset.datatype ? ths[i].dataset.datatype : false ;
+        } 
     }
 
     if (!this.table.tBodies[0]) {
@@ -87,21 +103,47 @@ var DataTable = function (table, opts) {
             }
         }
     }
-    else {
+    else if (this.table.tBodies[0].rows.length > 0) {
         this.data = [];
         var rows = this.table.tBodies[0].rows;
+        var nCols = rows[0].cells.length ;
         for (var i = 0; i < rows.length; ++i) {
-            var line = [];
-            for (var j = 0; j < rows[i].cells.length; ++j) {
-                line.push(rows[i].cells[j].innerHTML);
-            }
-            dataTable.data.push(line);
+            this.data.push ([]) ;
         }
-        if (!this.options.forceStrings && this.data.length) {
+        for (var j = 0 ; j < nCols ; ++j) {
+            var dt = function (x) { return x ; } ;
+            if (this.options.dataTypes instanceof Array) {
+                switch (this.options.dataTypes[j]) {
+                    case 'int': 
+                        dt = parseInt ;
+                        break ;
+                    case 'float': 
+                    case 'double':
+                        dt = parseFloat ;
+                        break ;
+                    case 'date':
+                    case 'datetime':
+                        dt = function (x) { return new Date(x) ; } ;
+                        break ;
+                    case false:
+                    case 'string':
+                    case 'str':
+                        dt = function (x) { return x ; } ;
+                        break ;
+                    default:
+                        dt = this.options.dataTypes[j] ;
+                }
+                console.log(dt) ;
+            }
+            for (var i = 0; i < rows.length; ++i) {
+                this.data[i].push(dt(rows[i].cells[j].innerHTML)) ;
+            }
+        }
+        if (this.options.dataTypes === true) {
             for (var c = 0; c < this.data[0].length; ++c) {
                 var isNumeric = true;
                 for (var i = 0; i < this.data.length; ++i) {
-                    if (this.data[i][c] !== "" && isNaN(parseFloat(this.data[i][c]))) {
+                    if (this.data[i][c] !== "" && !((this.data[i][c] - parseFloat(this.data[i][c]) + 1) >= 0)) {
                         isNumeric = false;
                     }
                 }
@@ -1467,6 +1509,7 @@ DataTable.defaultOptions = {
     pagingPages: false,
     nextPage: '&gt;',
     lastPage: '&gt;&gt;',
+    dataTypes: true,
     filters: {},
     filterText: 'Search... ',
     filterEmptySelect: '',
