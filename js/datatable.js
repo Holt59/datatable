@@ -66,8 +66,8 @@ var DataTable = function (table, opts) {
         this.options.data = ajaxOptions;
         var fetchData = true;
         if (fetchData) {
-            if (this.table.dataset.size !== undefined) {
-                this.options.data.size = parseInt(this.table.dataset.size, 10);
+            if (this.table.getAttribute('data-size') !== undefined) {
+                this.options.data.size = parseInt(this.table.getAttribute('data-size'), 10);
             }
             this.data = [];
             if (this.options.data.size !== undefined) {
@@ -391,10 +391,10 @@ DataTable.prototype = {
                 if (e.childNodes.length > 0) {
                     e.childNodes[0].addEventListener('click', function () {
                         if (this.parentNode.classList.contains('active') ||
-                            typeof this.dataset.page === 'undefined') {
+                            typeof this.getAttribute('data-page') === 'undefined') {
                             return;
                         }
-                        switch (this.dataset.page) {
+                        switch (this.getAttribute('data-page')) {
                             case 'first':
                                 dataTable.loadPage(1);
                                 break;
@@ -408,7 +408,7 @@ DataTable.prototype = {
                                 dataTable.loadPage(lp);
                                 break;
                             default:
-                                dataTable.loadPage(parseInt(parseInt(this.dataset.page), 10));
+                                dataTable.loadPage(parseInt(parseInt(this.getAttribute('data-page')), 10));
                         }
                     }, false);
                 }
@@ -509,7 +509,7 @@ DataTable.prototype = {
             input.placeholder = this.options.filterText;
         }
         this.addClass(input, 'datatable-filter datatable-input-text');
-        input.dataset.filter = field;
+        input.getAttribute('data-filter') = field;
         this.filterVals[field] = '';
         var typewatch = (function () {
             var timer = 0;
@@ -521,7 +521,7 @@ DataTable.prototype = {
         input.onkeyup = function (datatable) {
             return function () {
                 var val = this.value.toUpperCase();
-                var field = this.dataset.filter;
+                var field = this.getAttribute('data-filter');
                 typewatch(function () {
                     datatable.filterVals[field] = val;
                     datatable.filter();
@@ -529,7 +529,7 @@ DataTable.prototype = {
             };
         } (this);
         input.onkeydown = input.onkeyup;
-        var regexp = opt === 'regexp' || input.dataset.regexp;
+        var regexp = opt === 'regexp' || input.getAttribute('data-regexp');
         if (opt instanceof Function) {
             this.addFilter(field, opt);
         }
@@ -669,10 +669,10 @@ DataTable.prototype = {
             select.dataset['default'] = opt['default'];
         }
         this.addClass(select, 'datatable-filter datatable-select');
-        select.dataset.filter = field;
+        select.getAttribute('data-filter') = field;
         if (empty) {
             var option = document.createElement('option');
-            option.dataset.empty = true;
+            option.getAttribute('data-empty') = true;
             option.value = "";
             option.innerHTML = emptyValue;
             select.appendChild(option);
@@ -720,14 +720,14 @@ DataTable.prototype = {
                         if (this.options[i].selected) { val.push(this.options[i].value); }
                     }
                 }
-                var field = this.dataset.filter;
+                var field = this.getAttribute('data-filter');
                 datatable.filterVals[field] = multiple ? val : ((empty && !val) ? allKeys : [val]);
                 datatable.filter();
             };
         } (allKeys, multiple, empty, this);
         if (opt instanceof Object && opt.fn instanceof Function) {
             this.addFilter(field, opt.fn);
-            select.dataset.filterType = 'function';
+            select.getAttribute('data-filterType') = 'function';
         }
         else {
             this.addFilter(field, function (aKeys, datatable) {
@@ -737,7 +737,7 @@ DataTable.prototype = {
                     return datatable._isIn(data, val);
                 };
             } (allKeys, this));
-            select.dataset.filterType = 'default';
+            select.getAttribute('data-filterType') = 'default';
         }
         this.addClass(select, this.options.filterSelectClass);
         return select;
@@ -824,10 +824,10 @@ DataTable.prototype = {
             }
             for (var k = 0; k < allKeys.length; ++k) {
                 var keys = this._keys(allKeys[k]);
-                if (this.filterTags[k] && this.filterTags[k] instanceof HTMLSelectElement && this.filterTags[k].dataset.filterType == 'default') {
+                if (this.filterTags[k] && this.filterTags[k] instanceof HTMLSelectElement && this.filterTags[k].getAttribute('data-filterType') == 'default') {
                     var options = this.filterTags[k].childNodes;
                     for (var i = 0; i < options.length; ++i) {
-                        if (!options[i].dataset.empty) {
+                        if (!options[i].getAttribute('data-empty')) {
                             options[i].style.display = dtable._isIn(options[i].value, keys) ? 'block' : 'none';
                         }
                     }
@@ -846,7 +846,7 @@ DataTable.prototype = {
     resetFilters: function () {
         var dtable = this;
         this.filterTags.forEach(function (e) {
-            var field = e.dataset.filter;
+            var field = e.getAttribute('data-filter');
             if (e instanceof HTMLInputElement) {
                 e.value = '';
                 dtable.filterVals[field] = '';
@@ -871,7 +871,7 @@ DataTable.prototype = {
                     for (var i = 1; i < e.childNodes.length; ++i) {
                         e.childNodes[i].selected = false;
                     }
-                    if (e.childNodes[0].dataset.empty) {
+                    if (e.childNodes[0].getAttribute('data-empty')) {
                         var allKeys = [];
                         for (var i = 1; i < e.childNodes.length; ++i) {
                             allKeys.push(e.childNodes[i].value);
@@ -996,11 +996,11 @@ DataTable.prototype = {
             var ths = this.table.tHead.rows[0].cells;
             for (var i = 0; i < ths.length; ++i) {
 
-                if (ths[i].dataset.sort) {
+                if (ths[i].getAttribute('data-sort')) {
                     dataTable.options.sort = true;
                 }
                 else if (dataTable.options.sort === '*') {
-                    ths[i].dataset.sort = countTH;
+                    ths[i].getAttribute('data-sort') = countTH;
                 }
                 else {
                     var key;
@@ -1011,18 +1011,18 @@ DataTable.prototype = {
                         key = dataTable._keys(dataTable.options.sort)[countTH];
                     }
                     if (key !== undefined && dataTable.options.sort[key]) {
-                        ths[i].dataset.sort = key;
+                        ths[i].getAttribute('data-sort') = key;
                     }
                 }
 
-                if (ths[i].dataset.sort !== undefined) {
+                if (ths[i].getAttribute('data-sort') !== undefined) {
                     ths[i].classList.add('sorting');
                 }
 
                 countTH++;
 
                 ths[i].addEventListener('click', function () {
-                    if (this.dataset.sort) {
+                    if (this.getAttribute('data-sort')) {
                         if (this.classList.contains('sorting-asc')) {
                             dataTable.options.sortDir = 'desc';
                             this.classList.remove('sorting-asc')
@@ -1040,7 +1040,7 @@ DataTable.prototype = {
                                 oths[j].classList.remove('sorting-asc');
                             }
                             dataTable.options.sortDir = 'asc';
-                            dataTable.options.sortKey = this.dataset.sort;
+                            dataTable.options.sortKey = this.getAttribute('data-sort');
                             this.classList.add('sorting-asc');
                         }
                         dataTable.sort();
@@ -1070,7 +1070,7 @@ DataTable.prototype = {
             for (var j = 0; j < ths.length; j++) {
                 ths[j].classList.remove('sorting-desc');
                 ths[j].classList.remove('sorting-asc');
-                if (ths[j].dataset.sort === this.options.sortKey) {
+                if (ths[j].getAttribute('data-sort') === this.options.sortKey) {
                     th = ths[j];
                 }
             }
@@ -1477,7 +1477,7 @@ DataTable.defaultOptions = {
     afterRefresh: function () { },
     lineFormat: function (id, data) {
         var res = document.createElement('tr');
-        res.dataset.id = id;
+        res.getAttribute('data-id') = id;
         for (var key in data) {
             if (data.hasOwnProperty(key)) {
                 res.innerHTML += '<td>' + data[key] + '</td>';
