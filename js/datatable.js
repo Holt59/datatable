@@ -1000,7 +1000,7 @@ DataTable.prototype = {
                     dataTable.options.sort = true;
                 }
                 else if (dataTable.options.sort === '*') {
-                    ths[i].getAttribute('data-sort') = countTH;
+                    ths[i].setAttribute('data-sort', countTH);
                 }
                 else {
                     var key;
@@ -1011,7 +1011,7 @@ DataTable.prototype = {
                         key = dataTable._keys(dataTable.options.sort)[countTH];
                     }
                     if (key !== undefined && dataTable.options.sort[key]) {
-                        ths[i].getAttribute('data-sort') = key;
+                        ths[i].setAttribute('data-sort', key);
                     }
                 }
 
