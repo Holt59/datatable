@@ -19,8 +19,6 @@ var datatable = new DataTable(document.getElementById('MyTable'), {
     pageSize: 15,
     sort: '*'
 });
-datatable.triggerSort();
-datatable.filter();
 
 datatable.loadPage(3);
 var data = datatable.all();
