@@ -62,7 +62,7 @@ The full plugin documentation is available here: http://holt59.github.io/datatab
 Copyright and license
 =====================
 
-Copyright 2013 Mikaël Capelle.
+Copyright 2016 Mikaël Capelle.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this work except in compliance with the License. You may obtain a copy of the License in the LICENSE file, or at:
 
