@@ -1,56 +1,31 @@
 <!DOCTYPE html>
-<html>
+<html lang="en-us" id="top">
+    <head>
+        <meta charset="UTF-8">
+        <title>Datatable by Holt59</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css" media="screen">
+        <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+        <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="css/prism.min.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="css/datatable-bootstrap.min.css" media="screen">
+        <link rel="stylesheet" type="text/css" href="css/index.css" media="screen">
+    </head>
+    <body data-spy="scroll" data-target=".right-nav" data-offset="22">
 
-  <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Datatable : jQuery plugin for data tables" />
+        <div class="jumbotron">
+            <a href="https://github.com/Holt59/datatable" id="forkme"><i class="fa fa-github"></i> Fork me on Github</a>
+            <div class="container">
+            <h1>Datatable - A javascript plugin...</h1>
+            <p class="headline">...for smarter HTML table, by <a href="https://github.com/Holt59" target="_blank">@Holt59</a>.</p>
+            <p>
+                <a class="btn btn-lg" href="https://github.com/Holt59/datatable" target="_blank"><i class="fa fa-github"></i> Code on Github</a>
+                <a class="btn btn-lg" href="https://github.com/Holt59/datatable/archive/master.zip"><i class="fa fa-download"></i> Download (.zip)</a>
+            </p>
+            </div>
+        </div>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/prettify.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css">
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/datatable-bootstrap.min.css">
-    
-    <title>Datatable</title>
-    
-    <style>
-    /* Prettify */
-    li.L0, li.L1, li.L2, li.L3,
-    li.L5, li.L6, li.L7, li.L8 { 
-        list-style-type: decimal !important ;
-    }
-    
-    .pagination li {
-        padding-left: 0px;
-    }
-    
-    .pagination li a {
-    	cursor: pointer ;
-    }
-    
-    .pagination li a:hover {
-    	color: rgb(153, 153, 153);
-	cursor: default;
-    }
-    </style>
-  </head>
-
-  <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/Holt59/datatable">View on GitHub</a>
-
-          <h1 id="project_title">Datatable</h1>
-          <h2 id="project_tagline">jQuery plugin for data tables</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/Holt59/datatable/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/Holt59/datatable/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+        <div class="container">
 
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
@@ -223,11 +198,11 @@
 <p>And here is what it becomes after calling datatable: </p>
 
 <div class="paging"></div>
-<table id="example-table">
+<table id="example-table" class="table table-bordered">
     <thead>
         <tr>
-            <th style="background-color: #373737 !important;">Firstname</th>
-            <th style="background-color: #373737 !important; min-width: 90px ;">Lastname</th>
+            <th>Firstname</th>
+            <th>Lastname</th>
             <th></th>
         </tr>
     </thead>
@@ -370,8 +345,8 @@
     </tbody>
 </table>
 <div class="paging"></div>
-<p>Here is the code used to transform the table: </p>
-<pre><code class="prettyprint lang-javascript linenums">$('#example-table').datatable({
+<p>How many lines of code to get there? Not that much... </p>
+<pre><code class="prettyprint lang-javascript">$('#example-table').datatable({
     pageSize: 5,
     sort: [true, true, false],
     filters: [true, false, 'select'],
@@ -821,46 +796,55 @@ $('#MyTable').datatable('insert', savedData);
       </section>
     </div>
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Datatable maintained by <a href="https://github.com/Holt59">Holt59</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
     </div>
-    
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
-    <script type="text/javascript" src="javascripts/prettify/prettify.js"></script>
-    <script type="text/javascript" src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="javascripts/datatable.min.js"></script>
 
-    <script type="text/javascript">
-    
-        $('#example-table').datatable({
-            pageSize: 5,
-            sort: [true, true, false],
-            filters: [true, false, 'select'],
-            filterText: 'Type to filter... '
-        }) ;
-    
-		$('#show-initial-table').click(function () {
-            if ($('#code-initial-table').is(':visible')) {
-                $('#code-initial-table').hide('slow') ;
-                $(this).removeClass('btn-inverse')
-                    .addClass('btn-primary')
-                    .html('Show') ;
-            }
-            else {
-                $('#code-initial-table').show('slow') ;
-                $(this).removeClass('btn-primary')
-                    .addClass('btn-inverse')
-                    .html('Hide') ;
-            }
-        }) ;
-        
-        prettyPrint() ;
-    
-    </script>
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <p>&copy; 2015, Mikaël Capelle (@Holt59) - Designed and built by <a href="https://github.com/Holt59" target="_blank">Holt59</a> &amp; <a href="https://github.com/Holt59/datatable/graphs/contributors" target="_blank">contributors</a>.</p>
+                        <p>Code licensed under <a href="http://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License, Version 2.0</a>.</p>
+                        <p>Code & Documentation hosted by <a href="https://github.com" target="_blank"><i class="fa fa-github"></i> Github</a>.</p>
+                    </div>
+                </div>     
+            </div>
+        </footer>
+  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/prism.min.js"></script>
+        <script type="text/javascript" src="js/datatable.min.js"></script>
+
+        <script type="text/javascript">
+
+            var firstExampleTable = document.getElementById('example-table');
+            var datatable = new DataTable(firstExampleTable, {
+                pageSize: 5,
+                sort: [true, true, false],
+                filters: [true, false, 'select'],
+                filterText: 'Type to filter... '
+            });
+            datatable.triggerSort();
+            datatable.filter();
+
+            $('#show-initial-table').click(function () {
+                if ($('#code-initial-table').is(':visible')) {
+                    $('#code-initial-table').hide('slow');
+                    $(this).removeClass('btn-inverse')
+                        .addClass('btn-primary')
+                        .html('Show');
+                }
+                else {
+                    $('#code-initial-table').show('slow');
+                    $(this).removeClass('btn-primary')
+                        .addClass('btn-inverse')
+                        .html('Hide');
+                }
+            });
+
+            prettyPrint();
+
+        </script>
 
   </body>
 </html>
