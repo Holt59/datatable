@@ -3,7 +3,7 @@ Datatable v1.0.6
 
 Datatable is a jQuery plugin for dynamic datatables with pagination, filtering and ajax loading.
 
-<i>**Don't like jQuery?** Check the <a href="https://github.com/Holt59/datatable/tree/standalone">standalone</a> branch for a remade beta version of the plugin without jQuery (better performance, but still so simple to use!).</i>
+<i>**Warning:** This is an old version of the plugin using jQuery, if you are looking for a standalone version (much faster!), check out the <a href="https://github.com/Holt59/datatable/tree/master">master</a> branch.</i>
 
 How to use?
 ===========
