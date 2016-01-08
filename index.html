@@ -346,7 +346,7 @@
 </table>
 <div class="paging"></div>
 <p>How many lines of code to get there? Not that much... </p>
-<pre><code class="prettyprint lang-javascript">$('#example-table').datatable({
+<pre><code class="language-javascript">new DataTable(document.getElementById('#example-table'), {
     pageSize: 5,
     sort: [true, true, false],
     filters: [true, false, 'select'],
@@ -355,8 +355,8 @@
 
 <h2>
 <a name="available-options" class="anchor" href="#available-options"><span class="octicon octicon-link"></span></a>Available options</h2>
-<p>The current available options that can be passed to datatable are shown in the following table:</p>
-<table>
+<p>You may want to customize the some parameters of your datatable. The following table summarize the options that can be passed to the constructor (second argument):</p>
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Option</th>
@@ -370,8 +370,8 @@
             <td colspan="2">See the data part below for more information.</td>
         </tr>
         <tr>
-            <td>tableClass</td>
-            <td><code>'datatable'</code></td>
+            <td><code class="language-javascript">tableClass</code></td>
+            <td><code class="language-javascript">'datatable'</code></td>
             <td>The HTML class for the table.</td>
         </tr>
         <tr>
@@ -689,47 +689,46 @@ a javascript object for the <code>filter</code> option and specify a fieldname s
     return res ;
 }</code></pre>
 
-<h2><a name="comand" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Available commands</h2>
-<p>Some commands are available with datatable plugin, you can call a command like this way: </p>
-<pre><code class="prettyprint lang-javascript linenums">$('#MyTable').datatable(command, args1, args2, ...) ; </code></pre>
+<h2><a name="comand" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Datatable methods</h2>
+<p>Here is a list of the method available from a DataTable object:</p>
 <p>Available commands are: </p>
-<table>
+<table class="table table-bordered">
     <thead>
         <tr>
-            <th>Command</th>
-            <th style="width: 25%;">Args</th>
+            <th>Method name</th>
+            <th style="width: 25%;">Parameters</th>
             <th>Info</th>
         </tr>
     </thead>
     <body>
         <tr>
-            <td><code>'refresh'</code></td>
+            <td><code>refresh</code></td>
             <td></td>
             <td>Refresh the datatable output.</td>
         </tr>
         <tr>
-            <td><code>'destroy'</code></td>
+            <td><code>destroy</code></td>
             <td></td>
             <td>Remove the datatable.</td>
         </tr>
         <tr>
-            <td><code>'option'</code></td>
+            <td><code>option</code></td>
             <td>Name, Value</td>
             <td>Set a option value (the data options can not be set this way).</td>
         </tr>
         <tr>
-            <td><code>'page'</code></td>
+            <td><code>page</code></td>
             <td>Page number</td>
             <td>If a argument is specified, load the specified page, otherwize return current page number.</td>
         </tr>
         <tr>
-            <td><code>'reset-filters'</code></td>
+            <td><code>reset-filters</code></td>
             <td></td>
             <td>Reset all filters.</td>
         </tr>
         <tr>
-            <td><code>'select'</code></td>
-            <td><code class="prettyprint lang-javascript">null</code> <i class="arg-sep">/</i> ID <i class="arg-sep">/</i> <code class="prettyprint lang-javascript">function</code></td>
+            <td><code>select</code></td>
+            <td><code>null</code> <i class="arg-sep">/</i> ID <i class="arg-sep">/</i> <code>function</code></td>
             <td>Retrieve : 
                 <ul>
                     <li>All the elements if no argument is specified</li>
@@ -739,18 +738,18 @@ a javascript object for the <code>filter</code> option and specify a fieldname s
             </td>
         </tr>
         <tr>
-            <td><code>'insert'</code></td>
-            <td>Element <i class="arg-sep">/</i> <code class="prettyprint lang-javascript">[E1, E2, ...]</code></td>
+            <td><code>insert</code></td>
+            <td>Element <i class="arg-sep">/</i> <code>[E1, E2, ...]</code></td>
             <td>Add the specified element(s) to the data array.</td>
         </tr>
         <tr>
-            <td><code>'update'</code></td>
+            <td><code>update</code></td>
             <td>ID, Element</td>
             <td>Update the first element found with the specified ID with the new specified data.</td>
         </tr>
         <tr>
-            <td><code>'delete'</code></td>
-            <td>ID <i class="arg-sep">/</i> <code class="prettyprint lang-javascript">function</code</td>
+            <td><code>delete</code></td>
+            <td>ID <i class="arg-sep">/</i> <code>function</code></td>
             <td>Remove:
                 <ul>
                     <li>All the element matching the specified function if a function is specified</li>
@@ -765,19 +764,22 @@ a string, then element are compared using this key. If <code>identify</code> is 
 <pre><code class="prettyprint lang-javascript linenums">/* EXAMPLE 1 */
 
 /* Two elements E1 and E2 are equals if E1.id === E2.id. */
-$('#MyTable').datatable({identify: 'id'}) ;
+var datatable = new DataTable(document.getElementById('MyTable'), {
+    identify: 'id'
+});
+
 /* Delete the first element E found such as E.id === 4. */
-$('#MyTable').datatable('delete', 4) ;
+datatable.deleteRow(4) ;
 
 /* EXAMPLE 2 */
 
-$('#MyTable').datatable({
+var datatable = new DataTable(document.getElementById('MyTable'), {
     identify: function (id, E) { 
         return id.toUpperCase() === E.fullname.toUpperCase() ; 
     }
 }) ;
 /* Update ISAAC NEWTON. The update function will update any field found in the second parameter. */
-$('#MyTable').datatable('update', 'ISAAC NEWTON', {field: "Mathematics"}) ;
+datatable.updateRow('ISAAC NEWTON', {field: "Mathematics"}) ;
 
 /* EXAMPLE 3 */
 
@@ -785,13 +787,14 @@ function myFilter (data) {
     return data.field == "Mathematics" ;
 }
 
-$('#MyTable').datatable();
+var datatable = new DataTable(document.getElementById('MyTable'));
+
 /* Retrieve all mathematicians. */
-var savedData = $('#MyTable').datatable('select', myFilter);
+var savedData = datatable.all(myFilter);
 /* Delete all mathematicians. */
-$('#MyTable').datatable('delete', myFilter);
+datatable.deleteAll(myFilter);
 /* Insert all the mathematicians. */
-$('#MyTable').datatable('insert', savedData);
+datatable.addRows(savedData);
 </code></pre>
       </section>
     </div>
@@ -842,8 +845,34 @@ $('#MyTable').datatable('insert', savedData);
                 }
             });
 
-            prettyPrint();
+        </script>
 
+        <script type="text/javascript">
+            var sideNavOffset = $('.right-nav').offset().top;
+            $('a[href^="#"]:not([role="tab"])').on('click', function (e) {
+                var section = $($(this).attr('href'));
+                if (section.length > 0) {
+                    e.preventDefault();
+                    if (!section.is('h3')) {
+                        $('.right-nav').addClass('scrolling');
+                    }
+                    $('html, body').animate({
+                        scrollTop: section.offset().top - 20
+                    }, {
+                        complete: function () {
+                            $('.right-nav').removeClass('scrolling');
+                        }
+                    }, 500);
+                }
+            });
+            $(window).on('scroll', function (e) {
+                if ($(window).scrollTop() + 20 > sideNavOffset) {
+                    $('.right-nav').addClass('right-nav-fixed');
+                }
+                else {
+                    $('.right-nav').removeClass('right-nav-fixed');
+                }
+            });
         </script>
 
   </body>
