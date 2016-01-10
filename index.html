@@ -72,7 +72,6 @@
 
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="first-datatable-without">
-<div class="paging"></div>
 <table class="table table-bordered">
     <thead>
         <tr>
@@ -219,7 +218,7 @@
 		</tr>
     </tbody>
 </table>
-<div class="paging"></div>
+<div id="paging-first-datatable"></div>
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="first-datatable-markup">
                                     <pre><code class="language-markup"></code></pre>
@@ -248,12 +247,12 @@
 
                     <section id="options">
                         <h1>Available Options</h1>
-                        <h3><code>data</code></h3>
+                        <h2>data</h2>
                         <p>The <code>data</code> option specifies which data should be rendered in the datatable based on its type.</p>
-                        <h5><code>false</code> | <code>undefined</code></h5>
+                        <h3><code>false</code> | <code>undefined</code></h3>
                         <p>If the option <code>data</code> is not defined or set to <code>false</code>, the data will be retrieved from the current content
                         of the HTML table (see <i>your first datatable</i> example above).</p>
-                        <h5><code>Array</code> of <code>Array</code></h5>
+                        <h3><code>Array</code> of <code>Array</code></h3>
                         <p>If <code>data</code> is an array (<code>data instanceof Array</code>), it will be used to fill the table: </p>
                         <div role="tabpanel">
                             <!-- Nav tabs -->
@@ -291,10 +290,10 @@
                             </div>
                         </div>
                         <p><span class="label label-warning">Warning!</span> Do not forget to add the <code>&lt;tbody&gt;&lt;/tbody&gt;</code> tag inside your table before running datatable.</p>
-                        <h5><code>Array</code> of <code>Object</code></h5>
+                        <h3><code>Array</code> of <code>Object</code></h3>
                         <p>You may want to use <code>Object</code> as cell instead of <code>Array</code>, it may be useful to specify <code>sort</code>,
                         <code>identify</code> or <code>filters</code> options:</p>
-                                                <div role="tabpanel">
+                        <div role="tabpanel">
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" role="tablist">           
                                 <li role="presentation" class="active"><a href="#opts-data-array-2-javascript" aria-controls="opts-data-array-2-javascript" role="tab" data-toggle="tab">Javascript</a></li>
@@ -329,6 +328,75 @@
                                 </div>
                             </div>
                         </div>
+                        <h3><code>Object</code></h3>
+                        <p>It is possible to load data using AJAX with datatable, to do so, you need to pass a javascript object as the <code>data</code> option (see below
+                        for more explanation):</p>
+                        <pre><code class="language-javascript">{
+    data: {
+        url: "http://site.com/get", // The service URL
+        type: "post" | "get",       // The type of request (post or get)
+        size: null | int,           // The total amount of data to load, 
+                                    // may also be specified as the data-size attribute
+        allInOne: false,            // Set to true to load all your data in one AJAX call
+        refresh: false | int        // Set to a positive value to refresh the data 
+                                    // every X milliseconds
+    }
+}</code></pre>
+                        <h4>Server side</h4>
+                        <p>The server must returns data in JSON format: <b>One</b> JSON array containing either JSON array or object as cells:</p>
+                        <pre><code class="language-javascript">[["Albert", "Einstein"], ["Isaac", "Newton"]]
+// Or...
+[{"firstname": "Albert", "lastname": "Einstein"}, {"firstname": "Isaac", "lastname": "Newton"}]</code></pre>
+                        <p>Below is a simple PHP example: </p>
+                        <pre><code class="language-php">// Please do not use the following in production, this is not safe code!
+$start = $_GET['start'];
+$limit = $_GET['limit'];
+
+$entries = array();
+foreach ($db->query("SELECT * FROM my_table LIMIT $start, $limit") as $row) {
+    $entries[] = $row;
+}
+
+echo json_encode($entries);
+</code></pre>
+                        <p><span class="label label-warning">Warning!</span> The plugin may ask for more data than what is currently available (e.g. for the last
+                        block), so your server code must be able to handle such request (by returning smaller or empty arrays).</p>
+                        <h4>AJAX options</h4>
+                        <p>By default (<code>allInOne = false</code>), the plugin will load data block by block using the following type of URL:</p>
+                        <pre><code class="language-php">http://site.com/get?offset=0&limit=50</code></pre>
+                        <p>Where <code>http://site.com/get</code> is the URL specified in the <code>data</code> option and <code>offset</code> and <code>limit</code>
+                        define the range of data that should be returned.</p>
+                        <p>Below are the available possible values for the options <code>size</code> and <code>allInOne</code>: </p>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th><code>size</code></th>
+                                    <th><code>allInOne</code></th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>int</code></td>
+                                    <td><code>false</code></td>
+                                    <td><span class="label label-info">Prefered!</span> Data will be retrieved asynchronously (multiple simultaneous AJAX calls).</td>
+                                </tr>
+                                <tr>
+                                    <td><code>int</code></td>
+                                    <td><code>true</code></td>
+                                    <td>Data will be retrieved in <b>one</b> AJAX call (do not use if you want to load a large amount of entries).</td>
+                                </tr>
+                                <tr>
+                                    <td><code>null</code></td>
+                                    <td><code>false | true</code></td>
+                                    <td>Data will be retrieved (asynchronously) by doing one AJAX call at a time (slower than the first one).</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p><span class="label label-info">Info!</span> If <code>refresh != false</code>, the whole table will be refreshed every X milliseconds using
+                        the third way specified above (as if <code>size</code> was <code>null</code> and <code>allInOne</code> was <code>false</code>). You may initialy
+                        load data the way you want even if the refresh mode is fixed.</p>
+
                     </section>
 
     <!-- MAIN CONTENT -->
@@ -814,7 +882,7 @@ datatable.addRows(savedData);
             var firstExampleTable = document.querySelector('#first-datatable-output table');
             var datatable = new DataTable(firstExampleTable, {
                 pageSize: 5,
-                pagingDivSelector: '#first-datatable-output .paging',
+                pagingDivSelector: '#paging-first-datatable',
                 sort: [true, true, false],
                 filters: [true, false, 'select'],
                 filterText: 'Type to filter... '
