@@ -27,178 +27,53 @@
 
         <div class="container">
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <h1>
-<a name="datatable" class="anchor" href="#datatable"><span class="octicon octicon-link"></span></a>Datatable</h1>
+            <div class="row">
+                <div id="content" class="col-md-9">
+                    <section id="getting-started">
+                        <h1>Getting Started</h1>
+                        <h3>Dependencies</h3>
+                        <p>Since version <i>2</i>, this plugin is standalone, thus there are no dependencies.</p>
+                        <p><span class="label label-info">Info!</span> This page uses <a href="http://getbootstrap.com/">Bootstrap</a>, so you may not have the exact
+                        same rendering for your table.</p>
+                        <h3>Installation</h3>
+                        <p>Download the <a href="https://github.com/Holt59/datatable/archive/master.zip">archive</a> containing the plugin, or clone
+                         it using:</p>
+                        <pre><code class="language-javascript">git clone https://github.com/Holt59/datatable.git</code></pre>
+                        <h3>Using the plugin</h3>
+                        <p>You need to include the following files in order to use the plugin: </p>
+                        <pre><code class="language-markup">&lt;!-- CSS files (include only one of the two files!) --&gt;
+&lt;!-- If you are not using bootstrap: --&gt;
+&lt;link rel="stylesheet" type="text/css" href="css/datatable.min.css" media="screen"&gt;
+&lt;!-- If you are using bootstrap: --&gt;
+&lt;link rel="stylesheet" type="text/css" href="css/datatable-bootstrap.min.css" media="screen"&gt;
+                        
+&lt;!-- JS files --&gt;
+&lt;script type="text/javascript" src="js/datatable.min.js"&gt;&lt;/script&gt;
+                        
+&lt;!-- Add the following if you want to use the jQuery wrapper (you still need datatable.min.js): --&gt;
+&lt;script type="text/javascript" src="js/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="js/datatable.jquery.min.js"&gt;&lt;/script&gt;</code></pre>
 
-<p>A custom datatable plugin for jQuery, allowing pagination, filtering, ajax loading.</p>
+                        <h3>Your first datatable</h3>
+                        <p>Below is a basic example on what you could get using this plugin (there are tons of extra options documented below):</p>
+                        <div role="tabpanel">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li role="presentation" class="active"><a href="#first-datatable-output" aria-controls="first-datatable-output" role="tab" data-toggle="tab">With datatable</a></li>
+                                <li role="presentation"><a href="#first-datatable-without" aria-controls="first-datatable-without" role="tab" data-toggle="tab">Without the plugin</a></li>
+                                <li role="presentation"><a href="#first-datatable-markup" aria-controls="first-datatable-markup" role="tab" data-toggle="tab">Markup</a></li>
+                                <li role="presentation"><a href="#first-datatable-javascript" aria-controls="first-datatable-javascript" role="tab" data-toggle="tab">Javascript</a></li>
+                                <li role="presentation"><a href="#first-datatable-jquery" aria-controls="first-datatable-jquery" role="tab" data-toggle="tab">jQuery</a></li>
+                            </ul>
 
-<h2>
-<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="first-datatable-output">
 
-<p>The example below show the main features of the plugin. I am using <a href="https://github.com/twitter" class="user-mention">@twitter</a> bootstrap theme for rendering, but you do not have to use it to use the plugin. If you want to use <a href="https://github.com/twitter" class="user-mention">@twitter</a> bootstrap, include datatable-bootstrap.css instead of datatable.css in your page. </p>
-
-<h2>
-<a name="example" class="anchor" href="#example"><span class="octicon octicon-link"></span></a>Example</h2>
-
-<p>Here is the initial HTML table: <button id="show-initial-table" class="btn btn-primary btn-small" >Show</button></p>
-
-<pre><code id="code-initial-table" class="prettyprint lang-html" style="display: none ;">&lt;div class="paging"&gt;&lt;/div&gt;
-&lt;table&gt;
-    &lt;thead&gt;
-        &lt;tr&gt;
-            &lt;th&gt;Firstname&lt;/th&gt;
-            &lt;th&gt;Lastname&lt;/th&gt;
-            &lt;th&gt;&lt;/th&gt;
-        &lt;/tr&gt;
-    &lt;/thead&gt;
-    &lt;tbody&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Linus&lt;/td&gt;
-            &lt;td&gt;Torvalds&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Brian&lt;/td&gt;
-            &lt;td&gt;Kernighan&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Blaise&lt;/td&gt;
-            &lt;td&gt;Pascal&lt;/td&gt;
-            &lt;td&gt;Mathematics&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Larry&lt;/td&gt;
-            &lt;td&gt;Page&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Richard&lt;/td&gt;
-            &lt;td&gt;Hamming&lt;/td&gt;
-            &lt;td&gt;Mathematics&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Grace&lt;/td&gt;
-            &lt;td&gt;Hopper&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Pierre&lt;/td&gt;
-            &lt;td&gt;Bezier&lt;/td&gt;
-            &lt;td&gt;Mathematics&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Shigeru&lt;/td&gt;
-            &lt;td&gt;Miyamoto&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Leslie&lt;/td&gt;
-            &lt;td&gt;Lamport&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Rasmus&lt;/td&gt;
-            &lt;td&gt;Lerdorf&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-        &lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Xavier&lt;/td&gt;
-            &lt;td&gt;Leroy&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Albert&lt;/td&gt;
-            &lt;td&gt;Einstein&lt;/td&gt;
-            &lt;td&gt;Physics&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Bill&lt;/td&gt;
-            &lt;td&gt;Gates&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Leonard&lt;/td&gt;
-            &lt;td&gt;De Vinci&lt;/td&gt;
-            &lt;td&gt;Mathematics&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Pierre&lt;/td&gt;
-            &lt;td&gt;De Fermat&lt;/td&gt;
-            &lt;td&gt;Mathematics&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;René&lt;/td&gt;
-            &lt;td&gt;Descartes&lt;/td&gt;
-            &lt;td&gt;Mathematics&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Alan&lt;/td&gt;
-            &lt;td&gt;Turing&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Ada&lt;/td&gt;
-            &lt;td&gt;Lovelace&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Isaac&lt;/td&gt;
-            &lt;td&gt;Newton&lt;/td&gt;
-            &lt;td&gt;Physics&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Carl Friedrich&lt;/td&gt;
-            &lt;td&gt;Gauss&lt;/td&gt;
-            &lt;td&gt;Mathematics&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;John&lt;/td&gt;
-            &lt;td&gt;Von Neumann&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Claude&lt;/td&gt;
-            &lt;td&gt;Shannon&lt;/td&gt;
-            &lt;td&gt;Mathematics&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Tim&lt;/td&gt;
-            &lt;td&gt;Berners-Lee&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Richard&lt;/td&gt;
-            &lt;td&gt;Stallman&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Dennis&lt;/td&gt;
-            &lt;td&gt;Ritchie&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Bjarne&lt;/td&gt;
-            &lt;td&gt;Stroustrup&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-        &lt;tr&gt;
-            &lt;td&gt;Steve&lt;/td&gt;
-            &lt;td&gt;Jobs&lt;/td&gt;
-            &lt;td&gt;Computer Science&lt;/td&gt;
-		&lt;/tr&gt;
-    &lt;/tbody&gt;
-&lt;/table&gt;
-&lt;div class="paging"&gt;&lt;/div&gt;</code>
-</pre>
-
-<p>And here is what it becomes after calling datatable: </p>
-
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="first-datatable-without">
 <div class="paging"></div>
-<table id="example-table" class="table table-bordered">
+<table class="table table-bordered">
     <thead>
         <tr>
             <th>Firstname</th>
@@ -345,16 +220,121 @@
     </tbody>
 </table>
 <div class="paging"></div>
-<p>How many lines of code to get there? Not that much... </p>
-<pre><code class="language-javascript">new DataTable(document.getElementById('#example-table'), {
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="first-datatable-markup">
+                                    <pre><code class="language-markup"></code></pre>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="first-datatable-javascript">
+                                    <pre><code class="language-javascript">var datatable = new DataTable(document.querySelector('#first-datatable-output table'), {
     pageSize: 5,
     sort: [true, true, false],
     filters: [true, false, 'select'],
     filterText: 'Type to filter... '
-}) ;</code></pre>
+});</code></pre>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="first-datatable-jquery">
+                                    <pre><code class="language-javascript">$('#first-datatable-output table').datatable({
+    pageSize: 5,
+    sort: [true, true, false],
+    filters: [true, false, 'select'],
+    filterText: 'Type to filter... '
+});</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                        <p><span class="label label-success">Ugh?</span> If you feel upset because your favorite scientist do not show up in the above table, 
+                        feel free to add it by creating <a href="https://github.com/Holt59/datatable/pulls">a pull request</a>!</p>
+                    </section>
 
-<h2>
-<a name="available-options" class="anchor" href="#available-options"><span class="octicon octicon-link"></span></a>Available options</h2>
+                    <section id="options">
+                        <h1>Available Options</h1>
+                        <h3><code>data</code></h3>
+                        <p>The <code>data</code> option specifies which data should be rendered in the datatable based on its type.</p>
+                        <h5><code>false</code> | <code>undefined</code></h5>
+                        <p>If the option <code>data</code> is not defined or set to <code>false</code>, the data will be retrieved from the current content
+                        of the HTML table (see <i>your first datatable</i> example above).</p>
+                        <h5><code>Array</code> of <code>Array</code></h5>
+                        <p>If <code>data</code> is an array (<code>data instanceof Array</code>), it will be used to fill the table: </p>
+                        <div role="tabpanel">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">           
+                                <li role="presentation" class="active"><a href="#opts-data-array-1-javascript" aria-controls="opts-data-array-1-javascript" role="tab" data-toggle="tab">Javascript</a></li>
+                                <li role="presentation"><a href="#opts-data-array-1-markup" aria-controls="opts-data-array-1-markup" role="tab" data-toggle="tab">Markup</a></li>
+                                <li role="presentation"><a href="#opts-data-array-1-output" aria-controls="opts-data-array-1-output" role="tab" data-toggle="tab">Output</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="opts-data-array-1-javascript">
+                                    <pre><code class="language-javascript">var datatable = new DataTable(document.querySelector('#my-table'), {
+    data: [
+        ['Albert', 'Einstein'],
+        ['Linus', 'Torvalds'],
+        ['Ada', 'Lovelace']
+    ]
+});</code></pre>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="opts-data-array-1-markup">
+                                    <pre><code class="language-markup"></code></pre>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="opts-data-array-1-output">
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+                                </div>
+                            </div>
+                        </div>
+                        <p><span class="label label-warning">Warning!</span> Do not forget to add the <code>&lt;tbody&gt;&lt;/tbody&gt;</code> tag inside your table before running datatable.</p>
+                        <h5><code>Array</code> of <code>Object</code></h5>
+                        <p>You may want to use <code>Object</code> as cell instead of <code>Array</code>, it may be useful to specify <code>sort</code>,
+                        <code>identify</code> or <code>filters</code> options:</p>
+                                                <div role="tabpanel">
+                            <!-- Nav tabs -->
+                            <ul class="nav nav-tabs" role="tablist">           
+                                <li role="presentation" class="active"><a href="#opts-data-array-2-javascript" aria-controls="opts-data-array-2-javascript" role="tab" data-toggle="tab">Javascript</a></li>
+                                <li role="presentation"><a href="#opts-data-array-2-markup" aria-controls="opts-data-array-2-markup" role="tab" data-toggle="tab">Markup</a></li>
+                                <li role="presentation"><a href="#opts-data-array-2-output" aria-controls="opts-data-array-2-output" role="tab" data-toggle="tab">Output</a></li>
+                            </ul>
+
+                            <!-- Tab panes -->
+                            <div class="tab-content">
+                                <div role="tabpanel" class="tab-pane active" id="opts-data-array-2-javascript">
+                                    <pre><code class="language-javascript">var datatable = new DataTable(document.querySelector('#my-table'), {
+    data: [
+        {firstname: 'Albert', lastname: 'Einstein'},
+        {firstname: 'Linus',  lastname: 'Torvalds'},
+        {firstname: 'Ada',    lastname: 'Lovelace'}
+    ]
+});</code></pre>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="opts-data-array-2-markup">
+                                    <pre><code class="language-markup"></code></pre>
+                                </div>
+                                <div role="tabpanel" class="tab-pane" id="opts-data-array-2-output">
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Firstname</th>
+            <th>Lastname</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+    <!-- MAIN CONTENT -->
+      <section id="main_content" class="inner">
+
+<h2><a name="available-options" class="anchor" href="#available-options"><span class="octicon octicon-link"></span></a>Available options</h2>
 <p>You may want to customize the some parameters of your datatable. The following table summarize the options that can be passed to the constructor (second argument):</p>
 <table class="table table-bordered">
     <thead>
@@ -797,9 +777,9 @@ datatable.deleteAll(myFilter);
 datatable.addRows(savedData);
 </code></pre>
       </section>
-    </div>
 
-    </div>
+            </div>
+        </div>
 
         <footer>
             <div class="container">
@@ -820,34 +800,34 @@ datatable.addRows(savedData);
 
         <script type="text/javascript">
 
-            var firstExampleTable = document.getElementById('example-table');
+            function create_datatable(section_id) {
+                $('#' + section_id + '-markup pre code').text($('#' + section_id + '-output').html());
+                var js = $('#' + section_id + '-javascript pre code').text();
+                js = js.replace('#my-table', '#' + section_id + '-output table');
+                eval(js);
+            }
+
+            /* First example */
+
+            $('#first-datatable-markup pre code').text($('#first-datatable-without').html());
+            $('#first-datatable-output').html($('#first-datatable-without').html());
+            var firstExampleTable = document.querySelector('#first-datatable-output table');
             var datatable = new DataTable(firstExampleTable, {
                 pageSize: 5,
+                pagingDivSelector: '#first-datatable-output .paging',
                 sort: [true, true, false],
                 filters: [true, false, 'select'],
                 filterText: 'Type to filter... '
             });
-            datatable.triggerSort();
-            datatable.filter();
 
-            $('#show-initial-table').click(function () {
-                if ($('#code-initial-table').is(':visible')) {
-                    $('#code-initial-table').hide('slow');
-                    $(this).removeClass('btn-inverse')
-                        .addClass('btn-primary')
-                        .html('Show');
-                }
-                else {
-                    $('#code-initial-table').show('slow');
-                    $(this).removeClass('btn-primary')
-                        .addClass('btn-inverse')
-                        .html('Hide');
-                }
-            });
+            /* Option DATA 1 */
+
+            create_datatable('opts-data-array-1');
+            create_datatable('opts-data-array-2');
 
         </script>
 
-        <script type="text/javascript">
+        <script type="text/javascript">/*
             var sideNavOffset = $('.right-nav').offset().top;
             $('a[href^="#"]:not([role="tab"])').on('click', function (e) {
                 var section = $($(this).attr('href'));
@@ -873,7 +853,7 @@ datatable.addRows(savedData);
                     $('.right-nav').removeClass('right-nav-fixed');
                 }
             });
-        </script>
+        */</script>
 
   </body>
 </html>

@@ -204,3 +204,11 @@ div[role="tabpanel"] {
     text-decoration: none ;
     color: #1096D0 ;
 }
+
+/* SPECIFIC */
+
+#code-initial-table {
+    height: 300px;
+    overflow: auto;
+    width: 100%;
+}
