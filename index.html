@@ -247,13 +247,14 @@
 
                     <section id="options">
                         <h1>Available Options</h1>
-                        <h2>data</h2>
-                        <p>The <code>data</code> option specifies which data should be rendered in the datatable based on its type.</p>
-                        <h3><code>false</code> | <code>undefined</code></h3>
-                        <p>If the option <code>data</code> is not defined or set to <code>false</code>, the data will be retrieved from the current content
+                        <h2 id="option-data">data</h2>
+                        <p>The <code class="language-option">data</code> option specifies which data should be rendered in the datatable based on its type.</p>
+                        <h3>From the HTML table</h3>
+                        <p>If the option <code>data</code> is not defined or set to <code class="language-javascript">false</code>, the data will be retrieved from the current content
                         of the HTML table (see <i>your first datatable</i> example above).</p>
-                        <h3><code>Array</code> of <code>Array</code></h3>
-                        <p>If <code>data</code> is an array (<code>data instanceof Array</code>), it will be used to fill the table: </p>
+                        <h3>From an array of array</h3>
+                        <p>If <code class="language-option">data</code> is an array (<code class="language-javascript">data instanceof Array</code>), it will be used to fill the table,
+                        considering each cell of the array as an entry for the datatable: </p>
                         <div role="tabpanel">
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" role="tablist">           
@@ -289,10 +290,10 @@
                                 </div>
                             </div>
                         </div>
-                        <p><span class="label label-warning">Warning!</span> Do not forget to add the <code>&lt;tbody&gt;&lt;/tbody&gt;</code> tag inside your table before running datatable.</p>
-                        <h3><code>Array</code> of <code>Object</code></h3>
-                        <p>You may want to use <code>Object</code> as cell instead of <code>Array</code>, it may be useful to specify <code>sort</code>,
-                        <code>identify</code> or <code>filters</code> options:</p>
+                        <p><span class="label label-warning">Warning!</span> Do not forget to add the <code class="language-markup">&lt;tbody&gt;&lt;/tbody&gt;</code> tag inside your table before running datatable.</p>
+                        <h3>From an array of object</h3>
+                        <p>You may want to use <code class="language-javascript">Object</code> as cell instead of <cod class="language-javascript"e>Array</code>, 
+                        it may be useful to specify <code class="language-option">sort</code>, <code class="language-option">identify</code> or <code class="language-option">filters</code> options:</p>
                         <div role="tabpanel">
                             <!-- Nav tabs -->
                             <ul class="nav nav-tabs" role="tablist">           
@@ -328,8 +329,8 @@
                                 </div>
                             </div>
                         </div>
-                        <h3><code>Object</code></h3>
-                        <p>It is possible to load data using AJAX with datatable, to do so, you need to pass a javascript object as the <code>data</code> option (see below
+                        <h3>AJAX Data</h3>
+                        <p>It is possible to load data using AJAX with datatable, to do so, you need to pass a javascript object as the <code class="language-option">data</code> option (see below
                         for more explanation):</p>
                         <pre><code class="language-javascript">{
     data: {
@@ -362,202 +363,207 @@ echo json_encode($entries);
                         <p><span class="label label-warning">Warning!</span> The plugin may ask for more data than what is currently available (e.g. for the last
                         block), so your server code must be able to handle such request (by returning smaller or empty arrays).</p>
                         <h4>AJAX options</h4>
-                        <p>By default (<code>allInOne = false</code>), the plugin will load data block by block using the following type of URL:</p>
+                        <p>By default (<code class="language-javascript">allInOne = false</code>), the plugin will load data block by block using the following type of URL:</p>
                         <pre><code class="language-php">http://site.com/get?offset=0&limit=50</code></pre>
-                        <p>Where <code>http://site.com/get</code> is the URL specified in the <code>data</code> option and <code>offset</code> and <code>limit</code>
+                        <p>Where <code class="language-">http://site.com/get</code> is the URL specified in the <code class="language-option">data</code> option and <code class="language-option">offset</code> and <code class="language-option">limit</code>
                         define the range of data that should be returned.</p>
-                        <p>Below are the available possible values for the options <code>size</code> and <code>allInOne</code>: </p>
+                        <p>Below are the available possible values for the options <code class="language-option">size</code> and <code class="language-option">allInOne</code>: </p>
                         <table class="table table-bordered">
                             <thead>
                                 <tr>
-                                    <th><code>size</code></th>
-                                    <th><code>allInOne</code></th>
+                                    <th><code class="language-option">size</code></th>
+                                    <th><code class="language-option">allInOne</code></th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td><code>int</code></td>
-                                    <td><code>false</code></td>
+                                    <td><code class="language-javascript">int</code></td>
+                                    <td><code class="language-javascript">false</code></td>
                                     <td><span class="label label-info">Prefered!</span> Data will be retrieved asynchronously (multiple simultaneous AJAX calls).</td>
                                 </tr>
                                 <tr>
-                                    <td><code>int</code></td>
-                                    <td><code>true</code></td>
+                                    <td><code class="language-javascript">int</code></td>
+                                    <td><code class="language-javascript">true</code></td>
                                     <td>Data will be retrieved in <b>one</b> AJAX call (do not use if you want to load a large amount of entries).</td>
                                 </tr>
                                 <tr>
-                                    <td><code>null</code></td>
-                                    <td><code>false | true</code></td>
+                                    <td><code class="language-javascript">null</code></td>
+                                    <td><code class="language-javascript">false | true</code></td>
                                     <td>Data will be retrieved (asynchronously) by doing one AJAX call at a time (slower than the first one).</td>
                                 </tr>
                             </tbody>
                         </table>
-                        <p><span class="label label-info">Info!</span> If <code>refresh != false</code>, the whole table will be refreshed every X milliseconds using
-                        the third way specified above (as if <code>size</code> was <code>null</code> and <code>allInOne</code> was <code>false</code>). You may initialy
-                        load data the way you want even if the refresh mode is fixed.</p>
+                        <p><span class="label label-info">Info!</span> If <code class="language-javascript">refresh != false</code>, the whole table will be refreshed every X milliseconds using
+                        the third way specified above (as if <code class="language-option">size</code> was <code class="language-javascript">null</code> and <code class="language-option">allInOne</code> 
+                        was <code class="language-javascript">false</code>). You may initialy load data the way you want even if the refresh mode is fixed.</p>
+
+                        <h2 class="option-others">Other Options</h2>
+                        
+                        <p>Below is a summary of all the available options.</p>
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Option</th>
+                                    <th>Default value</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code class="language-option">data</code></td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td><code class="language-option">tableClass</code></td>
+                                    <td><code class="language-javascript">"datatable"</code></td>
+                                    <td>The class to be added to the HTML table element.</td>
+                                </tr>
+                                <tr>
+                                    <td>pagingDivSelector</td>
+                                    <td><code class="language-javascript">".paging"</code></td>
+                                    <td>The jQuery selector for paging divs.</td>
+                                </tr>
+                                <tr>
+                                    <td>pagingDivClass</td>
+                                    <td><code class="language-javascript">"pagination pagination-centered"</code></td>
+                                    <td>The HTML class which will be added to the paging div.</td>
+                                </tr>
+                                <tr>
+                                    <td>pagingListClass</td>
+                                    <td><code class="language-javascript">""</code></td>
+                                    <td>The HTML class which will be added to the &lt;ul&gt; tag inside the paging div.</td>
+                                </tr>
+                                <tr>
+                                    <td>counterDivSelector</td>
+                                    <td><code>'.counter'</code></td>
+                                    <td>The jQuery selector for counter divs.</td>
+                                </tr>
+                                <tr>
+                                    <td>counterText</td>
+                                    <td colspan="2">See below.</td>
+                                </tr>
+                                <tr>
+                                    <td>loadingDivSelector</td>
+                                    <td><code>'.loading'</code></td>
+                                    <td>The jQuery selector for the ajax loading div.</td>
+                                </tr>
+                                <tr>
+                                    <td>sort</td>
+                                    <td><code>false</code></td>
+                                    <td>See the sort part below for more information.</td>
+                                </tr>
+                                <tr>
+                                    <td>sortKey</td>
+                                    <td><code>undefined</code></td>
+                                    <td>The default sort key (if sort enable).</td>
+                                </tr>
+                                <tr>
+                                    <td>sortDir</td>
+                                    <td><code>'asc'</code></td>
+                                    <td>The default sort direction (<code>'asc'</code> or <code>'desc'</code>).</td>
+                                </tr>
+                                <tr>
+                                    <td>nbColumns</td>
+                                    <td><code>-1</code></td>
+                                    <td>The number of columns. If not specified will be find according to the number of
+                                    &lt;th&gt; tags in the head of the table.</td>
+                                </tr>
+                                <tr>
+                                    <td>pageSize</td>
+                                    <td><code>20</code></td>
+                                    <td>The number of elements that will be shown on each page.</td>
+                                </tr>
+                                <tr>
+                                    <td>identify</td>
+                                    <td><code>false</code></td>
+                                    <td>The key to use for check if 2 element are equals. Can also be a function.</td>
+                                </tr>
+                                <tr>
+                                    <td>pagingNumberOfPages</td>
+                                    <td><code>9</code></td>
+                                    <td>The number of pages that will be shown on the pagination list.</td>
+                                </tr>
+                                <tr>
+                                    <td>filters</td>
+                                    <td colspan="2">See the filter part below for more information.</td>
+                                </tr>
+                                <tr>
+                                    <td>filterText</td>
+                                    <td><code>'Search... '</code></td>
+                                    <td>The placeholder for the input filter (text and regexp).</td>
+                                </tr>
+                                <tr>
+                                    <td>filterEmptySelect</td>
+                                    <td><code>''</code></td>
+                                    <td>The default empty text for select filter.</td>
+                                </tr>
+                                <tr>
+                                    <td>filterSelectOptions</td>
+                                    <td><code>false</code></td>
+                                    <td>If enable, select options will be filtered according to other filters.</td>
+                                </tr>
+                                <tr>
+                                    <td>filterInputClass</td>
+                                    <td><code>''</code></td>
+                                    <td>The HTML class for search input.</td>
+                                </tr>
+                                <tr>
+                                    <td>filterSelectClass</td>
+                                    <td><code>''</code></td>
+                                    <td>The HTML class for search select.</td>
+                                </tr>
+                                <tr>
+                                    <td>onChange</td>
+                                    <td><code>function (old, new) {}</code></td>
+                                    <td>A callback call before page is changed.</td>
+                                </tr>
+                                <tr>
+                                    <td>beforeRefresh</td>
+                                    <td><code>function () {}</code></td>
+                                    <td>A callback call before each refresh.</td>
+                                </tr>
+                                <tr>
+                                    <td>afterRefresh</td>
+                                    <td><code>function () {}</code></td>
+                                    <td>A callback call after each refresh.</td>
+                                </tr>
+                                <tr>
+                                    <td>lineFormat</td>
+                                    <td colspan="3">See below.</td>
+                                </tr>
+                                <tr>
+                                    <td>firstPage</td>
+                                    <td><code>&amp;lt;&amp;lt;</code></td>
+                                    <td>First page link text (set to false to do not show the link).</td>
+                                </tr>
+                                <tr>
+                                    <td>prevPage</td>
+                                    <td><code>&amp;lt;</code></td>
+                                    <td>Previous page link text (set to false to do not show the link).</td>
+                                </tr>
+                                <tr>
+                                    <td>nextPage</td>
+                                    <td><code>&amp;gt;</code></td>
+                                    <td>Next page link text (set to false to do not show the link).</td>
+                                </tr>
+                                <tr>
+                                    <td>lastPage</td>
+                                    <td><code>&amp;gt;&amp;gt;</code></td>
+                                    <td>Last page link text (set to false to do not show the link).</td>
+                                </tr>
+                            </tbody>
+                        </table>   
 
                     </section>
+
 
     <!-- MAIN CONTENT -->
       <section id="main_content" class="inner">
 
 <h2><a name="available-options" class="anchor" href="#available-options"><span class="octicon octicon-link"></span></a>Available options</h2>
 <p>You may want to customize the some parameters of your datatable. The following table summarize the options that can be passed to the constructor (second argument):</p>
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Option</th>
-            <th>Default value</th>
-            <th>Explanation</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>data</td>
-            <td colspan="2">See the data part below for more information.</td>
-        </tr>
-        <tr>
-            <td><code class="language-javascript">tableClass</code></td>
-            <td><code class="language-javascript">'datatable'</code></td>
-            <td>The HTML class for the table.</td>
-        </tr>
-        <tr>
-            <td>pagingDivSelector</td>
-            <td><code>'.paging'</code></td>
-            <td>The jQuery selector for paging divs.</td>
-        </tr>
-        <tr>
-            <td>pagingDivClass</td>
-            <td><code>'pagination pagination-centered'</code></td>
-            <td>The HTML class which will be added to the paging div.</td>
-        </tr>
-        <tr>
-            <td>pagingListClass</td>
-            <td><code>''</code></td>
-            <td>The HTML class which will be added to the &lt;ul&gt; tag inside the paging div.</td>
-        </tr>
-        <tr>
-            <td>counterDivSelector</td>
-            <td><code>'.counter'</code></td>
-            <td>The jQuery selector for counter divs.</td>
-        </tr>
-        <tr>
-            <td>counterText</td>
-            <td colspan="2">See below.</td>
-        </tr>
-        <tr>
-            <td>loadingDivSelector</td>
-            <td><code>'.loading'</code></td>
-            <td>The jQuery selector for the ajax loading div.</td>
-        </tr>
-        <tr>
-            <td>sort</td>
-            <td><code>false</code></td>
-            <td>See the sort part below for more information.</td>
-        </tr>
-        <tr>
-            <td>sortKey</td>
-            <td><code>undefined</code></td>
-            <td>The default sort key (if sort enable).</td>
-        </tr>
-        <tr>
-            <td>sortDir</td>
-            <td><code>'asc'</code></td>
-            <td>The default sort direction (<code>'asc'</code> or <code>'desc'</code>).</td>
-        </tr>
-        <tr>
-            <td>nbColumns</td>
-            <td><code>-1</code></td>
-            <td>The number of columns. If not specified will be find according to the number of
-            &lt;th&gt; tags in the head of the table.</td>
-        </tr>
-        <tr>
-            <td>pageSize</td>
-            <td><code>20</code></td>
-            <td>The number of elements that will be shown on each page.</td>
-        </tr>
-        <tr>
-            <td>identify</td>
-            <td><code>false</code></td>
-            <td>The key to use for check if 2 element are equals. Can also be a function.</td>
-        </tr>
-        <tr>
-            <td>pagingNumberOfPages</td>
-            <td><code>9</code></td>
-            <td>The number of pages that will be shown on the pagination list.</td>
-        </tr>
-        <tr>
-            <td>filters</td>
-            <td colspan="2">See the filter part below for more information.</td>
-        </tr>
-        <tr>
-            <td>filterText</td>
-            <td><code>'Search... '</code></td>
-            <td>The placeholder for the input filter (text and regexp).</td>
-        </tr>
-        <tr>
-            <td>filterEmptySelect</td>
-            <td><code>''</code></td>
-            <td>The default empty text for select filter.</td>
-        </tr>
-        <tr>
-            <td>filterSelectOptions</td>
-            <td><code>false</code></td>
-            <td>If enable, select options will be filtered according to other filters.</td>
-        </tr>
-        <tr>
-            <td>filterInputClass</td>
-            <td><code>''</code></td>
-            <td>The HTML class for search input.</td>
-        </tr>
-        <tr>
-            <td>filterSelectClass</td>
-            <td><code>''</code></td>
-            <td>The HTML class for search select.</td>
-        </tr>
-        <tr>
-            <td>onChange</td>
-            <td><code>function (old, new) {}</code></td>
-            <td>A callback call before page is changed.</td>
-        </tr>
-        <tr>
-            <td>beforeRefresh</td>
-            <td><code>function () {}</code></td>
-            <td>A callback call before each refresh.</td>
-        </tr>
-        <tr>
-            <td>afterRefresh</td>
-            <td><code>function () {}</code></td>
-            <td>A callback call after each refresh.</td>
-        </tr>
-        <tr>
-            <td>lineFormat</td>
-            <td colspan="3">See below.</td>
-        </tr>
-        <tr>
-            <td>firstPage</td>
-            <td><code>&amp;lt;&amp;lt;</code></td>
-            <td>First page link text (set to false to do not show the link).</td>
-        </tr>
-        <tr>
-            <td>prevPage</td>
-            <td><code>&amp;lt;</code></td>
-            <td>Previous page link text (set to false to do not show the link).</td>
-        </tr>
-        <tr>
-            <td>nextPage</td>
-            <td><code>&amp;gt;</code></td>
-            <td>Next page link text (set to false to do not show the link).</td>
-        </tr>
-        <tr>
-            <td>lastPage</td>
-            <td><code>&amp;gt;&amp;gt;</code></td>
-            <td>Last page link text (set to false to do not show the link).</td>
-        </tr>
-    </tbody>
-</table>   
-
 <h3>data</h3>
 <p>If you don't specify the data option, the plugin will load the data from the current HTML table,
 considering each row as an element (See the example above).</p>
@@ -847,6 +853,46 @@ datatable.addRows(savedData);
       </section>
 
             </div>
+                <div class="col-md-3">
+                    <nav class="right-nav">
+                        <ul class="nav">
+                            <li>
+                                <a href="#getting-started">Getting Started</a>
+
+                            </li>
+                            <li>
+                                <a href="#options">Available Options</a>
+                                <ul class="nav">
+                                    <li><a href="#option-data">data</a></li>
+                                    <li><a href="#option-countertext">counterText</a></li>
+                                    <li><a href="#option-sort">sort</a></li>
+                                    <li><a href="#option-filters">filters</a></li>
+                                    <li><a href="#option-others">Other options</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#methods">Available Methods</a>
+                                <ul class="nav">
+                                    <li><a href="#form-standard-use">Standard Use</a></li>
+                                    <li><a href="#horizontal-forms">Horizontal Forms</a></li>
+                                    <li><a href="#custom-file-input">Custom File Input</a></li>
+                                    <li><a href="#button-groups-etc">Button Group, Toolbar & Dropdown</a></li>
+                                    <li><a href="#form-new-options">New input options</a></li>
+                                </ul>
+                            </li>
+                            <li>
+                                <a href="#jquery-version">jQuery Usage</a>
+                                <ul class="nav">
+                                    <li><a href="#modal-standard-use">Standard Use</a></li>
+                                    <li><a href="#modal-without-html">Without HTML</a></li>
+                                    <li><a href="#modal-custom">Custom Modal</a></li>
+                                    <li><a href="#modal-togglebutton">Creating a toggle button</a></li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <a href="#top">Back to top</a>
+                    </nav>
+                </div>
         </div>
 
         <footer>
@@ -895,7 +941,7 @@ datatable.addRows(savedData);
 
         </script>
 
-        <script type="text/javascript">/*
+        <script type="text/javascript">
             var sideNavOffset = $('.right-nav').offset().top;
             $('a[href^="#"]:not([role="tab"])').on('click', function (e) {
                 var section = $($(this).attr('href'));
@@ -921,7 +967,7 @@ datatable.addRows(savedData);
                     $('.right-nav').removeClass('right-nav-fixed');
                 }
             });
-        */</script>
+        </script>
 
   </body>
 </html>

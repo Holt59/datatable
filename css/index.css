@@ -54,9 +54,37 @@ pre[class*="language-"] {
 #forkme:focus {
     text-decoration: none;
 }
+
+h3 code {
+    color: inherit;
+    background: none;
+    font-style: italic;
+    border-bottom: 1px dotted #333;
+    border-radius: 0;
+}
+
+th code[class*="language-"], 
+td code[class*="language-"], 
+p code[class*="language-"] {
+    padding: 2px 4px;
+    /* font-size: 90%; */
+    background: transparent none repeat scroll 0% 0%;
+    border: medium none;
+    font-weight: bold;
+}
+
+th code.language-option,
+td code.language-option,
+p code.language-option {
+    color: #C7254E;
+}
     
 a.cake-link {
     color: #c7254e;
+}
+
+a:focus {
+    outline: none;
 }
 
 .btn-custom {
