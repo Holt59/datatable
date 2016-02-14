@@ -40,10 +40,6 @@
                         }
                     }
                     this.datatable = new DataTable(this, args[0]);
-                    /* If a sort key is specified, sort. */
-                    this.datatable.triggerSort();
-                    /* Then filter (and refresh) ! */
-                    this.datatable.filter();
                 }
                 else {
                     this.datatable.setOptions(args[0]);

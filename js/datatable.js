@@ -164,6 +164,9 @@ var DataTable = function (table, opts) {
     /* Add filter where it's needed. */
     this.createFilter();
 
+    this.triggerSort();
+    this.filter();
+
 };
 
 DataTable.prototype = {
