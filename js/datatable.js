@@ -947,19 +947,17 @@ DataTable.prototype = {
     },
 
     /**
+     * Strip HTML tags for the specified string.
      *
-     * Check if str is a valid HTML tag.
+     * @param str The string from which tags must be stripped.
      *
-     * @param str The string to check.
-     *
-     * @return true if str is a valid HTML tag, false otherwise.
+     * @return The string with HTML tags removed.
      *
      **/
-    isHtml: function (str) {
-        if (typeof str !== "string") {
-            return false;
-        }
-        return /^\s*<[A-Z].*?<\/[a-zA-Z]+>\s*$/i.test(str);
+    stripTags: function (str) {
+        var e = document.createElement('div');
+        e.innerHTML = str;
+        return e.textContent || e.innerText;
     },
 
     /**
@@ -976,8 +974,8 @@ DataTable.prototype = {
         var ok = true;
         for (var fk in this.filters) {
             var currentData = fk[0] === '_' ? data : data[fk];
-            if (this.isHtml(currentData)) {
-                currentData = currentData.textContent;
+            if (typeof currentData === "string") {
+                currentData = this.stripTags(currentData);
             }
             if (!this.filters[fk](currentData, this.filterVals[fk])) {
                 ok = false;
@@ -1016,13 +1014,8 @@ DataTable.prototype = {
         values.sort();
         for (var i in values) {
             if (values.hasOwnProperty(i)) {
-                if (this.isHtml(values[i])) {
-                    var txt = values[i].textContent;
-                    options[txt] = txt;
-                }
-                else {
-                    options[values[i]] = values[i];
-                }
+                var txt = this.stripTags(values[i]);
+                options[txt] = txt;
             }
         }
         return options;
