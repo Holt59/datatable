@@ -807,6 +807,14 @@ DataTable.prototype = {
         this.filters = [];
         this.filterTags = [];
         this.filterVals = [];
+        // Speical options if '*'
+        if (this.options.filter === '*') {
+            var nThs = this.table.tHead.rows[0].cells.length;
+            this.options.filter = [];
+            while (nThs--) {
+                this.options.filter.push(true);
+            }
+        }
         if (this.options.filters) {
             var filterLine = false;
             var tr = document.createElement('tr');
