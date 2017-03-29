@@ -808,11 +808,11 @@ DataTable.prototype = {
         this.filterTags = [];
         this.filterVals = [];
         // Speical options if '*'
-        if (this.options.filter === '*') {
+        if (this.options.filters === '*') {
             var nThs = this.table.tHead.rows[0].cells.length;
-            this.options.filter = [];
+            this.options.filters = [];
             while (nThs--) {
-                this.options.filter.push(true);
+                this.options.filters.push(true);
             }
         }
         if (this.options.filters) {
