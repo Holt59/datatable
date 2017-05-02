@@ -1393,8 +1393,7 @@ DataTable.prototype = {
         this.options.beforeRefresh.call(this.table);
         this.updatePaging();
         this.updateCounter();
-        this.removeNode(this.table.tBodies[0]);
-        this.table.appendChild(document.createElement('tbody'));
+        this.table.tBodies[0].innerHTML = "";
         if (this.currentStart >= this.currentDataLength) {
             this.table.tBodies[0].innerHTML = '<tr><td colspan="' + this.options.nbColumns + '">'
                 + '<div class="progress progress-striped active">'
