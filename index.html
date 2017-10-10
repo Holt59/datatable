@@ -216,6 +216,15 @@
             <td>Jobs</td>
             <td>Computer Science</td>
 		</tr>
+        <tr>
+            <td>Steve</td>
+            <td>Wozniak</td>
+            <td>Computer Science</td>
+		</tr>        <tr>
+            <td>Mario</td>
+            <td>Molina</td>
+            <td>Chemistry</td>
+        </tr>
     </tbody>
 </table>
 <div id="paging-first-datatable"></div>
@@ -228,7 +237,8 @@
     pageSize: 5,
     sort: [true, true, false],
     filters: [true, false, 'select'],
-    filterText: 'Type to filter... '
+    filterText: 'Type to filter... ',
+    pagingDivSelector: "#paging-first-datatable"
 });</code></pre>
                                 </div>
                                 <div role="tabpanel" class="tab-pane" id="first-datatable-jquery">
@@ -236,7 +246,8 @@
     pageSize: 5,
     sort: [true, true, false],
     filters: [true, false, 'select'],
-    filterText: 'Type to filter... '
+    filterText: 'Type to filter... ',
+    pagingDivSelector: "#paging-first-datatable"
 });</code></pre>
                                 </div>
                             </div>
@@ -622,17 +633,21 @@ to change the sorting direction (asc or desc). The function should take 2 argume
 argument is resp. lower, equal or greater than the second.</p>
 <p>Currently, it is only possible to specify one function for the whole table (not a function for each column).</p>
 <p><strong>Specifying which column can be sort</strong></p>
-<p>You have 3 ways to specify the columns, depending on the sort option:</p>
+<p>You have 4 ways to specify the columns, depending on the sort option:</p>
+
 <ul>
-    <li><code class="prettyprint lang-javascript">false</code> - No sortable columns</li>
-    <li><code class="prettyprint lang-javascript">true</code> - The sortable columns will be find according to <code>data-sort</code> attribute of &lt;th&gt; tags.</li>
-    <li><code class="prettyprint lang-javascript">'*'</code> - All the column will be sortable.</li>
-    <li><code class="prettyprint lang-javascript">[true, false, function (l, r) { }, true]</code>
+    <li style="display:block;padding:17px 0 17px 0"><code class="prettyprint lang-javascript">false</code> - No sortable columns</li>
+    <li style="display:block;padding:17px 0 17px 0"><code class="prettyprint lang-javascript">true</code> - The sortable columns will be find according to <code>data-sort</code> attribute of &lt;th&gt; tags.</li>
+    <li style="display:block;padding:17px 0 17px 0"><code class="prettyprint lang-javascript">'*'</code> - All the column will be sortable.</li>
+    <li style="display:block;padding:17px 0 17px 0"><code class="prettyprint lang-javascript">[true, false, function (l, r) { }, true]</code> - Specific sort for each column 
         <ul>
-            <li><code class="prettyprint lang-javascript">function (l, r) { }</code> (return values must be -1, 0 or 1 if l is lower, equal or greater than r), the column
-            is sortable, and the order is computed using the specified function (for this column).</li>
-            <li><code class="prettyprint lang-javascript">false</code>, the column is not sortable.</li>
-            <li><code class="prettyprint lang-javascript">true</code>, shortcut for the following function: <code class="prettyprint lang-javascript">function (l, r) { return l < r ? -1 : (l > r ? 1 : 0) ; }</code>,
+            <li style="display:block;padding:25px 0 15px 0"><code class="prettyprint lang-javascript">function (l, r) { }</code><span style="display:inline-block;vertical-align:middle">
+                (return values must be -1, 0 or 1 if l is lower, equal or greater than r), the column
+                is sortable, and the order is computed using the specified function (for this column).</span></li>
+            <li style="display:block;padding:12px 0 12px 0"><code class="prettyprint lang-javascript">false</code> - the column is not sortable.</li>
+            <li style="display:block;padding:12px 0 12px 0"><code class="prettyprint lang-javascript">true</code><span style="display:inline-block;padding:12px 0 12px 0">
+                 - shortcut for the following function:</span>
+                <code class="prettyprint lang-javascript">function (l, r) { return l < r ? -1 : (l > r ? 1 : 0) ; }</code>,
             which is a standard sort function.</li>
         </ul>
     </li>
