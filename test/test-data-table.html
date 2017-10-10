@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Prueba de datatable</title>
+    <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="bootstrap.min.css" />
+
+    <!-- CSS files (include only one of the two files!) -->
+    <!-- If you are not using bootstrap: -->
+    <!--link rel="stylesheet" type="text/css" href="/css/datatable.min.css" media="screen"-->
+    <!-- If you are using bootstrap: -->
+    <link rel="stylesheet" type="text/css" href="/css/datatable-bootstrap.min.css" media="screen">
+    <!-- JS files -->
+    <script type="text/javascript" src="/js/datatable.min.js"></script>
+
+    <script type="text/javascript">
+        function onLoad() {
+            var datatable = new DataTable(document.querySelector('#first-datatable-output'), {
+                data: customerList(),
+                pageSize: 2,
+                sort: [true, true, false, false, false],
+                filters: false,
+                pagingDivSelector: "#paging",
+                lineFormat: lineFormatFn
+            });
+        }
+
+        //
+        function customerList() {
+            return [
+             [ 1, 'Hemoeco Renta*', '+52(33)36-41-39-79', 'It\'s a trusthworty company', 'N' ],
+             [ 2, 'César Antonio*', '36-65-83-66',        '',      'N' ],
+             [ 3, 'Angel Rosas*',   '331-333-33-33',      'Notes', 'N' ],
+             [ 4, 'Hardcoded*',     '00-00-00-00',        '',      'S' ]];
+        }
+
+        //
+        function lineFormatFn(id, data) {
+
+            var noRentCol = 4;
+
+            var res = document.createElement('tr');
+            res.dataset.id = id;
+            var noRent = data[noRentCol];
+            if (noRent === 'S') {
+                res.className = "alert-danger";
+            }
+            for (var key in data) {
+                if (key == noRentCol) {
+                    continue; // Ignorar 'noRent'
+                }
+                if (data.hasOwnProperty(key)) {
+                    res.innerHTML += '<td>' + data[key] + '</td>';
+                }
+            }
+            return res;
+        }
+    </script>
+</head>
+
+<body onload="onLoad();">
+    <div class="jumbotron"><h2>Customer list</h2></div>
+
+    <table class="table table-bordered" id="first-datatable-output">
+        <thead>
+            <tr>
+                <th>Num</th>
+                <th>Name</th>
+                <th>Tel</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+    <div id="paging"></div>    
+   
+</body>
+</html>
