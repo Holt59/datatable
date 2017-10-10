@@ -12,22 +12,20 @@
     <!-- If you are using bootstrap: -->
     <link rel="stylesheet" type="text/css" href="/css/datatable-bootstrap.min.css" media="screen">
     <!-- JS files -->
-    <script type="text/javascript" src="/js/datatable.js"></script>
+    <script type="text/javascript" src="/js/datatable.min.js"></script>
 
     <script type="text/javascript">
         function onLoad() {
             var ajaxData = {
-                url: "lista-de-clientes-array.json",// "http://localhost:53956/Customers.asmx/CustomersList",
+                url: "lista-de-clientes-array.json",
                 type: "get",
-                // url: "http://localhost:53956/Customers.asmx/CustomersList",
-                // type: "post",
                 refresh: false,
                 allInOne: true
             };
 
             var datatable = new DataTable(document.querySelector('#first-datatable-output'), {
                 data: ajaxData,
-                pageSize: 10,
+                pageSize: 2,
                 sort: [true, true, false, false, false],
                 filters: false,
                 pagingDivSelector: "#paging",
