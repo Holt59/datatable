@@ -827,7 +827,7 @@ DataTable.prototype = {
                         var input = opt === true || opt === 'regexp' || opt === 'input' || opt instanceof Function || opt instanceof HTMLInputElement;
                         var filter = input ? this.createTextFilter(field) : this.createSelectFilter(field);
                         this.filterTags[field] = filter;
-                        if (!document.contains(filter)) {
+                        if (!document.body.contains(filter)) {
                             td.classList.add('datatable-filter-cell');
                             td.appendChild(filter);
                         }
