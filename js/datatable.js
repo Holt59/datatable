@@ -390,18 +390,24 @@ DataTable.prototype = {
 
         /* Juste iterate over each paging list and append li to ul. */
 
+        var linkClass = '';
+
+        if (dataTable.options.pagingLinkClass) {
+            linkClass = ' class="' + dataTable.options.pagingLinkClass + '"';
+        }
+
         for (var i = 0; i < this.pagingLists.length; ++i) {
             var childs = [];
             if (dataTable.options.firstPage) {
                 var li = document.createElement('li');
                 if (cp === 1) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="first">' + dataTable.options.firstPage + '</a>';
+                li.innerHTML = '<a data-page="first"' + linkClass + '>' + dataTable.options.firstPage + '</a>';
                 childs.push(li);
             }
             if (dataTable.options.prevPage) {
                 var li = document.createElement('li');
                 if (cp === 1) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="prev">' + dataTable.options.prevPage + '</a>';
+                li.innerHTML = '<a data-page="prev"' + linkClass + '>' + dataTable.options.prevPage + '</a>';
                 childs.push(li);
             }
             if (dataTable.options.pagingPages) {
@@ -418,24 +424,27 @@ DataTable.prototype = {
                 for (var k = start; k <= end; k++) {
                     var li = document.createElement('li');
                     if (k === cp) { li.classList.add('active'); }
-                    li.innerHTML = '<a data-page="' + k + '">' + k + '</a>';
+                    li.innerHTML = '<a data-page="' + k + '"' + linkClass + '>' + k + '</a>';
                     childs.push(li);
                 }
             }
             if (dataTable.options.nextPage) {
                 var li = document.createElement('li');
                 if (cp === lp || lp === 0) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="next">' + dataTable.options.nextPage + '</a>';
+                li.innerHTML = '<a data-page="next"' + linkClass + '>' + dataTable.options.nextPage + '</a>';
                 childs.push(li);
             }
             if (dataTable.options.lastPage) {
                 var li = document.createElement('li');
                 if (cp === lp || lp === 0) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="last">' + dataTable.options.lastPage + '</a>';
+                li.innerHTML = '<a data-page="last"' + linkClass + '>' + dataTable.options.lastPage + '</a>';
                 childs.push(li);
             }
             this.pagingLists[i].innerHTML = '';
             childs.forEach(function (e) {
+                if (dataTable.options.pagingItemClass) {
+                    e.classList.add(dataTable.options.pagingItemClass);
+                }
                 if (e.childNodes.length > 0) {
                     e.childNodes[0].addEventListener('click', function () {
                         if (this.parentNode.classList.contains('active') ||
@@ -1520,6 +1529,8 @@ DataTable.defaultOptions = {
     pagingDivSelector: '.paging',
     pagingDivClass: 'text-center',
     pagingListClass: 'pagination',
+    pagingItemClass: '',
+    pagingLinkClass: '',
     counterDivSelector: '.counter',
     loadingDivSelector: '.loading',
     sort: false,
