@@ -348,6 +348,27 @@ DataTable.prototype = {
         return parseInt(Math.ceil(this.filterIndex.length / this.options.pageSize), 10);
     },
 
+    createPagingLink: function (content, page, disabled) {
+        var link = document.createElement('a');
+
+        // Check options...
+        if (this.options.pagingLinkClass) {
+            link.classList.add(this.options.pagingLinkClass);
+        }
+
+        if (this.options.pagingLinkHref) {
+            link.href = this.options.pagingLinkHref;
+        }
+
+        if (this.options.pagingLinkDisabledTabIndex !== false && disabled) {
+            link.tabIndex = this.options.pagingLinkDisabledTabIndex;
+        }
+
+        link.dataset.page = page;
+        link.innerHTML = content;
+        return link;
+    },
+
     /**
      *
      * Update the paging divs.
@@ -390,24 +411,22 @@ DataTable.prototype = {
 
         /* Juste iterate over each paging list and append li to ul. */
 
-        var linkClass = '';
-
-        if (dataTable.options.pagingLinkClass) {
-            linkClass = ' class="' + dataTable.options.pagingLinkClass + '"';
-        }
-
         for (var i = 0; i < this.pagingLists.length; ++i) {
             var childs = [];
             if (dataTable.options.firstPage) {
                 var li = document.createElement('li');
+                li.appendChild(dataTable.createPagingLink(
+                    dataTable.options.firstPage, "first", cp === 1
+                ));
                 if (cp === 1) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="first"' + linkClass + '>' + dataTable.options.firstPage + '</a>';
                 childs.push(li);
             }
             if (dataTable.options.prevPage) {
                 var li = document.createElement('li');
+                li.appendChild(dataTable.createPagingLink(
+                    dataTable.options.prevPage, "prev", cp === 1
+                ));
                 if (cp === 1) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="prev"' + linkClass + '>' + dataTable.options.prevPage + '</a>';
                 childs.push(li);
             }
             if (dataTable.options.pagingPages) {
@@ -423,21 +442,27 @@ DataTable.prototype = {
             else {
                 for (var k = start; k <= end; k++) {
                     var li = document.createElement('li');
+                    li.appendChild(dataTable.createPagingLink(
+                        k, k, cp === k
+                    ));
                     if (k === cp) { li.classList.add('active'); }
-                    li.innerHTML = '<a data-page="' + k + '"' + linkClass + '>' + k + '</a>';
                     childs.push(li);
                 }
             }
             if (dataTable.options.nextPage) {
                 var li = document.createElement('li');
+                li.appendChild(dataTable.createPagingLink(
+                    dataTable.options.nextPage, "next", cp === lp || lp === 0
+                ));
                 if (cp === lp || lp === 0) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="next"' + linkClass + '>' + dataTable.options.nextPage + '</a>';
                 childs.push(li);
             }
             if (dataTable.options.lastPage) {
                 var li = document.createElement('li');
+                li.appendChild(dataTable.createPagingLink(
+                    dataTable.options.lastPage, "last", cp === lp || lp === 0
+                ));
                 if (cp === lp || lp === 0) { li.classList.add('active'); }
-                li.innerHTML = '<a data-page="last"' + linkClass + '>' + dataTable.options.lastPage + '</a>';
                 childs.push(li);
             }
             this.pagingLists[i].innerHTML = '';
@@ -1531,6 +1556,8 @@ DataTable.defaultOptions = {
     pagingListClass: 'pagination',
     pagingItemClass: '',
     pagingLinkClass: '',
+    pagingLinkHref: '',
+    pagingLinkDisabledTabIndex: false,
     counterDivSelector: '.counter',
     loadingDivSelector: '.loading',
     sort: false,
