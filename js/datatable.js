@@ -1548,26 +1548,147 @@ DataTable.prototype = {
     }
 };
 
+/**
+ * Default option for DataTable.
+ *
+ */
 DataTable.defaultOptions = {
+
+    /**
+     * Specify whether the type of the column should be deduced or not. If this option
+     * is true, the type is not deduced (mainly here for backward compatibility).
+     *
+     * @see dataTypes
+     */
     forceStrings: false,
+
+    /**
+     * Specify the class of the table.
+     *
+     */
     tableClass: 'datatable',
+
+    /**
+     * Specify the selector for the paging div element.
+     *
+     */
     pagingDivSelector: '.paging',
+
+    /**
+     * Specify the class for the paging div element.
+     *
+     */
     pagingDivClass: 'text-center',
+
+    /**
+     * Specify the class for the paging list element.
+     *
+     */
     pagingListClass: 'pagination',
+
+    /**
+     * Specify the class for the paging list item elements.
+     *
+     */
     pagingItemClass: '',
+
+    /**
+     * Specify the class for the paging list link elements.
+     *
+     */
     pagingLinkClass: '',
+
+    /**
+     * Specify the href attribute for the paging list link elements.
+     *
+     */
     pagingLinkHref: '',
+
+    /**
+     * Specify the tabindex attribute for the paging list link elements when
+     * disabled.
+     *
+     */
     pagingLinkDisabledTabIndex: false,
+
+    /**
+     * Specify the selector for the counter div element.
+     *
+     * @see counterText
+     */
     counterDivSelector: '.counter',
+
+    /**
+     * Specify the selector the loading div element.
+     *
+     * @see data
+     */
     loadingDivSelector: '.loading',
+
+    /**
+     * Sepcify the sort options.
+     *
+     * @type boolean|string|Array|Object
+     */
     sort: false,
+
+    /**
+     * Specify the default sort key.
+     *
+     * @type boolean|int|string.
+     */
     sortKey: false,
+
+    /**
+     * Specify the default sort directions, 'asc' or 'desc'.
+     *
+     */
     sortDir: 'asc',
+
+    /**
+     * Specify the number of columns, a value of -1 (default) specify
+     * the the number of columns should be retrieved for the <thead>
+     * elements of the table.
+     *
+     */
     nbColumns: -1,
+
+    /**
+     * Specify the number of elements to display per page.
+     *
+     */
     pageSize: 20,
+
+    /**
+     * Specify the number of pages to display in the paging list element.
+     *
+     */
     pagingNumberOfPages: 9,
+
+    /**
+     * Specify the way of identifying items from the data array:
+     *
+     *   - if this option is false (default), no identification is provided.
+     *   - if a Function is specified, the function is used to identify:
+     *         function (id, item) -> boolean
+     *   - if an int or a string is specified, items are identified by the
+     *     value corresponding to the key.
+     *
+     * @type boolean|int|string|Function.
+     *
+     */
     identify: false,
+
+    /**
+     * Callback function when the table is updated.
+     *
+     */
     onChange: function (oldPage, newPage) { },
+
+    /**
+     * Function used to generate content for the counter div element.
+     *
+     */
     counterText: function (currentPage, totalPage,
                            firstRow, lastRow,
                            totalRow, totalRowUnfiltered) {
@@ -1579,20 +1700,98 @@ DataTable.defaultOptions = {
         counterText += '.';
         return counterText;
     },
+
+    /**
+     * Content of the paging item pointing to the first page.
+     *
+     */
     firstPage: '&lt;&lt;',
+
+    /**
+     * Content of the paging item pointing to the previous page.
+     *
+     */
     prevPage: '&lt;',
+
+    /**
+     *
+     */
     pagingPages: false,
+
+    /**
+     * Content of the paging item pointing to the next page.
+     *
+     */
     nextPage: '&gt;',
+
+    /**
+     * Content of the paging item pointing to the last page.
+     *
+     */
     lastPage: '&gt;&gt;',
+
+    /**
+     * Specify the type of the columns:
+     *
+     *   - if false, the type is not deduced and values are treated as strings.
+     *   - if true, the type is deduced automatically.
+     *   - if an Array is specified, the type of each column is retrieve from the
+     *     array values, possible values are 'int', 'float' <> 'double', 'date' <> 'datetime',
+     *     false <> true <> 'string' <> 'str'. A function can also be specified to convert
+     *     the value.
+     *
+     * @see forceStrings
+     *
+     */
     dataTypes: true,
+
+    /**
+     * Specify the filter options.
+     *
+     */
     filters: {},
+
+    /**
+     * Specify the placeholder for the textual input filters.
+     */
     filterText: 'Search... ',
+
+    /**
+     * Specify the placeholder for the select input filters.
+     */
     filterEmptySelect: '',
+
+    /**
+     *
+     */
     filterSelectOptions: false,
+
+    /**
+     *
+     */
     filterInputClass: 'form-control',
+
+    /**
+     *
+     */
     filterSelectClass: 'form-control',
+
+    /**
+     * Callback function before the display is reloaded.
+     *
+     */
     beforeRefresh: function () { },
+
+    /**
+     * Callback function after the display has been reloaded.
+     *
+     */
     afterRefresh: function () { },
+
+    /**
+     * Function used to generate the row of the table.
+     *
+     */
     lineFormat: function (id, data) {
         var res = document.createElement('tr');
         res.dataset.id = id;
