@@ -471,7 +471,8 @@ DataTable.prototype = {
                     e.classList.add(dataTable.options.pagingItemClass);
                 }
                 if (e.childNodes.length > 0) {
-                    e.childNodes[0].addEventListener('click', function () {
+                    e.childNodes[0].addEventListener('click', function (event) {
+                        event.preventDefault();
                         if (this.parentNode.classList.contains('active') ||
                             typeof this.dataset.page === 'undefined') {
                             return;
