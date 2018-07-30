@@ -39,6 +39,7 @@ var DataTable = function (table, opts) {
         div.appendChild(ul);
     }
     this.pagingLists = document.querySelectorAll(this.options.pagingDivSelector + ' ul');
+    this.pageSizeDivs = document.querySelectorAll(this.options.pageSizeDivSelector);
     this.counterDivs = document.querySelectorAll(this.options.counterDivSelector);
     this.loadingDiv = document.querySelector(this.options.loadingDivSelector);
 
@@ -104,7 +105,12 @@ var DataTable = function (table, opts) {
         var rows = this.table.tBodies[0].rows;
         var nCols = rows[0].cells.length ;
         for (var i = 0; i < rows.length; ++i) {
-            this.data.push ([]) ;
+          this.data.push ([]) ;
+
+          if(!this.currentPage && rows[i].getAttribute("class") === 'selected') {
+           	this.currentPage = Math.floor(i / this.options.pageSize);
+           	this.currentStart = this.currentPage * this.options.pageSize;
+          }
         }
         for (var j = 0 ; j < nCols ; ++j) {
             var dt = function (x) { return x ; } ;
@@ -162,8 +168,7 @@ var DataTable = function (table, opts) {
     this.createFilter();
 
     this.triggerSort();
-    this.filter();
-
+    this.filter(true);
 };
 
 DataTable.prototype = {
@@ -449,6 +454,11 @@ DataTable.prototype = {
                     childs.push(li);
                 }
             }
+            if (lp > end) {
+              var li = document.createElement('li');
+              li.innerHTML = ' ... <a data-page="last">' + lp + '</a>';
+              childs.push(li);
+            }
             if (dataTable.options.nextPage) {
                 var li = document.createElement('li');
                 li.appendChild(dataTable.createPagingLink(
@@ -471,7 +481,7 @@ DataTable.prototype = {
                     e.classList.add(dataTable.options.pagingItemClass);
                 }
                 if (e.childNodes.length > 0) {
-                    e.childNodes[0].addEventListener('click', function (event) {
+                    e.childNodes[e.childNodes.length - 1].addEventListener('click', function (event) {
                         event.preventDefault();
                         if (this.parentNode.classList.contains('active') ||
                             typeof this.dataset.page === 'undefined') {
@@ -498,7 +508,34 @@ DataTable.prototype = {
                 this.pagingLists[i].appendChild(e);
             }, this);
         }
-
+        
+       /* create innerHtml for a pageSize dropdown */
+        var pageSizePicker = '';
+        var pageSizeInPicker = false;
+        
+       if(this.pageSizeDivs.length) {
+          for(var p in dataTable.options.pageSizeOptions) {
+          	pageSizePicker += '<option';
+          	if(dataTable.options.pageSize == dataTable.options.pageSizeOptions[p]) {
+          		pageSizePicker += ' selected';
+          		pageSizeInPicker = true;
+          	}
+          	pageSizePicker += ' value="' + dataTable.options.pageSizeOptions[p] + '">' + dataTable.options.pageSizeOptions[p];
+          }
+          
+          var pageSizePicker = '<select>' + (pageSizeInPicker?'':'<option>') + pageSizePicker + '</select>'; 
+      }  
+        
+        /* iterate over every elemnet holding a page size select and set the innerHtml */ 
+        for (var i = 0; i < this.pageSizeDivs.length; ++i) {
+          this.pageSizeDivs[i].innerHTML = pageSizePicker;
+          
+          this.pageSizeDivs[i].getElementsByTagName('select')[0].addEventListener('change', function (event) {
+          	dataTable.options.pageSize = this.value;
+          	dataTable.loadPage(1);
+          	dataTable.options.onPageSizeChange(this.value);
+          }, false);
+        }
     },
 
     /**
@@ -548,11 +585,10 @@ DataTable.prototype = {
                 };
             } (this.options.sort[key]);
         }
+        var alg = this.options.sortAlgorithm;
         return function (a, b) {
             var vala = a[key], valb = b[key];
-            if (vala > valb) { return asc ? 1 : -1; }
-            if (vala < valb) { return asc ? -1 : 1; }
-            return 0;
+            return alg(vala, valb) * (asc ? 1 : -1);
         };
     },
 
@@ -1155,11 +1191,11 @@ DataTable.prototype = {
      *
      **/
     triggerSort: function () {
-        if (this.options.sort instanceof Function) {
-            this.sort();
-            this.refresh();
-        }
-        else if (this.options.sortKey !== false) {
+      	if (this.options.sort instanceof Function) {
+      		this.sort();
+      		this.refresh();
+      	}
+      	else if (this.options.sortKey !== false) {
             var ths = this.table.tHead.rows[0].cells;
             var th;
             for (var j = 0; j < ths.length; j++) {
@@ -1625,6 +1661,7 @@ DataTable.defaultOptions = {
      * @see data
      */
     loadingDivSelector: '.loading',
+    pageSizeDivSelector: '.pagesize',
 
     /**
      * Sepcify the sort options.
@@ -1645,6 +1682,11 @@ DataTable.defaultOptions = {
      *
      */
     sortDir: 'asc',
+    sortAlgorithm : function (vala,valb) { 
+    	if (vala > valb) { return 1; }
+      if (vala < valb) { return -1; }
+      return 0;
+   ;},
 
     /**
      * Specify the number of columns, a value of -1 (default) specify
@@ -1659,12 +1701,14 @@ DataTable.defaultOptions = {
      *
      */
     pageSize: 20,
+    pageSizeOptions: [5, 10, 20, 50, 100],
 
     /**
      * Specify the number of pages to display in the paging list element.
      *
      */
     pagingNumberOfPages: 9,
+	onPageSizeChange : function(newPageSize){},
 
     /**
      * Specify the way of identifying items from the data array:
@@ -1801,6 +1845,21 @@ DataTable.defaultOptions = {
                 res.innerHTML += '<td>' + data[key] + '</td>';
             }
         }
+        var ancors = res.getElementsByTagName("a");
+        var ancor = ancors[ancors.length - 1];
+        if(ancor !== undefined) {
+        	var href = ancor.getAttribute("href");
+          if(window.location.href.endsWith(href)) {
+          	res.setAttribute('class','selected');
+          	var ancors = res.getElementsByTagName("a");
+          	ancors[ancors.length - 1].setAttribute('href','#');
+          } else if(ancor.getAttribute('class') == 'edit') {
+            res.addEventListener('click', function() {
+            	window.location.href = href;
+            }, false);
+          }
+        }
+        
         return res;
     }
 };
