@@ -1656,11 +1656,17 @@ DataTable.defaultOptions = {
     counterDivSelector: '.counter',
 
     /**
-     * Specify the selector the loading div element.
+     * Specify the selector for the loading div element.
      *
      * @see data
      */
     loadingDivSelector: '.loading',
+	
+	/**
+     * Specify the selector for the element that shall contain the select element used
+     * used to choose pagesize.
+     *
+     */
     pageSizeDivSelector: '.pagesize',
 
     /**
@@ -1682,6 +1688,11 @@ DataTable.defaultOptions = {
      *
      */
     sortDir: 'asc',
+	
+	/**
+     * Specify comparison function for sorting columns
+     *
+     */
     sortAlgorithm : function (vala,valb) { 
     	if (vala > valb) { return 1; }
       if (vala < valb) { return -1; }
@@ -1701,6 +1712,12 @@ DataTable.defaultOptions = {
      *
      */
     pageSize: 20,
+	
+	/**
+     * Specify the values for the option elements in the pagesize selector.
+     *
+	 * @see pageSizeDivSelector
+     */
     pageSizeOptions: [5, 10, 20, 50, 100],
 
     /**
@@ -1708,6 +1725,12 @@ DataTable.defaultOptions = {
      *
      */
     pagingNumberOfPages: 9,
+	
+	/**
+     * Callback function called when the pagesizeselector is changed
+     *
+     * @see pageSizeDivSelector
+     */
 	onPageSizeChange : function(newPageSize){},
 
     /**
