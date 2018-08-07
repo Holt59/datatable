@@ -105,12 +105,7 @@ var DataTable = function (table, opts) {
         var rows = this.table.tBodies[0].rows;
         var nCols = rows[0].cells.length ;
         for (var i = 0; i < rows.length; ++i) {
-          this.data.push ([]) ;
-
-          if(!this.currentPage && rows[i].getAttribute("class") === 'selected') {
-            this.currentPage = Math.floor(i / this.options.pageSize);
-            this.currentStart = this.currentPage * this.options.pageSize;
-          }
+            this.data.push ([]);
         }
         for (var j = 0 ; j < nCols ; ++j) {
             var dt = function (x) { return x ; } ;
@@ -159,6 +154,12 @@ var DataTable = function (table, opts) {
                 }
             }
         }
+    }
+
+    var indexOfSelectedRow = this.indexOfSelectedRow();
+    if(indexOfSelectedRow) {
+        this.currentPage = Math.floor(indexOfSelectedRow / this.options.pageSize);
+        this.currentStart = this.currentPage * this.options.pageSize;
     }
 
     /* Add sorting class to all th and add callback. */
@@ -1248,6 +1249,31 @@ DataTable.prototype = {
 
     /**
      *
+     * Try to find the row that should be visible as soon as the table is loaded.
+     *
+     * @return index of the row or 0 in case no row matched
+     *
+     **/
+    indexOfSelectedRow: function () {
+        if (this.options.selectedRow === false) {
+            return false;
+        }
+        if (this.options.selectedRow instanceof Function) {
+            for (var i = 0; i < this.data.length; i++) {
+                if(this.options.selectedRow.call(this.table, i, this.data[i])) {;
+                    return i;
+                }
+            }
+        }
+        var index = this.indexOf(this.options.selectedRow);
+        if(index === -1) {
+            index = 0;
+        }
+        return index;
+    },
+
+    /**
+     *
      * Find the index of the first element matching id in the data array.
      *
      * @param The id to find (will be match according to this.options.identify)
@@ -1868,23 +1894,17 @@ DataTable.defaultOptions = {
                 res.innerHTML += '<td>' + data[key] + '</td>';
             }
         }
-        var ancors = res.getElementsByTagName("a");
-        var ancor = ancors[ancors.length - 1];
-        if(ancor !== undefined) {
-            var href = ancor.getAttribute("href");
-            if(window.location.href.endsWith(href)) {
-                res.setAttribute('class','selected');
-                var ancors = res.getElementsByTagName("a");
-              ancors[ancors.length - 1].setAttribute('href','#');
-            } else if(ancor.getAttribute('class') == 'edit') {
-                res.addEventListener('click', function() {
-                    window.location.href = href;
-                }, false);
-            }
-        }
-        
         return res;
-    }
+    },
+
+    /**
+     * The id or a function returning true, when the table is loaded the 
+     * page this row is on will be shown instead of the first page.
+     * When a function is given, the parameters index and data are passed to the function.
+     *
+     */
+    selectedRow: false,
+
 };
 
 DataTable.defaultAjaxOptions = {
