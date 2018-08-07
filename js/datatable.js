@@ -108,8 +108,8 @@ var DataTable = function (table, opts) {
           this.data.push ([]) ;
 
           if(!this.currentPage && rows[i].getAttribute("class") === 'selected') {
-           	this.currentPage = Math.floor(i / this.options.pageSize);
-           	this.currentStart = this.currentPage * this.options.pageSize;
+            this.currentPage = Math.floor(i / this.options.pageSize);
+            this.currentStart = this.currentPage * this.options.pageSize;
           }
         }
         for (var j = 0 ; j < nCols ; ++j) {
@@ -513,28 +513,28 @@ DataTable.prototype = {
         var pageSizePicker = '';
         var pageSizeInPicker = false;
         
-       if(this.pageSizeDivs.length) {
-          for(var p in dataTable.options.pageSizeOptions) {
-          	pageSizePicker += '<option';
-          	if(dataTable.options.pageSize == dataTable.options.pageSizeOptions[p]) {
-          		pageSizePicker += ' selected';
-          		pageSizeInPicker = true;
-          	}
-          	pageSizePicker += ' value="' + dataTable.options.pageSizeOptions[p] + '">' + dataTable.options.pageSizeOptions[p];
-          }
-          
-          var pageSizePicker = '<select>' + (pageSizeInPicker?'':'<option>') + pageSizePicker + '</select>'; 
-      }  
+        if(this.pageSizeDivs.length) {
+           for(var p in dataTable.options.pageSizeOptions) {
+               pageSizePicker += '<option';
+               if(dataTable.options.pageSize == dataTable.options.pageSizeOptions[p]) {
+                   pageSizePicker += ' selected';
+                   pageSizeInPicker = true;
+               }
+               pageSizePicker += ' value="' + dataTable.options.pageSizeOptions[p] + '">' + dataTable.options.pageSizeOptions[p];
+           }
+           
+           var pageSizePicker = '<select>' + (pageSizeInPicker?'':'<option>') + pageSizePicker + '</select>'; 
+        }
         
         /* iterate over every elemnet holding a page size select and set the innerHtml */ 
         for (var i = 0; i < this.pageSizeDivs.length; ++i) {
-          this.pageSizeDivs[i].innerHTML = pageSizePicker;
-          
-          this.pageSizeDivs[i].getElementsByTagName('select')[0].addEventListener('change', function (event) {
-          	dataTable.options.pageSize = this.value;
-          	dataTable.loadPage(1);
-          	dataTable.options.onPageSizeChange(this.value);
-          }, false);
+            this.pageSizeDivs[i].innerHTML = pageSizePicker;
+            
+            this.pageSizeDivs[i].getElementsByTagName('select')[0].addEventListener('change', function (event) {
+                dataTable.options.pageSize = this.value;
+                dataTable.loadPage(1);
+                dataTable.options.onPageSizeChange(this.value);
+            }, false);
         }
     },
 
@@ -1191,11 +1191,11 @@ DataTable.prototype = {
      *
      **/
     triggerSort: function () {
-      	if (this.options.sort instanceof Function) {
-      		this.sort();
-      		this.refresh();
-      	}
-      	else if (this.options.sortKey !== false) {
+        if (this.options.sort instanceof Function) {
+            this.sort();
+            this.refresh();
+        }
+        else if (this.options.sortKey !== false) {
             var ths = this.table.tHead.rows[0].cells;
             var th;
             for (var j = 0; j < ths.length; j++) {
@@ -1661,8 +1661,8 @@ DataTable.defaultOptions = {
      * @see data
      */
     loadingDivSelector: '.loading',
-	
-	/**
+
+    /**
      * Specify the selector for the element that shall contain the select element used
      * used to choose pagesize.
      *
@@ -1688,16 +1688,16 @@ DataTable.defaultOptions = {
      *
      */
     sortDir: 'asc',
-	
-	/**
+
+    /**
      * Specify comparison function for sorting columns
      *
      */
     sortAlgorithm : function (vala,valb) { 
-    	if (vala > valb) { return 1; }
-      if (vala < valb) { return -1; }
-      return 0;
-   ;},
+        if (vala > valb) { return 1; }
+        if (vala < valb) { return -1; }
+        return 0;
+    },
 
     /**
      * Specify the number of columns, a value of -1 (default) specify
@@ -1712,11 +1712,11 @@ DataTable.defaultOptions = {
      *
      */
     pageSize: 20,
-	
-	/**
+
+    /**
      * Specify the values for the option elements in the pagesize selector.
      *
-	 * @see pageSizeDivSelector
+     * @see pageSizeDivSelector
      */
     pageSizeOptions: [5, 10, 20, 50, 100],
 
@@ -1725,13 +1725,13 @@ DataTable.defaultOptions = {
      *
      */
     pagingNumberOfPages: 9,
-	
-	/**
+
+    /**
      * Callback function called when the pagesizeselector is changed
      *
      * @see pageSizeDivSelector
      */
-	onPageSizeChange : function(newPageSize){},
+    onPageSizeChange : function(newPageSize){},
 
     /**
      * Specify the way of identifying items from the data array:
@@ -1871,16 +1871,16 @@ DataTable.defaultOptions = {
         var ancors = res.getElementsByTagName("a");
         var ancor = ancors[ancors.length - 1];
         if(ancor !== undefined) {
-        	var href = ancor.getAttribute("href");
-          if(window.location.href.endsWith(href)) {
-          	res.setAttribute('class','selected');
-          	var ancors = res.getElementsByTagName("a");
-          	ancors[ancors.length - 1].setAttribute('href','#');
-          } else if(ancor.getAttribute('class') == 'edit') {
-            res.addEventListener('click', function() {
-            	window.location.href = href;
-            }, false);
-          }
+            var href = ancor.getAttribute("href");
+            if(window.location.href.endsWith(href)) {
+                res.setAttribute('class','selected');
+                var ancors = res.getElementsByTagName("a");
+              ancors[ancors.length - 1].setAttribute('href','#');
+            } else if(ancor.getAttribute('class') == 'edit') {
+                res.addEventListener('click', function() {
+                    window.location.href = href;
+                }, false);
+            }
         }
         
         return res;
