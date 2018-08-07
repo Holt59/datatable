@@ -39,6 +39,7 @@ var DataTable = function (table, opts) {
         div.appendChild(ul);
     }
     this.pagingLists = document.querySelectorAll(this.options.pagingDivSelector + ' ul');
+    this.pageSizeDivs = document.querySelectorAll(this.options.pageSizeDivSelector);
     this.counterDivs = document.querySelectorAll(this.options.counterDivSelector);
     this.loadingDiv = document.querySelector(this.options.loadingDivSelector);
 
@@ -104,7 +105,7 @@ var DataTable = function (table, opts) {
         var rows = this.table.tBodies[0].rows;
         var nCols = rows[0].cells.length ;
         for (var i = 0; i < rows.length; ++i) {
-            this.data.push ([]) ;
+            this.data.push ([]);
         }
         for (var j = 0 ; j < nCols ; ++j) {
             var dt = function (x) { return x ; } ;
@@ -155,6 +156,12 @@ var DataTable = function (table, opts) {
         }
     }
 
+    var indexOfSelectedRow = this.indexOfSelectedRow();
+    if(indexOfSelectedRow) {
+        this.currentPage = Math.floor(indexOfSelectedRow / this.options.pageSize);
+        this.currentStart = this.currentPage * this.options.pageSize;
+    }
+
     /* Add sorting class to all th and add callback. */
     this.createSort();
 
@@ -162,8 +169,7 @@ var DataTable = function (table, opts) {
     this.createFilter();
 
     this.triggerSort();
-    this.filter();
-
+    this.filter(true);
 };
 
 DataTable.prototype = {
@@ -449,6 +455,11 @@ DataTable.prototype = {
                     childs.push(li);
                 }
             }
+            if (lp > end) {
+              var li = document.createElement('li');
+              li.innerHTML = ' ... <a data-page="last">' + lp + '</a>';
+              childs.push(li);
+            }
             if (dataTable.options.nextPage) {
                 var li = document.createElement('li');
                 li.appendChild(dataTable.createPagingLink(
@@ -471,7 +482,7 @@ DataTable.prototype = {
                     e.classList.add(dataTable.options.pagingItemClass);
                 }
                 if (e.childNodes.length > 0) {
-                    e.childNodes[0].addEventListener('click', function (event) {
+                    e.childNodes[e.childNodes.length - 1].addEventListener('click', function (event) {
                         event.preventDefault();
                         if (this.parentNode.classList.contains('active') ||
                             typeof this.dataset.page === 'undefined') {
@@ -498,7 +509,34 @@ DataTable.prototype = {
                 this.pagingLists[i].appendChild(e);
             }, this);
         }
-
+        
+       /* create innerHtml for a pageSize dropdown */
+        var pageSizePicker = '';
+        var pageSizeInPicker = false;
+        
+        if(this.pageSizeDivs.length) {
+           for(var p in dataTable.options.pageSizeOptions) {
+               pageSizePicker += '<option';
+               if(dataTable.options.pageSize == dataTable.options.pageSizeOptions[p]) {
+                   pageSizePicker += ' selected';
+                   pageSizeInPicker = true;
+               }
+               pageSizePicker += ' value="' + dataTable.options.pageSizeOptions[p] + '">' + dataTable.options.pageSizeOptions[p];
+           }
+           
+           var pageSizePicker = '<select>' + (pageSizeInPicker?'':'<option>') + pageSizePicker + '</select>'; 
+        }
+        
+        /* iterate over every elemnet holding a page size select and set the innerHtml */ 
+        for (var i = 0; i < this.pageSizeDivs.length; ++i) {
+            this.pageSizeDivs[i].innerHTML = pageSizePicker;
+            
+            this.pageSizeDivs[i].getElementsByTagName('select')[0].addEventListener('change', function (event) {
+                dataTable.options.pageSize = this.value;
+                dataTable.loadPage(1);
+                dataTable.options.onPageSizeChange(this.value);
+            }, false);
+        }
     },
 
     /**
@@ -548,11 +586,10 @@ DataTable.prototype = {
                 };
             } (this.options.sort[key]);
         }
+        var alg = this.options.sortAlgorithm;
         return function (a, b) {
             var vala = a[key], valb = b[key];
-            if (vala > valb) { return asc ? 1 : -1; }
-            if (vala < valb) { return asc ? -1 : 1; }
-            return 0;
+            return alg(vala, valb) * (asc ? 1 : -1);
         };
     },
 
@@ -1212,6 +1249,31 @@ DataTable.prototype = {
 
     /**
      *
+     * Try to find the row that should be visible as soon as the table is loaded.
+     *
+     * @return index of the row or 0 in case no row matched
+     *
+     **/
+    indexOfSelectedRow: function () {
+        if (this.options.selectedRow === false) {
+            return false;
+        }
+        if (this.options.selectedRow instanceof Function) {
+            for (var i = 0; i < this.data.length; i++) {
+                if(this.options.selectedRow.call(this.table, i, this.data[i])) {;
+                    return i;
+                }
+            }
+        }
+        var index = this.indexOf(this.options.selectedRow);
+        if(index === -1) {
+            index = 0;
+        }
+        return index;
+    },
+
+    /**
+     *
      * Find the index of the first element matching id in the data array.
      *
      * @param The id to find (will be match according to this.options.identify)
@@ -1620,11 +1682,18 @@ DataTable.defaultOptions = {
     counterDivSelector: '.counter',
 
     /**
-     * Specify the selector the loading div element.
+     * Specify the selector for the loading div element.
      *
      * @see data
      */
     loadingDivSelector: '.loading',
+
+    /**
+     * Specify the selector for the element that shall contain the select element used
+     * used to choose pagesize.
+     *
+     */
+    pageSizeDivSelector: '.pagesize',
 
     /**
      * Sepcify the sort options.
@@ -1647,6 +1716,16 @@ DataTable.defaultOptions = {
     sortDir: 'asc',
 
     /**
+     * Specify comparison function for sorting columns
+     *
+     */
+    sortAlgorithm : function (vala,valb) { 
+        if (vala > valb) { return 1; }
+        if (vala < valb) { return -1; }
+        return 0;
+    },
+
+    /**
      * Specify the number of columns, a value of -1 (default) specify
      * the the number of columns should be retrieved for the <thead>
      * elements of the table.
@@ -1661,10 +1740,24 @@ DataTable.defaultOptions = {
     pageSize: 20,
 
     /**
+     * Specify the values for the option elements in the pagesize selector.
+     *
+     * @see pageSizeDivSelector
+     */
+    pageSizeOptions: [5, 10, 20, 50, 100],
+
+    /**
      * Specify the number of pages to display in the paging list element.
      *
      */
     pagingNumberOfPages: 9,
+
+    /**
+     * Callback function called when the pagesizeselector is changed
+     *
+     * @see pageSizeDivSelector
+     */
+    onPageSizeChange : function(newPageSize){},
 
     /**
      * Specify the way of identifying items from the data array:
@@ -1802,7 +1895,16 @@ DataTable.defaultOptions = {
             }
         }
         return res;
-    }
+    },
+
+    /**
+     * The id or a function returning true, when the table is loaded the 
+     * page this row is on will be shown instead of the first page.
+     * When a function is given, the parameters index and data are passed to the function.
+     *
+     */
+    selectedRow: false,
+
 };
 
 DataTable.defaultAjaxOptions = {
